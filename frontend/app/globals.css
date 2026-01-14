@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  /* Stitch Design System - Dark Mode */
+  --color-primary: #17cf63;
+  --color-primary-hover: #14b556;
+
+  --color-background-light: #f9fafa;
+  --color-background-dark: #17191c;
+  /* Stitch Background */
+
+  --color-surface-dark: #20232A;
+  /* Stitch Surface */
+  --color-surface-dark-lighter: #2A2E35;
+  /* Stitch Surface Lighter */
+  --color-surface-hover: #2A2E35;
+
+  --color-input-bg: #111814;
+  /* Slightly darker than bg */
+  --color-border-dark: #2A2E35;
+  /* Matching surface lighter */
+
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-noto-sans), sans-serif;
+
+  --shadow-glow: 0 0 15px -3px rgba(0, 191, 255, 0.3);
+  --shadow-glow-emerald: 0 0 15px -3px rgba(16, 185, 129, 0.4);
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: white;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -25,7 +25,8 @@ export default function RegisterPage() {
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Register Error:", error);
-            toast.error(error || "Registration failed");
+            const errorMessage = error.response?.data?.message || error.message || "Registration failed";
+            toast.error(errorMessage);
         }
     };
 

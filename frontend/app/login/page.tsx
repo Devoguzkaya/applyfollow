@@ -24,7 +24,8 @@ export default function LoginPage() {
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Login Error:", error);
-            toast.error(error || "Login failed");
+            const errorMessage = error.response?.data?.message || error.message || "Login failed";
+            toast.error(errorMessage);
         }
     };
 

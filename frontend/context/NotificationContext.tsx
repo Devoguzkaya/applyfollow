@@ -45,8 +45,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }, [notifications]);
 
     const addNotification = (title: string, message: string, type: 'alarm' | 'info' | 'success' = 'info') => {
+        // Safe UUID generation (crypto.randomUUID may not be available in non-HTTPS contexts)
+        const generateId = () => {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+            return Math.random().toString(36).substring(2, 9);
+        };
+
         const newNotif: AppNotification = {
-            id: crypto.randomUUID(),
+            id: generateId(),
             title,
             message,
             timestamp: new Date(),

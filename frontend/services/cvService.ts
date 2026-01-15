@@ -41,6 +41,9 @@ export interface CertificateDto {
     url?: string;
 }
 
+export type Education = EducationDto;
+export type Experience = ExperienceDto;
+export type Skill = SkillDto;
 export type Language = LanguageDto;
 export type Certificate = CertificateDto;
 

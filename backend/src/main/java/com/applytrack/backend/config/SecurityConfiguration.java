@@ -62,13 +62,9 @@ public class SecurityConfiguration {
 
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
-                String allowedOriginsEnv = System.getenv("ALLOWED_ORIGINS");
-                List<String> allowedOrigins = (allowedOriginsEnv != null)
-                                ? List.of(allowedOriginsEnv.split(","))
-                                : List.of("http://localhost:3000", "http://5.175.136.4");
-
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(allowedOrigins);
+                // Allow all origins via pattern (supports credentials with wildcard)
+                configuration.setAllowedOriginPatterns(List.of("*"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
                 configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-User-Id"));
                 configuration.setAllowCredentials(true);

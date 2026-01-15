@@ -58,7 +58,10 @@ public class CvControllerTest {
 
         @Test
         public void getCv_ShouldReturnCvData() throws Exception {
-                CvUpdateRequest cvData = new CvUpdateRequest(Collections.emptyList(), Collections.emptyList(),
+                CvUpdateRequest cvData = new CvUpdateRequest(
+                                null, null, null, null, null, null,
+                                Collections.emptyList(), Collections.emptyList(),
+                                Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());
                 when(cvService.getCv(any(UUID.class))).thenReturn(cvData);
 
@@ -69,7 +72,10 @@ public class CvControllerTest {
 
         @Test
         public void updateCv_ShouldReturnOk() throws Exception {
-                CvUpdateRequest request = new CvUpdateRequest(Collections.emptyList(), Collections.emptyList(),
+                CvUpdateRequest request = new CvUpdateRequest(
+                                null, null, null, null, null, null,
+                                Collections.emptyList(), Collections.emptyList(),
+                                Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());
                 doNothing().when(cvService).updateCv(any(UUID.class), any(CvUpdateRequest.class));
 

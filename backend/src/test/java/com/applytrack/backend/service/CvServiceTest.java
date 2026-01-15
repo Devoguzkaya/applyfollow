@@ -60,7 +60,9 @@ class CvServiceTest {
         CvUpdateRequest.EducationDto eduDto = new CvUpdateRequest.EducationDto(null, "School", "Field", "Degree", null,
                 null, false);
         CvUpdateRequest request = new CvUpdateRequest(
-                List.of(eduDto), Collections.emptyList(), Collections.emptyList());
+                null, null, null, null, null, null,
+                List.of(eduDto), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                Collections.emptyList());
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 

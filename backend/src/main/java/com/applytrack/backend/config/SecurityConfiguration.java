@@ -25,47 +25,56 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+        private final JwtAuthenticationFilter jwtAuthFilter;
+        private final AuthenticationProvider authenticationProvider;
 
-    private static final String[] WHITE_LIST_URL = {
-            "/api/auth/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html"
-    };
+        private static final String[] WHITE_LIST_URL = {
+                        "/api/auth/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+        };
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable) // JWT kullandığımız için CSRF kapatıyoruz
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS konfigürasyonu
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers(WHITE_LIST_URL).permitAll() // Public endpointler
-                        .anyRequest().authenticated() // Diğer her şey için authentication şart
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // REST API stateless olmalı
-                )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                // Yetkisiz erişimlerde 403 yerine 401 dönmesi için (Frontend redirect için
-                // önemli)
-                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(AbstractHttpConfigurer::disable) // JWT kullandığımız için CSRF kapatıyoruz
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS
+                                                                                                   // konfigürasyonu
+                                .authorizeHttpRequests(req -> req
+                                                .requestMatchers(WHITE_LIST_URL).permitAll() // Public endpointler
+                                                .anyRequest().authenticated() // Diğer her şey için authentication şart
+                                )
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // REST API
+                                                                                                        // stateless
+                                                                                                        // olmalı
+                                )
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                                // Yetkisiz erişimlerde 403 yerine 401 dönmesi için (Frontend redirect için
+                                // önemli)
+                                .exceptionHandling(e -> e.authenticationEntryPoint(
+                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Frontend URL
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-User-Id"));
-        configuration.setAllowCredentials(true);
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                String allowedOriginsEnv = System.getenv("ALLOWED_ORIGINS");
+                List<String> allowedOrigins = (allowedOriginsEnv != null)
+                                ? List.of(allowedOriginsEnv.split(","))
+                                : List.of("http://localhost:3000", "http://5.175.136.4");
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(allowedOrigins);
+                configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-User-Id"));
+                configuration.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 }

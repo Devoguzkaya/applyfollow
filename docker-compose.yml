@@ -1,17 +1,44 @@
 version: '3.8'
+
 services:
   db:
-    image: postgres
-    container_name: job_crm_postgres
+    image: postgres:15
+    container_name: postgres_db
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: REMOVED_FOR_SECURITY
-      POSTGRES_DB: job_crm_db
+      POSTGRES_DB: applyfollow_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: spring_backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/applyfollow_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: REMOVED_FOR_SECURITY
+      # Burada VPS IP'sini CORS için tanımlıyoruz
+      ALLOWED_ORIGINS: http://5.175.136.4
+
+  frontend:
+    build: ./frontend
+    container_name: nextjs_frontend
+    restart: always
+    ports:
+      - "80:3000"
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://5.175.136.4:8080
 
 volumes:
   postgres_data:

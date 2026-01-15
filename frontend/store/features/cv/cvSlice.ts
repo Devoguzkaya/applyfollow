@@ -14,6 +14,8 @@ const initialState: CvState = {
         educations: [],
         experiences: [],
         skills: [],
+        languages: [],
+        certificates: [],
     },
     isLoading: false,
     isSaving: false,

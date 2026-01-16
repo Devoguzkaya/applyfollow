@@ -82,8 +82,8 @@ services:
     build:
       context: ./frontend
       args:
-        # Frontend artik backend'i kendi domaininde bulacak
-        NEXT_PUBLIC_API_URL: https://applyfollow.com/api
+        # Frontend relative path
+        NEXT_PUBLIC_API_URL: /api
     container_name: applyfollow_frontend
     restart: always
     expose:
@@ -91,8 +91,8 @@ services:
     depends_on:
       - backend
     environment:
-      # Browser -> Same Domain /api
-      NEXT_PUBLIC_API_URL: https://applyfollow.com/api
+      # Browser -> Relative /api (Same Origin)
+      NEXT_PUBLIC_API_URL: /api
 
       # NGINX CONFIG - ANA DOMAIN (Kalan her sey buraya)
       VIRTUAL_HOST: applyfollow.com,www.applyfollow.com

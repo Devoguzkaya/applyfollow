@@ -89,7 +89,7 @@ export default function NewApplicationPage() {
 
                     {/* Job Position Field */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium text-slate-300 ml-1">Job Position</label>
+                        <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.position')}</label>
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">badge</span>
@@ -107,7 +107,7 @@ export default function NewApplicationPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* URL Field */}
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-300 ml-1">Job Listing URL</label>
+                            <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.jobUrl')}</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">link</span>
@@ -116,7 +116,7 @@ export default function NewApplicationPage() {
                                     value={formData.jobUrl}
                                     onChange={(e) => setFormData({ ...formData, jobUrl: e.target.value })}
                                     className="w-full h-14 pl-12 pr-4 bg-input-bg border border-border-dark rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base"
-                                    placeholder="https://..."
+                                    placeholder={t('applications.new.jobUrlPlaceholder')}
                                     type="url"
                                 />
                             </div>
@@ -124,7 +124,7 @@ export default function NewApplicationPage() {
 
                         {/* Status Dropdown */}
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-300 ml-1">Application Status</label>
+                            <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.status')}</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                     <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">flag</span>
@@ -134,11 +134,11 @@ export default function NewApplicationPage() {
                                     onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                                     className="w-full h-14 pl-12 pr-10 bg-input-bg border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base appearance-none cursor-pointer"
                                 >
-                                    <option value="APPLIED">Applied</option>
-                                    <option value="INTERVIEW">Interviewing</option>
-                                    <option value="OFFER">Offer</option>
-                                    <option value="REJECTED">Rejected</option>
-                                    <option value="GHOSTED">Ghosted</option>
+                                    <option value="APPLIED">{t('applications.status.APPLIED')}</option>
+                                    <option value="INTERVIEW">{t('applications.status.INTERVIEW')}</option>
+                                    <option value="OFFER">{t('applications.status.OFFER')}</option>
+                                    <option value="REJECTED">{t('applications.status.REJECTED')}</option>
+                                    <option value="GHOSTED">{t('applications.status.GHOSTED')}</option>
                                 </select>
                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-slate-500">expand_more</span>
@@ -148,7 +148,7 @@ export default function NewApplicationPage() {
 
                         {/* Application Date Field */}
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-300 ml-1">Application Date</label>
+                            <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.appliedDate')}</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">calendar_month</span>
@@ -167,7 +167,7 @@ export default function NewApplicationPage() {
                 {/* FOOTER ACTIONS */}
                 <div className="px-8 py-6 bg-surface-dark rounded-b-2xl border-t border-border-dark flex items-center justify-end gap-4">
                     <Link href="/dashboard" className="px-6 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        Cancel
+                        {t('common.cancel')}
                     </Link>
                     <button
                         onClick={handleSubmit}
@@ -175,11 +175,11 @@ export default function NewApplicationPage() {
                         className="px-8 py-3 rounded-xl text-sm font-bold text-[#101618] bg-primary hover:bg-emerald-400 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#11161d] focus:ring-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? (
-                            <span>Saving...</span>
+                            <span>{t('applications.new.submitting')}</span>
                         ) : (
                             <>
                                 <span className="material-symbols-outlined text-[20px]">check</span>
-                                Save Application
+                                {t('applications.new.submit')}
                             </>
                         )}
                     </button>

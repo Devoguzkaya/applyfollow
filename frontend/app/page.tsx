@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { checkAuth } from '@/store/features/auth/authSlice';
-import { useEffect } from 'react';
 
 function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
   return (
@@ -31,10 +30,15 @@ export default function Home() {
   const [sending, setSending] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
     dispatch(checkAuth());
   }, [dispatch]);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,10 +73,10 @@ export default function Home() {
       <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full -z-10"></div>
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-card/80 backdrop-blur-md border-b border-border-main transition-colors">
-        <div className="w-full max-w-7xl mx-auto p-2 md:p-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-4 group/logo">
-            <div className="relative size-12 sm:size-16 shrink-0 bg-slate-900 rounded-xl p-2 border border-white/10 transition-transform group-hover/logo:scale-105">
+      <nav className="fixed top-0 left-0 right-0 z-[100] bg-surface-card/80 backdrop-blur-md border-b border-border-main transition-colors">
+        <div className="w-full max-w-7xl mx-auto p-4 md:p-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group/logo z-50 relative">
+            <div className="relative size-10 md:size-12 shrink-0 bg-slate-900 rounded-xl p-2 border border-white/10 transition-transform group-hover/logo:scale-105">
               <Image
                 src="/ApplyFollowLogo.png"
                 alt="ApplyFollow Logo"
@@ -80,67 +84,125 @@ export default function Home() {
                 className="object-contain"
               />
             </div>
-            <span className="font-display font-black text-2xl md:text-4xl tracking-tighter text-text-main">Apply<span className="text-primary">Follow</span></span>
+            <span className="font-display font-black text-xl md:text-2xl tracking-tighter text-text-main">Apply<span className="text-primary">Follow</span></span>
           </Link>
 
-          {/* Nav Links - Desktop */}
+          {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm font-medium text-text-muted hover:text-text-main transition-colors">{t('landing.nav.features')}</a>
             <a href="#about" className="text-sm font-medium text-text-muted hover:text-text-main transition-colors">{t('landing.nav.about')}</a>
             <a href="#contact" className="text-sm font-medium text-text-muted hover:text-text-main transition-colors">{t('landing.nav.contact')}</a>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Language Toggle */}
-            <div className="hidden md:flex bg-surface-hover rounded-xl p-1 border border-border-main transition-colors">
+          <div className="flex items-center gap-3 md:gap-4">
+
+            {/* Language Toggle (Visible on Mobile too) */}
+            <div className="flex bg-surface-hover rounded-xl p-1 border border-border-main transition-colors">
               <button
-                onClick={() => setLanguage('tr')}
-                className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${language === 'tr' ? 'bg-primary text-black' : 'text-text-muted hover:text-text-main'}`}
+                onClick={() => { setLanguage('tr'); }}
+                className={`px-2 md:px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${language === 'tr' ? 'bg-primary text-black' : 'text-text-muted hover:text-text-main'}`}
               >
                 TR
               </button>
               <button
-                onClick={() => setLanguage('en')}
-                className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${language === 'en' ? 'bg-primary text-black' : 'text-text-muted hover:text-text-main'}`}
+                onClick={() => { setLanguage('en'); }}
+                className={`px-2 md:px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${language === 'en' ? 'bg-primary text-black' : 'text-text-muted hover:text-text-main'}`}
               >
                 EN
               </button>
             </div>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="size-10 flex items-center justify-center rounded-xl bg-surface-hover border border-border-main text-text-main hover:border-primary transition-all active:scale-95"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-              </span>
-            </button>
-
-            {/* Auth Buttons */}
-            {isMounted && isAuthenticated ? (
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all font-bold group"
+            {/* Desktop Auth & Theme */}
+            <div className="flex items-center gap-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="size-10 flex items-center justify-center rounded-xl bg-surface-hover border border-border-main text-text-main hover:border-primary transition-all active:scale-95"
               >
-                <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                <span className="text-sm">{t('sidebar.overview')}</span>
-                <span className="hidden sm:inline-block w-px h-4 bg-primary/20 mx-1"></span>
-                <span className="hidden sm:inline-block text-sm text-text-main group-hover:text-primary transition-colors">{user?.fullName?.split(' ')[0]}</span>
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="px-5 py-2 rounded-lg border border-border-main hover:bg-surface-hover transition-colors text-sm font-medium text-text-main">{t('landing.nav.login')}</Link>
-                <Link href="/register" className="hidden sm:block px-5 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-primary/20">{t('landing.nav.signup')}</Link>
-              </>
-            )}
+                <span className="material-symbols-outlined text-[20px]">
+                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
+
+              {/* Auth Buttons (Desktop Only) */}
+              <div className="hidden md:flex items-center gap-4">
+                {isMounted && isAuthenticated ? (
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 px-5 py-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all font-bold group"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">dashboard</span>
+                    <span className="text-sm">{t('sidebar.overview')}</span>
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/login" className="px-5 py-2 rounded-lg border border-border-main hover:bg-surface-hover transition-colors text-sm font-medium text-text-main">{t('landing.nav.login')}</Link>
+                    <Link href="/register" className="px-5 py-2 rounded-lg bg-primary text-black font-bold text-sm hover:opacity-90 transition-all shadow-lg shadow-primary/20">{t('landing.nav.signup')}</Link>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile Hamburger Button */}
+            <div className="flex md:hidden items-center gap-3">
+              <button
+                onClick={toggleMobileMenu}
+                className="size-10 flex items-center justify-center rounded-xl bg-surface-hover border border-border-main text-text-main active:scale-95 z-50 relative"
+              >
+                <span className="material-symbols-outlined text-2xl">
+                  {isMobileMenuOpen ? 'close' : 'menu'}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown - Solid Distinct Color & Premium Glossy Style */}
+        {isMobileMenuOpen && (
+          <div
+            className="absolute top-full left-0 right-0 bg-[#0f172a] border-b border-t border-primary/30 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.6)] md:hidden animate-in slide-in-from-top-2 duration-300 overflow-hidden rounded-b-[2.5rem]"
+          >
+            <div className="flex flex-col p-10 gap-8 items-center text-center relative">
+              {/* Glossy Top Highlight */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" />
+
+              <div className="flex flex-col gap-6">
+                <a onClick={closeMobileMenu} href="#features" className="text-xl font-display font-medium text-text-main active:scale-95 transition-all">{t('landing.nav.features')}</a>
+                <a onClick={closeMobileMenu} href="#about" className="text-xl font-display font-medium text-text-main active:scale-95 transition-all">{t('landing.nav.about')}</a>
+                <a onClick={closeMobileMenu} href="#contact" className="text-xl font-display font-medium text-text-main active:scale-95 transition-all">{t('landing.nav.contact')}</a>
+              </div>
+
+              <div className="w-12 h-px bg-white/10" />
+
+              <div className="flex flex-col w-full gap-4 max-w-xs mx-auto mb-4">
+                {isMounted && isAuthenticated ? (
+                  <Link
+                    onClick={closeMobileMenu}
+                    href="/dashboard"
+                    className="w-full py-4 rounded-2xl bg-primary/10 border border-primary/20 text-primary font-bold flex items-center justify-center gap-2 active:scale-95 transition-all"
+                  >
+                    <span className="material-symbols-outlined">dashboard</span>
+                    <span>{t('sidebar.overview')}</span>
+                  </Link>
+                ) : (
+                  <>
+                    <Link onClick={closeMobileMenu} href="/login" className="w-full py-4 rounded-2xl border border-border-main text-center font-bold text-text-main bg-surface-card active:scale-95 transition-all">
+                      {t('landing.nav.login')}
+                    </Link>
+                    <Link onClick={closeMobileMenu} href="/register" className="w-full py-4 rounded-2xl bg-primary text-black text-center font-black shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                      {t('landing.nav.signup')}
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
-      <div className="pt-24"> {/* Offset for fixed nav */}
+      <div className="pt-20 md:pt-24 h-full"> {/* Offset for navbar */}
         {/* Hero Section */}
-        <section className="max-w-7xl mx-auto px-6 pt-20 pb-32 flex flex-col items-center text-center">
+        <section className="max-w-7xl mx-auto px-6 pt-16 pb-20 flex flex-col items-center text-center">
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-border-main mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -178,7 +240,7 @@ export default function Home() {
           </div>
 
           {/* Mockup / Visual */}
-          <div className="mt-20 relative w-full max-w-5xl aspect-video rounded-3xl bg-surface-card border border-border-main shadow-[0_0_80px_-15px_rgba(var(--primary-rgb),0.15)] overflow-hidden group animate-in fade-in zoom-in duration-1000 delay-500">
+          <div className="mt-12 relative w-full max-w-5xl aspect-video rounded-3xl bg-surface-card border border-border-main shadow-[0_0_80px_-15px_rgba(var(--primary-rgb),0.15)] overflow-hidden group animate-in fade-in zoom-in duration-1000 delay-500">
             <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none"></div>
 
             {/* Actual Dashboard UI Representation */}
@@ -196,16 +258,16 @@ export default function Home() {
               {/* Main Content Mock */}
               <div className="flex-1 flex flex-col gap-6">
                 {/* Header Stats */}
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                   {[
                     { label: t('dashboard.stats.total'), value: '24', color: 'text-text-main' },
                     { label: t('dashboard.stats.interviews'), value: '5', color: 'text-amber-400' },
                     { label: 'Offers', value: '2', color: 'text-emerald-400' },
                     { label: t('dashboard.stats.pending'), value: '17', color: 'text-blue-400' }
                   ].map((stat, i) => (
-                    <div key={i} className="h-24 bg-surface-hover rounded-2xl border border-border-main p-4 flex flex-col justify-end">
-                      <p className="text-[10px] text-text-muted font-bold uppercase">{stat.label}</p>
-                      <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
+                    <div key={i} className="h-20 sm:h-24 bg-surface-hover rounded-xl sm:rounded-2xl border border-border-main p-3 sm:p-4 flex flex-col justify-end">
+                      <p className="text-[9px] sm:text-[10px] text-text-muted font-bold uppercase truncate">{stat.label}</p>
+                      <p className={`text-xl sm:text-2xl font-black ${stat.color}`}>{stat.value}</p>
                     </div>
                   ))}
                 </div>
@@ -234,7 +296,7 @@ export default function Home() {
         </section>
 
         {/* Features Grid */}
-        <section id="features" className="max-w-7xl mx-auto px-6 py-32 border-t border-border-main">
+        <section id="features" className="max-w-7xl mx-auto px-6 py-20 border-t border-border-main">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-black mb-4 text-text-main">{t('landing.features.title')}</h2>
             <p className="text-text-muted">{t('landing.features.subtitle')}</p>
@@ -259,7 +321,7 @@ export default function Home() {
         </section>
 
         {/* About Us Section */}
-        <section id="about" className="max-w-7xl mx-auto px-6 py-32 border-t border-border-main">
+        <section id="about" className="max-w-7xl mx-auto px-6 py-20 border-t border-border-main">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative aspect-square rounded-3xl overflow-hidden group">
               <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors duration-500 z-10"></div>
@@ -286,7 +348,7 @@ export default function Home() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="max-w-7xl mx-auto px-6 py-32 border-t border-border-main">
+        <section id="contact" className="max-w-7xl mx-auto px-6 py-20 border-t border-border-main">
           <div className="bg-surface-card border border-border-main rounded-[40px] p-8 md:p-16 relative overflow-hidden transition-colors">
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 blur-[100px] rounded-full -z-10"></div>
 

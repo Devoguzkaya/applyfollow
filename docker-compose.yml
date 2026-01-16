@@ -65,8 +65,16 @@ services:
       JWT_SECRET_KEY: REMOVED_FOR_SECURITY
       MAIL_PASSWORD: mail_sifresi_yok
 
-      # CORS
+      # CORS - Same Domain oldugu icin aslinda cok esnek olabilir artik
       CORS_ALLOWED_ORIGINS: "*"
+
+      # NGINX CONFIG - ANA DOMAIN ALTINDA /api
+      # Frontend ile aynı domaini paylasacak
+      VIRTUAL_HOST: applyfollow.com,www.applyfollow.com
+      # Bu path ile baslayan istekleri bana (Backend 8080'e) gonder
+      VIRTUAL_PATH: /api,/v3/api-docs,/swagger-ui
+      LETSENCRYPT_HOST: applyfollow.com,www.applyfollow.com
+
     networks:
       - app_network
 

@@ -266,14 +266,11 @@ export default function Home() {
               <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors duration-500 z-10"></div>
               <div className="absolute inset-0 bg-gradient-to-tr from-background to-transparent z-20"></div>
               <Image
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
-                alt="Building the Future"
+                src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2032&auto=format&fit=crop"
+                alt="Empowering Professionals"
                 fill
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
+                className="object-cover"
               />
-              <div className="absolute bottom-10 left-10 z-30">
-                <p className="text-primary font-black text-5xl opacity-20">EST. 2026</p>
-              </div>
             </div>
             <div>
               <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">{t('landing.about.badge')}</div>

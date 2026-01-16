@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  async rewrites() {
+    const apiUrl = process.env.NODE_ENV === 'production'
+      ? 'http://backend:8080' // Docker network name
+      : 'http://localhost:8080'; // Local dev
+
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiUrl}/api/:path*`, // Proxy to Backend
+      },
+    ];
+  },
 };
 
 export default nextConfig;

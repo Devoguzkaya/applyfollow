@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/cv")
+@RequestMapping("/cv")
 @RequiredArgsConstructor
 public class CvController {
 

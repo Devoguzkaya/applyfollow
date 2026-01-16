@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/companies")
+@RequestMapping("/companies")
 @CrossOrigin(origins = "http://localhost:3000")
 public class CompanyController {
 
@@ -25,4 +25,3 @@ public class CompanyController {
         return companyService.getAllCompanies();
     }
 }
-

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/contact")
+@RequestMapping("/contact")
 @RequiredArgsConstructor
 @org.springframework.web.bind.annotation.CrossOrigin(origins = "http://localhost:3000")
 public class ContactController {
@@ -33,4 +33,3 @@ public class ContactController {
         return ResponseEntity.ok().build();
     }
 }
-

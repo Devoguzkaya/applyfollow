@@ -35,7 +35,7 @@ services:
       MAIL_PASSWORD: mail_sifresi_yok
 
       # CORS (Frontend Container Name veya IP)
-      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://5.175.136.4:3000,http://frontend:3000"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://5.175.136.4:3000,http://frontend:3000,http://www.applyfollow.com,http://applyfollow.com"
     networks:
       - app_network
 

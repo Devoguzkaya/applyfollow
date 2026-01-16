@@ -48,10 +48,10 @@ export default function Home() {
         body: JSON.stringify(contactForm)
       });
       if (response.ok) {
-        alert("Message sent! Check your email for confirmation. (Backend ayaktaysa ulaştı kanka)");
+        alert("Message sent successfully!");
         setContactForm({ name: '', email: '', subject: '', message: '' });
       } else {
-        alert("Something went wrong. Backend ayakta mı?");
+        alert("Something went wrong. Please try again later.");
       }
     } catch (error) {
       console.error(error);

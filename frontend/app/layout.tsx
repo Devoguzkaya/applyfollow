@@ -20,6 +20,11 @@ const notoSans = Noto_Sans({
 export const metadata: Metadata = {
   title: 'ApplyFollow',
   description: 'Track your job applications intelligently',
+  icons: {
+    icon: '/ApplyFollowLogo.png',
+    shortcut: '/ApplyFollowLogo.png',
+    apple: '/ApplyFollowLogo.png',
+  }
 }
 
 export default function RootLayout({

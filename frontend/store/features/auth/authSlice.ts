@@ -40,7 +40,7 @@ export const register = createAsyncThunk('auth/register', async (data: RegisterR
 
 // 4. Update Profile
 export const updateProfile = createAsyncThunk('auth/updateProfile', async ({ fullName, email }: { fullName: string, email: string }) => {
-    return await authService.updateProfile(fullName, email);
+    return await authService.updateProfile({ fullName, email });
 });
 
 export const authSlice = createSlice({

@@ -52,7 +52,7 @@ export default function Sidebar() {
 
     // Close sidebar on mobile after navigation
     useEffect(() => {
-        if (isMobile) { // lg breakpoint
+        if (isMobile) {
             dispatch(setSidebarOpen(false));
         }
     }, [pathname, dispatch, isMobile]);
@@ -83,7 +83,7 @@ export default function Sidebar() {
                 h-full flex flex-col 
                 bg-background-main border-r border-border-main
                 transition-all duration-300 ease-in-out
-                ${isSidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0 w-72 lg:w-24'}
+                ${isSidebarOpen ? 'translate-x-0 w-80' : '-translate-x-full lg:translate-x-0 w-80'}
             `}>
                 {/* Logo Area */}
                 <div className="h-20 flex items-center px-6 border-b border-border-main">
@@ -91,11 +91,9 @@ export default function Sidebar() {
                         <div className="relative size-10 shrink-0 bg-slate-900 rounded-lg p-1 border border-white/5 transition-transform group-hover/logo:scale-105">
                             <Image src="/ApplyFollowLogo.png" alt="ApplyFollow" fill className="object-contain" priority />
                         </div>
-                        {(isSidebarOpen || isMobile) && (
-                            <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary">
-                                Apply<span className="text-primary font-black">Follow</span>
-                            </h1>
-                        )}
+                        <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary">
+                            Apply<span className="text-primary font-black">Follow</span>
+                        </h1>
                     </Link>
                 </div>
 
@@ -103,69 +101,65 @@ export default function Sidebar() {
                 <nav className="flex-1 overflow-y-auto py-8 flex flex-col gap-2.5 px-4 scrollbar-hide">
                     <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
                         <span className="material-symbols-outlined text-[24px]">grid_view</span>
-                        {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap transition-all">{t('sidebar.overview')}</span>}
+                        <span className="whitespace-nowrap transition-all">{t('sidebar.overview')}</span>
                         {pathname === "/dashboard" && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </Link>
 
                     <Link href="/applications" className={getLinkClasses("/applications")}>
                         <span className="material-symbols-outlined text-[24px]">work</span>
-                        {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap">{t('sidebar.applications')}</span>}
+                        <span className="whitespace-nowrap">{t('sidebar.applications')}</span>
                         {pathname?.startsWith("/applications") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </Link>
 
                     <Link href="/calendar" className={getLinkClasses("/calendar")}>
                         <span className="material-symbols-outlined text-[24px]">event</span>
-                        {(isSidebarOpen || isMobile) && (
-                            <div className="flex items-center justify-between w-full">
-                                <span className="whitespace-nowrap">{t('sidebar.schedule')}</span>
-                                {todayCount > 0 && (
-                                    <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-primary/30">
-                                        {todayCount}
-                                    </span>
-                                )}
-                            </div>
-                        )}
+                        <div className="flex items-center justify-between w-full">
+                            <span className="whitespace-nowrap">{t('sidebar.schedule')}</span>
+                            {todayCount > 0 && (
+                                <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-primary/30">
+                                    {todayCount}
+                                </span>
+                            )}
+                        </div>
                         {pathname?.startsWith("/calendar") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </Link>
 
                     <Link href="/my-cv" className={getLinkClasses("/my-cv")}>
                         <span className="material-symbols-outlined text-[24px]">description</span>
-                        {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap">{t('sidebar.cvBuilder')}</span>}
+                        <span className="whitespace-nowrap">{t('sidebar.cvBuilder')}</span>
                         {pathname?.startsWith("/my-cv") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </Link>
 
                     {/* Section Spacer / Label */}
-                    <div className={`mt-8 mb-2 px-3 ${(isSidebarOpen || isMobile) ? '' : 'flex justify-center'}`}>
-                        <div className={`h-px bg-border-main w-full ${(isSidebarOpen || isMobile) ? 'hidden' : 'block'}`}></div>
-                        {(isSidebarOpen || isMobile) && (
-                            <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{t('sidebar.management')}</p>
-                        )}
+                    <div className="mt-8 mb-2 px-3">
+                        {/* Hidden divider line since we always use text now? Or keep standard visual? 
+                            Original code hid line when Open. Let's align with Open design. 
+                            If open, we show Text.
+                        */}
+                        <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{t('sidebar.management')}</p>
                     </div>
 
                     <Link href="/profile" className={getLinkClasses("/profile")}>
                         <span className="material-symbols-outlined text-[24px]">manage_accounts</span>
-                        {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap">{t('sidebar.settings')}</span>}
+                        <span className="whitespace-nowrap">{t('sidebar.settings')}</span>
                     </Link>
 
                     {/* Admin Section */}
                     {user?.role === 'ADMIN' && (
                         <>
-                            <div className={`mt-8 mb-2 px-3 ${(isSidebarOpen || isMobile) ? '' : 'flex justify-center'}`}>
-                                <div className={`h-px bg-border-main w-full ${(isSidebarOpen || isMobile) ? 'hidden' : 'block'}`}></div>
-                                {(isSidebarOpen || isMobile) && (
-                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('sidebar.adminPanel')}</p>
-                                )}
+                            <div className="mt-8 mb-2 px-3">
+                                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('sidebar.adminPanel')}</p>
                             </div>
 
                             <Link href="/admin/users" className={getLinkClasses("/admin/users")}>
                                 <span className="material-symbols-outlined text-[24px]">group</span>
-                                {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap">{t('sidebar.users')}</span>}
+                                <span className="whitespace-nowrap">{t('sidebar.users')}</span>
                                 {pathname?.startsWith("/admin/users") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                             </Link>
 
                             <Link href="/admin/messages" className={getLinkClasses("/admin/messages")}>
                                 <span className="material-symbols-outlined text-[24px]">forum</span>
-                                {(isSidebarOpen || isMobile) && <span className="whitespace-nowrap">{t('sidebar.messages')}</span>}
+                                <span className="whitespace-nowrap">{t('sidebar.messages')}</span>
                                 {pathname?.startsWith("/admin/messages") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                             </Link>
                         </>
@@ -174,15 +168,13 @@ export default function Sidebar() {
 
                 {/* Bottom Section */}
                 <div className="px-4 py-8 border-t border-border-main scrollbar-hide">
-                    {(isSidebarOpen || isMobile) && (
-                        <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                            <p className="text-[10px] font-bold text-primary uppercase mb-1">{t('sidebar.upgradePlan')}</p>
-                            <p className="text-xs text-text-muted mb-3 leading-snug">{t('sidebar.proVersion')}</p>
-                            <button className="w-full py-2 bg-primary text-black text-xs font-black rounded-lg hover:bg-primary-dark transition-colors">
-                                {t('sidebar.proButton')}
-                            </button>
-                        </div>
-                    )}
+                    <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+                        <p className="text-[10px] font-bold text-primary uppercase mb-1">{t('sidebar.upgradePlan')}</p>
+                        <p className="text-xs text-text-muted mb-3 leading-snug">{t('sidebar.proVersion')}</p>
+                        <button className="w-full py-2 bg-primary text-black text-xs font-black rounded-lg hover:bg-primary-dark transition-colors">
+                            {t('sidebar.proButton')}
+                        </button>
+                    </div>
                 </div>
             </aside>
         </>

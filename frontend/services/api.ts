@@ -1,11 +1,16 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-    if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL + '/api';
-    if (typeof window !== 'undefined') {
-        return `${window.location.protocol}//${window.location.hostname}:8080/api`;
+    // 1. Environment variable (Docker/Vercel sets this)
+    if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+
+    // 2. Localhost development fallback
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        return 'http://localhost:8080/api';
     }
-    return 'http://localhost:8080/api';
+
+    // 3. Default Production Fallback
+    return 'https://api.applyfollow.com';
 };
 
 const api = axios.create({

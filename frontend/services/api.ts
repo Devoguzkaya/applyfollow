@@ -9,8 +9,8 @@ const getBaseURL = () => {
         return 'http://localhost:8080/api';
     }
 
-    // 3. Default Production Fallback
-    return 'https://applyfollow.com/api';
+    // 3. Default Production Fallback (Relative path for Same Domain)
+    return '/api';
 };
 
 const api = axios.create({

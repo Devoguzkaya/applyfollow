@@ -3,13 +3,27 @@
 import { useEffect, useState } from 'react';
 import { CvData, EducationDto, ExperienceDto, SkillDto, LanguageDto, CertificateDto } from '@/services/cvService';
 import toast from 'react-hot-toast';
+import { useLanguage } from '@/context/LanguageContext';
 // Redux
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchCv, saveCv, downloadCv } from '@/store/features/cv/cvSlice';
-import { MdSave, MdDownload, MdPerson, MdWork, MdSchool, MdPsychology, MdTranslate, MdWorkspacePremium, MdDelete } from "react-icons/md";
+import { MdSave, MdDownload, MdVisibility } from "react-icons/md";
 
-export default function CvBuilder() {
+// Sub-components
+import PersonalInfoForm from './cv/PersonalInfoForm';
+import ExperienceForm from './cv/ExperienceForm';
+import EducationForm from './cv/EducationForm';
+import SkillsForm from './cv/SkillsForm';
+import LanguagesForm from './cv/LanguagesForm';
+import CertificatesForm from './cv/CertificatesForm';
+
+interface CvBuilderProps {
+    setIsEditing: (value: boolean) => void;
+}
+
+export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
     const dispatch = useAppDispatch();
+    const { t } = useLanguage();
     const { data: reduxData, isLoading, isSaving } = useAppSelector((state) => state.cv);
 
     // Local state for all form data
@@ -56,7 +70,7 @@ export default function CvBuilder() {
     const handleSave = async () => {
         try {
             await dispatch(saveCv(data)).unwrap();
-            toast.success("CV saved successfully!");
+            toast.success(t('common.saved'));
         } catch (error) {
             // Error handled in slice
         }
@@ -67,7 +81,7 @@ export default function CvBuilder() {
             // First save, then download
             await dispatch(saveCv(data)).unwrap();
             await dispatch(downloadCv()).unwrap();
-            toast.success("CV downloaded!");
+            toast.success(t('cv.preview') + " " + t('common.download') + "!");
         } catch (error) {
             toast.error("Failed to download CV");
         }
@@ -151,220 +165,85 @@ export default function CvBuilder() {
     };
 
 
-    if (isLoading && !data.summary) return <div className="p-8 text-center text-slate-500">Loading CV data...</div>;
+    if (isLoading && !data.summary) return <div className="p-8 text-center text-slate-500">{t('common.loading')}</div>;
 
     return (
         <div className="flex flex-col gap-8 animate-in fade-in duration-500 pb-20">
             {/* Header / Actions */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-card p-6 rounded-2xl border border-border-main shadow-lg">
                 <div>
-                    <h2 className="text-2xl font-bold text-text-main mb-1">CV Builder</h2>
+                    <h2 className="text-2xl font-bold text-text-main mb-1">{t('cv.builder')}</h2>
                     <p className="text-text-muted text-sm">Craft your professional resume.</p>
                 </div>
                 <div className="flex gap-3">
+                    <button
+                        onClick={() => setIsEditing(false)}
+                        className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2 group"
+                    >
+                        <MdVisibility className="text-[20px] group-hover:text-primary transition-colors" />
+                        {t('cv.preview')}
+                    </button>
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
                         className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2"
                     >
                         {isSaving ? <span className="size-4 border-2 border-text-main/50 border-t-text-main rounded-full animate-spin"></span> : <MdSave className="text-[20px]" />}
-                        Save
+                        {t('common.save')}
                     </button>
                     <button
                         onClick={handleDownload}
                         className="px-6 py-2.5 rounded-xl bg-primary text-black font-bold hover:opacity-90 hover:shadow-glow transition-all flex items-center gap-2"
                     >
                         <MdDownload className="text-[20px]" />
-                        Download .docx
+                        {t('common.download')} .docx
                     </button>
                 </div>
             </div>
 
             {/* 1. PERSONAL INFO & SUMMARY */}
-            <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                <h3 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
-                    <MdPerson className="text-primary text-[24px]" />
-                    Personal Info & Summary
-                </h3>
-                <div className="grid grid-cols-1 gap-6 mb-6">
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-text-muted font-bold tracking-wider uppercase">CV Title / Name</label>
-                        <input
-                            value={data.cvTitle || ''}
-                            onChange={e => updateField('cvTitle', e.target.value)}
-                            className="bg-input-bg border border-border-main p-4 rounded-xl text-text-main text-lg font-bold focus:border-primary outline-none transition-all placeholder:text-text-muted/50 shadow-inner"
-                            placeholder="e.g. Senior Software Engineer CV"
-                        />
-                        <p className="text-[10px] text-text-muted italic mt-1 px-1">This title will appear at the top of your professional profile.</p>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-text-muted font-bold">Phone Number</label>
-                        <input value={data.phoneNumber || ''} onChange={e => updateField('phoneNumber', e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="+1 234 567 8900" />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-text-muted font-bold">Address (City, Country)</label>
-                        <input value={data.address || ''} onChange={e => updateField('address', e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="New York, USA" />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-text-muted font-bold">LinkedIn URL</label>
-                        <input value={data.linkedinUrl || ''} onChange={e => updateField('linkedinUrl', e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="https://linkedin.com/in/..." />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-text-muted font-bold">GitHub / Portfolio URL</label>
-                        <input value={data.githubUrl || ''} onChange={e => updateField('githubUrl', e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="https://github.com/..." />
-                    </div>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-text-muted font-bold">Professional Summary</label>
-                    <textarea
-                        rows={4}
-                        value={data.summary || ''}
-                        onChange={e => updateField('summary', e.target.value)}
-                        className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main text-sm focus:border-primary outline-none resize-y"
-                        placeholder="Write a brief summary of your professional background and key achievements..."
-                    />
-                </div>
-            </section>
+            <PersonalInfoForm data={data} updateField={updateField} />
 
             {/* 2. EXPERIENCE */}
-            <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-text-main flex items-center gap-2">
-                        <MdWork className="text-primary text-[24px]" />
-                        Experience
-                    </h3>
-                    <button onClick={addExperience} className="text-sm text-primary font-bold hover:underline">+ Add Position</button>
-                </div>
-                <div className="flex flex-col gap-6">
-                    {data.experiences.map((exp, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group">
-                            <button onClick={() => removeExperience(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400"><MdDelete className="text-[20px]" /></button>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-xs text-text-muted font-bold">Company Name</label>
-                                    <input value={exp.companyName} onChange={e => updateExperience(idx, 'companyName', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" />
-                                </div>
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-xs text-text-muted font-bold">Position</label>
-                                    <input value={exp.position} onChange={e => updateExperience(idx, 'position', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Start Date</label><input type="date" value={exp.startDate || ''} onChange={e => updateExperience(idx, 'startDate', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">End Date</label><input type="date" value={exp.endDate || ''} disabled={exp.isCurrent} onChange={e => updateExperience(idx, 'endDate', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none disabled:opacity-50" /></div>
-                                <div className="flex items-center gap-2 mt-6"><input type="checkbox" checked={exp.isCurrent} onChange={e => updateExperience(idx, 'isCurrent', e.target.checked)} className="accent-primary size-4" /><span className="text-sm text-text-muted">I currently work here</span></div>
-                            </div>
-                            <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Description</label><textarea rows={3} value={exp.description || ''} onChange={e => updateExperience(idx, 'description', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none resize-none" /></div>
-                        </div>
-                    ))}
-                    {data.experiences.length === 0 && <p className="text-center text-text-muted py-4 italic">No experience added yet.</p>}
-                </div>
-            </section>
+            <ExperienceForm
+                experiences={data.experiences}
+                addExperience={addExperience}
+                removeExperience={removeExperience}
+                updateExperience={updateExperience}
+            />
 
             {/* 3. EDUCATION */}
-            <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-text-main flex items-center gap-2">
-                        <MdSchool className="text-primary text-[24px]" />
-                        Education
-                    </h3>
-                    <button onClick={addEducation} className="text-sm text-primary font-bold hover:underline">+ Add Education</button>
-                </div>
-                <div className="flex flex-col gap-6">
-                    {data.educations.map((edu, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group">
-                            <button onClick={() => removeEducation(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400"><MdDelete className="text-[20px]" /></button>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">School / University</label><input value={edu.schoolName} onChange={e => updateEducation(idx, 'schoolName', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Field of Study</label><input value={edu.fieldOfStudy} onChange={e => updateEducation(idx, 'fieldOfStudy', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Degree</label><input value={edu.degree || ''} onChange={e => updateEducation(idx, 'degree', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Start Date</label><input type="date" value={edu.startDate || ''} onChange={e => updateEducation(idx, 'startDate', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">End Date</label><input type="date" value={edu.endDate || ''} disabled={edu.isCurrent} onChange={e => updateEducation(idx, 'endDate', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none disabled:opacity-50" /></div>
-                            </div>
-                        </div>
-                    ))}
-                    {data.educations.length === 0 && <p className="text-center text-text-muted py-4 italic">No education added yet.</p>}
-                </div>
-            </section>
+            <EducationForm
+                educations={data.educations}
+                addEducation={addEducation}
+                removeEducation={removeEducation}
+                updateEducation={updateEducation}
+            />
 
             {/* 4. SKILLS & LANGUAGES (2 Columns) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* SKILLS */}
-                <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-text-main flex items-center gap-2">
-                            <MdPsychology className="text-primary text-[24px]" />
-                            Skills
-                        </h3>
-                        <button onClick={addSkill} className="text-sm text-primary font-bold hover:underline">+ Add Skill</button>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        {data.skills.map((skill, idx) => (
-                            <div key={idx} className="flex items-center gap-3">
-                                <input value={skill.name} onChange={e => updateSkill(idx, 'name', e.target.value)} className="flex-1 bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="Skill Name" />
-                                <button onClick={() => removeSkill(idx)} className="text-text-muted hover:text-red-400"><MdDelete className="text-[20px]" /></button>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                <SkillsForm
+                    skills={data.skills}
+                    addSkill={addSkill}
+                    removeSkill={removeSkill}
+                    updateSkill={updateSkill}
+                />
 
-                {/* LANGUAGES */}
-                <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-text-main flex items-center gap-2">
-                            <MdTranslate className="text-primary text-[24px]" />
-                            Languages
-                        </h3>
-                        <button onClick={addLanguage} className="text-sm text-primary font-bold hover:underline">+ Add Language</button>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        {data.languages.map((lang, idx) => (
-                            <div key={idx} className="flex items-center gap-3">
-                                <input value={lang.name} onChange={e => updateLanguage(idx, 'name', e.target.value)} className="flex-1 bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="Language (e.g. English)" />
-                                <select value={lang.level} onChange={e => updateLanguage(idx, 'level', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none w-32">
-                                    <option value="BASIC">Basic</option>
-                                    <option value="INTERMEDIATE">Intermediate</option>
-                                    <option value="ADVANCED">Advanced</option>
-                                    <option value="FLUENT">Fluent</option>
-                                    <option value="NATIVE">Native</option>
-                                </select>
-                                <button onClick={() => removeLanguage(idx)} className="text-text-muted hover:text-red-400"><MdDelete className="text-[20px]" /></button>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                <LanguagesForm
+                    languages={data.languages}
+                    addLanguage={addLanguage}
+                    removeLanguage={removeLanguage}
+                    updateLanguage={updateLanguage}
+                />
             </div>
 
             {/* 5. CERTIFICATES */}
-            <section className="bg-surface-card p-6 rounded-2xl border border-border-main">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-text-main flex items-center gap-2">
-                        <MdWorkspacePremium className="text-primary text-[24px]" />
-                        Certificates & Awards
-                    </h3>
-                    <button onClick={addCertificate} className="text-sm text-primary font-bold hover:underline">+ Add Certificate</button>
-                </div>
-                <div className="flex flex-col gap-6">
-                    {data.certificates.map((cert, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group">
-                            <button onClick={() => removeCertificate(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400"><MdDelete className="text-[20px]" /></button>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Certificate Name</label><input value={cert.name} onChange={e => updateCertificate(idx, 'name', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="e.g. AWS Certified Solutions Architect" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Issuing Organization</label><input value={cert.issuer || ''} onChange={e => updateCertificate(idx, 'issuer', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="e.g. Amazon Web Services" /></div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Issue Date</label><input type="date" value={cert.date || ''} onChange={e => updateCertificate(idx, 'date', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
-                                <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">Credential URL</label><input value={cert.url || ''} onChange={e => updateCertificate(idx, 'url', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="https://..." /></div>
-                            </div>
-                        </div>
-                    ))}
-                    {data.certificates.length === 0 && <p className="text-center text-text-muted py-4 italic">No certificates added yet.</p>}
-                </div>
-            </section>
+            <CertificatesForm
+                certificates={data.certificates}
+                addCertificate={addCertificate}
+                removeCertificate={removeCertificate}
+                updateCertificate={updateCertificate}
+            />
 
         </div>
     );

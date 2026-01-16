@@ -13,6 +13,8 @@ public class Certificate extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
     private User user;
 
     @Column(nullable = false)
@@ -25,4 +27,3 @@ public class Certificate extends BaseEntity {
 
     private String url;
 }
-

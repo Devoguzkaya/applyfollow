@@ -1,6 +1,7 @@
 export const tr = {
     common: {
         save: "Kaydet",
+        saved: "Kaydedildi!",
         cancel: "İptal",
         delete: "Sil",
         edit: "Düzenle",
@@ -62,7 +63,7 @@ export const tr = {
     cv: {
         preview: "CV Önizleme",
         builder: "CV Oluşturucu",
-        title: "CV Başlığı",
+        title: "CV Başlığı / İsim",
         personalInfo: "Kişisel Bilgiler",
         summary: "Profil Özeti",
         experience: "Deneyim",
@@ -70,6 +71,75 @@ export const tr = {
         skills: "Yetenekler",
         languages: "Diller",
         certificates: "Sertifikalar",
+        previewMode: {
+            title: "CV Önizleme",
+            subtitle: "CV verilerinizin nasıl göründüğü aşağıdadır.",
+            editContent: "İçeriği Düzenle",
+            downloadDocx: "İndir .docx",
+            noCvFound: "CV Bulunamadı",
+            noCvDesc: "Henüz bir CV oluşturmadınız. Oluşturmak için CV Oluşturucu sekmesine geçin.",
+            openBuilder: "CV Oluşturucuyu Aç",
+            verify: "Doğrula",
+            degree: "Derece",
+            present: "Devam Ediyor"
+        },
+        sections: {
+            experience: {
+                title: "Deneyim",
+                add: "Pozisyon Ekle",
+                company: "Şirket Adı",
+                position: "Pozisyon",
+                startDate: "Başlangıç Tarihi",
+                endDate: "Bitiş Tarihi",
+                current: "Halen çalışıyorum",
+                description: "Açıklama",
+                empty: "Henüz deneyim eklenmemiş."
+            },
+            education: {
+                title: "Eğitim",
+                add: "Eğitim Ekle",
+                school: "Okul / Üniversite",
+                field: "Bölüm",
+                degree: "Derece",
+                startDate: "Başlangıç Tarihi",
+                endDate: "Bitiş Tarihi",
+                empty: "Henüz eğitim eklenmemiş."
+            },
+            skills: {
+                title: "Yetenekler",
+                add: "Yetenek Ekle",
+                name: "Yetenek Adı",
+                empty: "Henüz yetenek eklenmemiş."
+            },
+            languages: {
+                title: "Diller",
+                add: "Dil Ekle",
+                name: "Dil (örn. İngilizce)",
+                level: "Seviye",
+                levels: {
+                    BASIC: "Başlangıç",
+                    INTERMEDIATE: "Orta",
+                    ADVANCED: "İleri",
+                    FLUENT: "Akıcı",
+                    NATIVE: "Anadil"
+                },
+                empty: "Henüz dil eklenmemiş."
+            },
+            certificates: {
+                title: "Sertifikalar & Ödüller",
+                add: "Sertifika Ekle",
+                name: "Sertifika Adı",
+                issuer: "Veren Kurum",
+                date: "Veriliş Tarihi",
+                url: "Sertifika URL",
+                empty: "Henüz sertifika eklenmemiş."
+            },
+            personal: {
+                titlePlaceholder: "örn. Kıdemli Yazılım Mühendisi CV",
+                titleHelp: "Bu başlık profesyonel profilinizin en üstünde görünecektir.",
+                summaryPlaceholder: "Profesyonel geçmişinizi ve önemli başarılarınızı özetleyin..."
+            }
+        }
     },
     applications: {
         title: "Başvurular",
@@ -237,6 +307,7 @@ export const tr = {
                 hasCv: "CV Var mı?",
                 yes: "EVET",
                 no: "HAYIR",
+                cvScore: "CV Doluluk Oranı"
             },
             tabs: {
                 overview: "Genel Bakış",
@@ -298,6 +369,41 @@ export const tr = {
             saveError: "Etkinlik kaydedilemedi."
         },
         confirmDelete: "Bu etkinliği silmek istediğine emin misin?"
+    },
+    profilePage: {
+        title: "Profil Ayarları",
+        subtitle: "Kişisel bilgilerinizi ve hesap güvenliğinizi yönetin.",
+        tabs: {
+            personal: "Kişisel Bilgiler",
+            security: "Güvenlik & Şifre"
+        },
+        personal: {
+            fullName: "Ad Soyad",
+            email: "E-posta Adresi",
+            phone: "Telefon Numarası",
+            address: "Adres",
+            summary: "Kısa Özgeçmiş / Özet",
+            links: "Bağlantılar",
+            linkedin: "LinkedIn URL",
+            github: "GitHub URL",
+            website: "Kişisel Web Sitesi",
+            save: "Değişiklikleri Kaydet",
+            saving: "Kaydediliyor..."
+        },
+        security: {
+            currentPassword: "Mevcut Şifre",
+            newPassword: "Yeni Şifre",
+            confirmPassword: "Yeni Şifre (Tekrar)",
+            changePassword: "Şifreyi Değiştir",
+            changing: "Değiştiriliyor...",
+            requirements: "Şifreniz en az 6 karakter uzunluğunda olmalıdır."
+        },
+        toast: {
+            profileUpdated: "Profil başarıyla güncellendi!",
+            passwordChanged: "Şifreniz başarıyla değiştirildi!",
+            matchError: "Yeni şifreler eşleşmiyor.",
+            genericError: "Bir hata oluştu. Lütfen tekrar deneyin."
+        }
     }
 };
 

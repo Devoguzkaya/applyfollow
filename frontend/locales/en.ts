@@ -3,6 +3,7 @@ import { Dictionary } from "./tr";
 export const en: Dictionary = {
     common: {
         save: "Save",
+        saved: "Saved!",
         cancel: "Cancel",
         delete: "Delete",
         edit: "Edit",
@@ -64,7 +65,7 @@ export const en: Dictionary = {
     cv: {
         preview: "CV Preview",
         builder: "CV Builder",
-        title: "CV Title",
+        title: "CV Title / Name",
         personalInfo: "Personal Info",
         summary: "Professional Summary",
         experience: "Experience",
@@ -72,6 +73,75 @@ export const en: Dictionary = {
         skills: "Skills",
         languages: "Languages",
         certificates: "Certificates",
+        previewMode: {
+            title: "CV Preview",
+            subtitle: "This is how your CV data looks.",
+            editContent: "Edit Content",
+            downloadDocx: "Download .docx",
+            noCvFound: "No CV found",
+            noCvDesc: "You haven't built your CV yet. Switch to the Open CV Builder tab to create one.",
+            openBuilder: "Open CV Builder",
+            verify: "Verify",
+            degree: "Degree",
+            present: "Present"
+        },
+        sections: {
+            experience: {
+                title: "Experience",
+                add: "Add Position",
+                company: "Company Name",
+                position: "Position",
+                startDate: "Start Date",
+                endDate: "End Date",
+                current: "I currently work here",
+                description: "Description",
+                empty: "No experience added yet."
+            },
+            education: {
+                title: "Education",
+                add: "Add Education",
+                school: "School / University",
+                field: "Field of Study",
+                degree: "Degree",
+                startDate: "Start Date",
+                endDate: "End Date",
+                empty: "No education added yet."
+            },
+            skills: {
+                title: "Skills",
+                add: "Add Skill",
+                name: "Skill Name",
+                empty: "No skills added."
+            },
+            languages: {
+                title: "Languages",
+                add: "Add Language",
+                name: "Language (e.g. English)",
+                level: "Level",
+                levels: {
+                    BASIC: "Basic",
+                    INTERMEDIATE: "Intermediate",
+                    ADVANCED: "Advanced",
+                    FLUENT: "Fluent",
+                    NATIVE: "Native"
+                },
+                empty: "No languages added."
+            },
+            certificates: {
+                title: "Certificates & Awards",
+                add: "Add Certificate",
+                name: "Certificate Name",
+                issuer: "Issuing Organization",
+                date: "Issue Date",
+                url: "Credential URL",
+                empty: "No certificates added yet."
+            },
+            personal: {
+                titlePlaceholder: "e.g. Senior Software Engineer CV",
+                titleHelp: "This title will appear at the top of your professional profile.",
+                summaryPlaceholder: "Write a brief summary of your professional background and key achievements..."
+            }
+        }
     },
     applications: {
         title: "Applications",
@@ -239,6 +309,7 @@ export const en: Dictionary = {
                 hasCv: "Has CV?",
                 yes: "YES",
                 no: "NO",
+                cvScore: "CV Completion"
             },
             tabs: {
                 overview: "Overview",
@@ -300,5 +371,40 @@ export const en: Dictionary = {
             saveError: "Failed to save event."
         },
         confirmDelete: "Are you sure you want to delete this event?"
+    },
+    profilePage: {
+        title: "Profile Settings",
+        subtitle: "Manage your personal information and account security.",
+        tabs: {
+            personal: "Personal Information",
+            security: "Security & Password"
+        },
+        personal: {
+            fullName: "Full Name",
+            email: "Email Address",
+            phone: "Phone Number",
+            address: "Address",
+            summary: "Short Bio / Summary",
+            links: "Links",
+            linkedin: "LinkedIn URL",
+            github: "GitHub URL",
+            website: "Personal Website",
+            save: "Save Changes",
+            saving: "Saving..."
+        },
+        security: {
+            currentPassword: "Current Password",
+            newPassword: "New Password",
+            confirmPassword: "New Password (Confirm)",
+            changePassword: "Change Password",
+            changing: "Changing...",
+            requirements: "Passwords must be at least 6 characters long."
+        },
+        toast: {
+            profileUpdated: "Profile updated successfully!",
+            passwordChanged: "Password changed successfully!",
+            matchError: "New passwords do not match.",
+            genericError: "Something went wrong. Please try again."
+        }
     }
 };

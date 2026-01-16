@@ -13,6 +13,8 @@ public class Language extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
     private User user;
 
     @Column(nullable = false)
@@ -22,4 +24,3 @@ public class Language extends BaseEntity {
     @Column(nullable = false)
     private LanguageLevel level;
 }
-

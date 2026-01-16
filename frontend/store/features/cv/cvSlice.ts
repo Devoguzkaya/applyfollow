@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cvService, CvData, Education, Experience, Skill } from '@/services/cvService';
-import toast from 'react-hot-toast';
+// Remove toast import to prevent double notification
+// import toast from 'react-hot-toast';
 
 interface CvState {
     data: CvData | null;
@@ -76,12 +77,15 @@ export const cvSlice = createSlice({
         builder.addCase(saveCv.fulfilled, (state, action) => {
             state.data = action.payload;
             state.isSaving = false;
-            toast.success('CV saved successfully');
+            // Removed toast.success call here.
+            // Toast will be handled in the component layer to support localization.
         });
         builder.addCase(saveCv.rejected, (state, action) => {
             state.isSaving = false;
             state.error = action.error.message || 'Failed to save CV';
-            toast.error('Failed to save CV');
+            // Removed toast.error call here.
+            // Error toast will be handled in the component layer or can be re-added here if generic error msg is fine.
+            // For better UX, let component handle it.
         });
     },
 });

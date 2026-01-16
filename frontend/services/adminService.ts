@@ -81,18 +81,18 @@ export const adminService = {
         // but better to use 'any' if we want to avoid complex circular deps for now, 
         // OR better: let's use the type from applicationService.
         // Assuming we can request /api/applications/user/{userId}
-        const response = await api.get(`/api/applications/user/${userId}`);
+        const response = await api.get(`/applications/user/${userId}`);
         return response.data;
     },
 
     getUserCv: async (userId: string) => {
         // Request /api/cv/user/{userId}
-        const response = await api.get(`/api/cv/user/${userId}`);
+        const response = await api.get(`/cv/user/${userId}`);
         return response.data;
     },
 
     downloadUserCv: async (userId: string) => {
-        const response = await api.get(`/api/cv/user/${userId}/download`, {
+        const response = await api.get(`/cv/user/${userId}/download`, {
             responseType: 'blob',
         });
 

@@ -13,6 +13,8 @@ public class Application extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // Şimdilik nullable olabilir test için, auth gelince false yaparız
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,4 +29,3 @@ public class Application extends BaseEntity {
     private LocalDateTime appliedAt = LocalDateTime.now();
 
 }
-

@@ -39,7 +39,7 @@ public class AuthControllerTest {
                 RegisterRequest request = new RegisterRequest("Test User", "test@example.com", "password123");
                 AuthResponse response = new AuthResponse("jwt-token", UUID.randomUUID(), "test@example.com",
                                 "Test User", "USER",
-                                "Success");
+                                "Success", null, null, null, null, null, null);
 
                 when(userService.register(any(RegisterRequest.class))).thenReturn(response);
 
@@ -55,7 +55,7 @@ public class AuthControllerTest {
                 LoginRequest request = new LoginRequest("test@example.com", "password123");
                 AuthResponse response = new AuthResponse("jwt-token", UUID.randomUUID(), "test@example.com",
                                 "Test User", "USER",
-                                "Success");
+                                "Success", null, null, null, null, null, null);
 
                 when(userService.login(any(LoginRequest.class))).thenReturn(response);
 
@@ -66,4 +66,3 @@ public class AuthControllerTest {
                                 .andExpect(jsonPath("$.token").value("jwt-token"));
         }
 }
-

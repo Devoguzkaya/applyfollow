@@ -9,6 +9,7 @@ export const en: Dictionary = {
         download: "Download",
         loading: "Loading...",
         noData: "No data found",
+        viewAll: "View All",
     },
     sidebar: {
         overview: "Overview",
@@ -29,11 +30,24 @@ export const en: Dictionary = {
         summary: "Summary",
         stats: {
             total: "Total Applications",
+            responseRate: "Response Rate",
             pending: "Pending",
             interviews: "Interviews",
             rejected: "Rejected",
             offer: "Offer",
             ghosted: "Ghosted",
+        },
+        charts: {
+            statusBreakdown: "Status Breakdown",
+            outcomes: "Outcomes",
+            upcoming: "Upcoming",
+            total: "Total",
+            noEvents: "No upcoming events.",
+        },
+        recentApps: {
+            title: "Recent Applications",
+            noRecentActivity: "No recent activity. Start applying!",
+            addNew: "Add New",
         }
     },
     profile: {

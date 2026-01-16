@@ -7,6 +7,12 @@ export interface User {
     email: string;
     fullName: string;
     role: string;
+    phoneNumber?: string;
+    address?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    websiteUrl?: string;
+    summary?: string;
 }
 
 export interface LoginRequest {
@@ -27,6 +33,23 @@ export interface AuthResponse {
     fullName: string;
     role: string;
     message: string;
+    phoneNumber?: string;
+    address?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    websiteUrl?: string;
+    summary?: string;
+}
+
+export interface UpdateProfileData {
+    fullName: string;
+    email: string;
+    phoneNumber?: string;
+    address?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    websiteUrl?: string;
+    summary?: string;
 }
 
 export const authService = {
@@ -59,8 +82,8 @@ export const authService = {
         return null;
     },
 
-    updateProfile: async (fullName: string, email: string): Promise<AuthResponse> => {
-        const response = await api.put<AuthResponse>('/users/profile', { fullName, email });
+    updateProfile: async (data: UpdateProfileData): Promise<AuthResponse> => {
+        const response = await api.put<AuthResponse>('/users/profile', data);
         // Update local storage with new info
         if (response.data) {
             localStorage.setItem('user', JSON.stringify(response.data));

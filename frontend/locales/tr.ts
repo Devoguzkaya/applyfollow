@@ -7,6 +7,7 @@ export const tr = {
         download: "İndir",
         loading: "Yükleniyor...",
         noData: "Veri bulunamadı",
+        viewAll: "Tümünü Gör",
     },
     sidebar: {
         overview: "Genel Bakış",
@@ -27,11 +28,24 @@ export const tr = {
         summary: "Özet",
         stats: {
             total: "Toplam Başvuru",
+            responseRate: "Dönüş Oranı",
             pending: "Bekleyen",
             interviews: "Mülakatlar",
             rejected: "Reddedilen",
             offer: "Teklif",
             ghosted: "Cevapsız",
+        },
+        charts: {
+            statusBreakdown: "Durum Dağılımı",
+            outcomes: "Sonuçlar",
+            upcoming: "Yaklaşanlar",
+            total: "Toplam",
+            noEvents: "Yaklaşan etkinlik yok.",
+        },
+        recentApps: {
+            title: "Son Başvurular",
+            noRecentActivity: "Son zamanlarda aktivite yok. Başvuru yapmaya başla!",
+            addNew: "Yeni Ekle",
         }
     },
     profile: {

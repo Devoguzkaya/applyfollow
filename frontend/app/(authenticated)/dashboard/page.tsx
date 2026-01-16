@@ -82,7 +82,7 @@ export default function DashboardPage() {
           <div className="size-12 rounded-xl bg-surface-hover flex items-center justify-center"><span className="material-symbols-outlined text-text-muted">send</span></div>
         </div>
         <div className="bg-surface-card border border-border-main p-6 rounded-2xl flex items-center justify-between shadow-lg transition-colors">
-          <div><p className="text-text-muted text-sm font-medium">Response Rate</p><p className="text-3xl font-bold text-primary mt-1">{responseRate}%</p></div>
+          <div><p className="text-text-muted text-sm font-medium">{t('dashboard.stats.responseRate')}</p><p className="text-3xl font-bold text-primary mt-1">{responseRate}%</p></div>
           <div className="size-12 rounded-xl bg-surface-hover flex items-center justify-center"><span className="material-symbols-outlined text-text-muted">percent</span></div>
         </div>
         <div className="bg-surface-card border border-border-main p-6 rounded-2xl flex items-center justify-between shadow-lg transition-colors">
@@ -90,7 +90,7 @@ export default function DashboardPage() {
           <div className="size-12 rounded-xl bg-surface-hover flex items-center justify-center"><span className="material-symbols-outlined text-text-muted">video_camera_front</span></div>
         </div>
         <div className="bg-surface-card border border-border-main p-6 rounded-2xl flex items-center justify-between shadow-lg transition-colors">
-          <div><p className="text-text-muted text-sm font-medium">Offers</p><p className="text-3xl font-bold text-emerald-400 mt-1">{offers}</p></div>
+          <div><p className="text-text-muted text-sm font-medium">{t('dashboard.stats.offer')}</p><p className="text-3xl font-bold text-emerald-400 mt-1">{offers}</p></div>
           <div className="size-12 rounded-xl bg-surface-hover flex items-center justify-center"><span className="material-symbols-outlined text-text-muted">thumb_up</span></div>
         </div>
       </div>
@@ -99,14 +99,14 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Status Breakdown (Left) */}
         <div className="bg-surface-card border border-border-main p-8 rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between transition-colors">
-          <h3 className="text-xl font-bold text-text-main mb-6">Status Breakdown</h3>
+          <h3 className="text-xl font-bold text-text-main mb-6">{t('dashboard.charts.statusBreakdown')}</h3>
           <div className="space-y-4">
             {[
               { label: t('dashboard.stats.pending'), count: applied, color: 'bg-blue-500', total: totalApps },
               { label: t('dashboard.stats.interviews'), count: interviews, color: 'bg-amber-500', total: totalApps },
-              { label: 'Offer', count: offers, color: 'bg-emerald-400', total: totalApps },
+              { label: t('dashboard.stats.offer'), count: offers, color: 'bg-emerald-400', total: totalApps },
               { label: t('dashboard.stats.rejected'), count: rejections, color: 'bg-red-500', total: totalApps },
-              { label: 'Ghosted', count: ghosted, color: 'bg-slate-500', total: totalApps },
+              { label: t('dashboard.stats.ghosted'), count: ghosted, color: 'bg-slate-500', total: totalApps },
             ].map(item => (
               <div key={item.label}>
                 <div className="flex justify-between text-xs font-bold text-text-muted mb-1">
@@ -123,30 +123,30 @@ export default function DashboardPage() {
 
         {/* Outcomes Chart (Center) */}
         <div className="bg-surface-card border border-border-main p-8 rounded-2xl shadow-lg flex flex-col items-center transition-colors">
-          <h3 className="text-xl font-bold text-text-main mb-6">Outcomes</h3>
+          <h3 className="text-xl font-bold text-text-main mb-6">{t('dashboard.charts.outcomes')}</h3>
           <div className="size-48 rounded-full relative shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)] transition-all" style={{ background: getGradient(), borderRadius: '50%' }}>
             <div className="absolute inset-4 bg-surface-card rounded-full flex flex-col items-center justify-center z-10">
               <span className="text-4xl font-bold text-text-main">{totalApps}</span>
-              <span className="text-xs text-text-muted uppercase tracking-widest mt-1">Total</span>
+              <span className="text-xs text-text-muted uppercase tracking-widest mt-1">{t('dashboard.charts.total')}</span>
             </div>
           </div>
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
-            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-emerald-400"></span>Offer</div>
-            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-amber-500"></span>Interview</div>
-            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-red-500"></span>Rejected</div>
+            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-emerald-400"></span>{t('dashboard.stats.offer')}</div>
+            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-amber-500"></span>{t('dashboard.stats.interviews')}</div>
+            <div className="flex items-center gap-1 text-xs text-text-muted"><span className="size-2 rounded-full bg-red-500"></span>{t('dashboard.stats.rejected')}</div>
           </div>
         </div>
 
         {/* Upcoming Events (Right) */}
         <div className="bg-surface-card border border-border-main p-8 rounded-2xl shadow-lg flex flex-col transition-colors">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-text-main">Upcoming</h3>
-            <Link href="/calendar" className="text-xs font-bold text-primary hover:underline">View All</Link>
+            <h3 className="text-xl font-bold text-text-main">{t('dashboard.charts.upcoming')}</h3>
+            <Link href="/calendar" className="text-xs font-bold text-primary hover:underline">{t('common.viewAll')}</Link>
           </div>
           {upcomingEvents.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center gap-2">
               <span className="material-symbols-outlined text-text-muted text-3xl">event_busy</span>
-              <p className="text-text-muted text-sm">No upcoming events.</p>
+              <p className="text-text-muted text-sm">{t('dashboard.charts.noEvents')}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
@@ -170,16 +170,16 @@ export default function DashboardPage() {
       {/* Recent Applications Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-text-main">Recent Applications</h2>
-          <Link href="/applications" className="text-primary text-sm font-bold hover:underline">View All</Link>
+          <h2 className="text-2xl font-bold text-text-main">{t('dashboard.recentApps.title')}</h2>
+          <Link href="/applications" className="text-primary text-sm font-bold hover:underline">{t('common.viewAll')}</Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {loading && <div className="col-span-full text-center py-10 text-text-muted">Loading applications...</div>}
+          {loading && <div className="col-span-full text-center py-10 text-text-muted">{t('common.loading')}</div>}
 
           {!loading && applications.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-10 text-text-muted border border-dashed border-border-main rounded-2xl bg-surface-card/50">
-              <p>No recent activity. Start applying!</p>
+              <p>{t('dashboard.recentApps.noRecentActivity')}</p>
             </div>
           )}
 
@@ -216,7 +216,7 @@ export default function DashboardPage() {
             <div className="size-10 rounded-full bg-surface-hover flex items-center justify-center group-hover:bg-primary/10 transition-colors">
               <span className="material-symbols-outlined text-text-muted text-xl group-hover:text-primary transition-colors">add</span>
             </div>
-            <h4 className="text-sm font-bold text-text-muted group-hover:text-text-main transition-colors">Add New</h4>
+            <h4 className="text-sm font-bold text-text-muted group-hover:text-text-main transition-colors">{t('dashboard.recentApps.addNew')}</h4>
           </Link>
         </div>
       </div>

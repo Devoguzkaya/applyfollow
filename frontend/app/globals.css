@@ -21,30 +21,35 @@
 }
 
 :root {
+  /* KARANLIK TEMA (Varsayılan) - Eski Haline Döndürüldü */
   --primary: #17cf63;
   --primary-dark: #14b556;
   --background: #0d1214;
+  /* Simsiyah */
   --surface: #1a1f21;
   --surface-hover: #24292b;
   --surface-darker: #050708;
   --input-bg: #111814;
   --border-color: rgba(255, 255, 255, 0.03);
-  /* Çok daha mat, ince çizgi */
   --text-color: #f8fafc;
   --text-muted: #94a3b8;
 }
 
 .light {
+  /* AYDINLIK TEMA - Yeni Yumuşak Gri & Canlı Tonlar */
   --primary: #10b981;
   --primary-dark: #059669;
-  --background: #f8fafc;
+  --background: #f1f5f9;
+  /* Slate 100 - Yumuşak Gri */
   --surface: #ffffff;
-  --surface-hover: #f1f5f9;
+  /* Saf Beyaz */
+  --surface-hover: #f8fafc;
   --surface-darker: #e2e8f0;
-  --input-bg: #f1f5f9;
-  --border-color: rgba(0, 0, 0, 0.05);
-  /* Işık modunda da yumuşak */
-  --text-color: #0f172a;
+  --input-bg: #f8fafc;
+  --border-color: rgba(148, 163, 184, 0.2);
+  /* Slate 400 ile ince border */
+  --text-color: #334155;
+  /* Slate 700 - Okunaklı Koyu Gri */
   --text-muted: #64748b;
 }
 
@@ -57,6 +62,14 @@ body {
   color: var(--text-color);
   font-family: var(--font-body);
   transition: background-color 0.2s ease, color 0.2s ease;
+  min-height: 100vh;
+}
+
+/* Sadece Aydınlık Tema Etkinleşince Arka Plana Canlılık Kat */
+.light body {
+  background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(241, 245, 249, 1) 100%);
+  background-attachment: fixed;
 }
 
 /* Material Icons Customization */

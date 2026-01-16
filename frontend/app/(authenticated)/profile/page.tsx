@@ -25,6 +25,12 @@ export default function ProfilePage() {
     // Form States
     const [tempName, setTempName] = useState('');
     const [tempEmail, setTempEmail] = useState('');
+    const [tempPhone, setTempPhone] = useState('');
+    const [tempAddress, setTempAddress] = useState('');
+    const [tempLinkedin, setTempLinkedin] = useState('');
+    const [tempGithub, setTempGithub] = useState('');
+    const [tempWebsite, setTempWebsite] = useState('');
+    const [tempSummary, setTempSummary] = useState('');
     const [currentPass, setCurrentPass] = useState('');
     const [newPass, setNewPass] = useState('');
 
@@ -36,6 +42,12 @@ export default function ProfilePage() {
             setUser(currentUser);
             setTempName(currentUser.fullName);
             setTempEmail(currentUser.email);
+            setTempPhone(currentUser.phoneNumber || '');
+            setTempAddress(currentUser.address || '');
+            setTempLinkedin(currentUser.linkedinUrl || '');
+            setTempGithub(currentUser.githubUrl || '');
+            setTempWebsite(currentUser.websiteUrl || '');
+            setTempSummary(currentUser.summary || '');
         } else {
             router.push('/login');
             return;
@@ -70,7 +82,16 @@ export default function ProfilePage() {
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const updated = await authService.updateProfile(tempName, tempEmail);
+            const updated = await authService.updateProfile({
+                fullName: tempName,
+                email: tempEmail,
+                phoneNumber: tempPhone,
+                address: tempAddress,
+                linkedinUrl: tempLinkedin,
+                githubUrl: tempGithub,
+                websiteUrl: tempWebsite,
+                summary: tempSummary
+            });
             setUser(updated);
             toast.success("Profile updated!");
             setIsEditOpen(false);
@@ -243,18 +264,45 @@ export default function ProfilePage() {
 
             {/* Edit Profile Modal */}
             {isEditOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <form onSubmit={handleUpdateProfile} className="bg-surface-card border border-border-main p-6 rounded-2xl w-full max-w-md flex flex-col gap-4 animate-in fade-in zoom-in duration-200 shadow-2xl">
-                        <h3 className="text-xl font-bold text-text-main">Edit Profile</h3>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-text-muted">Full Name</label>
-                            <input value={tempName} onChange={e => setTempName(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="John Doe" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+                    <form onSubmit={handleUpdateProfile} className="bg-surface-card border border-border-main p-6 rounded-2xl w-full max-w-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-200 shadow-2xl relative my-8">
+                        <h3 className="text-xl font-bold text-text-main border-b border-white/10 pb-2">Edit Profile</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">Full Name</label>
+                                <input value={tempName} onChange={e => setTempName(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="John Doe" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">Email</label>
+                                <input value={tempEmail} onChange={e => setTempEmail(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="john@example.com" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">Phone Number</label>
+                                <input value={tempPhone} onChange={e => setTempPhone(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="+90 555 123 4567" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">Address</label>
+                                <input value={tempAddress} onChange={e => setTempAddress(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="City, Country" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">LinkedIn URL</label>
+                                <input value={tempLinkedin} onChange={e => setTempLinkedin(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="https://linkedin.com/in/..." />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm text-text-muted">GitHub URL</label>
+                                <input value={tempGithub} onChange={e => setTempGithub(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="https://github.com/..." />
+                            </div>
+                            <div className="flex flex-col gap-2 md:col-span-2">
+                                <label className="text-sm text-text-muted">Website / Portfolio</label>
+                                <input value={tempWebsite} onChange={e => setTempWebsite(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="https://mysite.com" />
+                            </div>
+                            <div className="flex flex-col gap-2 md:col-span-2">
+                                <label className="text-sm text-text-muted">Professional Summary</label>
+                                <textarea value={tempSummary} onChange={e => setTempSummary(e.target.value)} rows={3} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none resize-none" placeholder="Brief summary about yourself..." />
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm text-text-muted">Email</label>
-                            <input value={tempEmail} onChange={e => setTempEmail(e.target.value)} className="bg-input-bg border border-border-main p-3 rounded-lg text-text-main focus:border-primary outline-none" placeholder="john@example.com" />
-                        </div>
-                        <div className="flex justify-end gap-3 mt-4">
+
+                        <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-white/10">
                             <button type="button" onClick={() => setIsEditOpen(false)} className="px-4 py-2 text-text-muted hover:text-text-main font-medium">Cancel</button>
                             <button type="submit" className="px-5 py-2 bg-primary text-black font-bold rounded-lg hover:opacity-90 transition-colors">Save Changes</button>
                         </div>

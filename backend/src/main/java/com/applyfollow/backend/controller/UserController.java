@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import com.applyfollow.backend.model.User;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,17 +31,18 @@ public class UserController {
 
     @PutMapping("/profile")
     public AuthResponse updateProfile(
-            @RequestHeader("X-User-Id") UUID userId,
+            org.springframework.security.core.Authentication authentication,
             @RequestBody @Valid UpdateProfileRequest request) {
-        return userService.updateProfile(userId, request);
+        User user = (User) authentication.getPrincipal();
+        return userService.updateProfile(user.getId(), request);
     }
 
     @PostMapping("/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changePassword(
-            @RequestHeader("X-User-Id") UUID userId,
+            org.springframework.security.core.Authentication authentication,
             @RequestBody @Valid ChangePasswordRequest request) {
-        userService.changePassword(userId, request);
+        User user = (User) authentication.getPrincipal();
+        userService.changePassword(user.getId(), request);
     }
 }
-

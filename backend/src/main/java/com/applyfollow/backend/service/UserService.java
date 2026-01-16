@@ -54,7 +54,8 @@ public class UserService {
         var jwtToken = jwtService.generateToken(user);
 
         return new AuthResponse(jwtToken, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
-                "User registered successfully");
+                "User registered successfully", user.getPhoneNumber(), user.getAddress(), user.getLinkedinUrl(),
+                user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -71,7 +72,8 @@ public class UserService {
         var jwtToken = jwtService.generateToken(user);
 
         return new AuthResponse(jwtToken, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
-                "Login successful");
+                "Login successful", user.getPhoneNumber(), user.getAddress(), user.getLinkedinUrl(),
+                user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
     }
 
     public List<UserResponse> getAllUsers() {
@@ -86,6 +88,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setFullName(request.fullName());
+        user.setPhoneNumber(request.phoneNumber());
+        user.setAddress(request.address());
+        user.setLinkedinUrl(request.linkedinUrl());
+        user.setGithubUrl(request.githubUrl());
+        user.setWebsiteUrl(request.websiteUrl());
+        user.setSummary(request.summary());
 
         if (request.email() != null && !request.email().isEmpty() && !request.email().equals(user.getEmail())) {
             if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -97,7 +105,8 @@ public class UserService {
         userRepository.save(user);
         // Not regenerating token on profile update for simplicity
         return new AuthResponse(null, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
-                "Profile updated");
+                "Profile updated", user.getPhoneNumber(), user.getAddress(), user.getLinkedinUrl(),
+                user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
     }
 
     public void changePassword(UUID userId, ChangePasswordRequest request) {
@@ -112,4 +121,3 @@ public class UserService {
         userRepository.save(user);
     }
 }
-

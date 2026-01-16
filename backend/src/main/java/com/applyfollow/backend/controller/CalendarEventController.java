@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/calendar")
+@RequestMapping("/api/calendar")
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class CalendarEventController {

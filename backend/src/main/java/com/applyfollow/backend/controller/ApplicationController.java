@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/applications")
+@RequestMapping("/api/applications")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ApplicationController {
 

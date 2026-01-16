@@ -266,8 +266,8 @@ export default function Home() {
               <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors duration-500 z-10"></div>
               <div className="absolute inset-0 bg-gradient-to-tr from-background to-transparent z-20"></div>
               <Image
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
-                alt="Our Team"
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
+                alt="Building the Future"
                 fill
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
               />
@@ -284,16 +284,7 @@ export default function Home() {
               <p className="text-text-muted text-lg leading-relaxed mb-10">
                 {t('landing.about.desc2')}
               </p>
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <p className="text-3xl font-black text-text-main mb-1">10k+</p>
-                  <p className="text-text-muted text-sm font-bold uppercase">{t('landing.about.stats.tracked')}</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-black text-text-main mb-1">2k+</p>
-                  <p className="text-text-muted text-sm font-bold uppercase">{t('landing.about.stats.realized')}</p>
-                </div>
-              </div>
+
             </div>
           </div>
         </section>

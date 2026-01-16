@@ -154,7 +154,7 @@ export const en: Dictionary = {
         hero: {
             badge: "v1.0 Public Beta",
             title: "Land Your Dream Job Without the Chaos.",
-            subtitle: "Stop using spreadsheets. Track applications, manage interviews, and organize your network in one powerful workspace designed for developers.",
+            subtitle: "Stop using spreadsheets. Track applications, manage interviews, and organize your network in one powerful workspace designed for professionals.",
             getStarted: "Get Started",
             starGithub: "Star on GitHub",
         },
@@ -164,7 +164,7 @@ export const en: Dictionary = {
             cards: {
                 allInOne: {
                     title: "All in One Place",
-                    desc: "Ditch the messy Excel sheets. View all your applications, statuses, and notes in a unified dashboard.",
+                    desc: "Ditch the messy notes. View all your applications, statuses, and notes in a unified dashboard.",
                 },
                 reminders: {
                     title: "Smart Reminders",
@@ -178,13 +178,9 @@ export const en: Dictionary = {
         },
         about: {
             badge: "Our Mission",
-            title: "Empowering Developers to Build Their Future.",
-            desc1: "ApplyFollow was born out of frustration. As developers, we spend so much time building amazing products for others, yet we often lack the right tools to manage our own careers.",
-            desc2: "Our mission is to eliminate the chaos of job hunting. We believe that with the right data and organization, every developer can land their dream role without the burnout.",
-            stats: {
-                tracked: "Applications Tracked",
-                realized: "Dreams Realized",
-            }
+            title: "Empowering Talent to Build Their Future.",
+            desc1: "ApplyFollow was born out of frustration. As professionals, we spend so much time adding value to our work, yet we often lack the right tools to manage our own careers.",
+            desc2: "Our mission is to eliminate the chaos of job hunting. We believe that with the right data and organization, everyone can land their dream role without the burnout."
         },
         contact: {
             title: "Get in Touch.",

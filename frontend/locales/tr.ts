@@ -152,9 +152,9 @@ export const tr = {
         hero: {
             badge: "v1.0 Açık Beta",
             title: "Hayalindeki İşe Karmaşa Olmadan Kavuş.",
-            subtitle: "Excel tablolarını bırak. Developerlar için tasarlanmış güçlü bir çalışma alanında başvurularını takip et, mülakatlarını yönet ve ağını düzenle.",
+            subtitle: "Excel tablolarını bırak. Profesyoneller için tasarlanmış güçlü bir çalışma alanında başvurularını takip et, mülakatlarını yönet ve ağını düzenle.",
             getStarted: "Hemen Başla",
-            starGithub: "GitHub'da Yıldızla",
+            starGithub: "GitHub'da İncele",
         },
         features: {
             title: "İhtiyacın Olan Her Şey",
@@ -162,7 +162,7 @@ export const tr = {
             cards: {
                 allInOne: {
                     title: "Hepsi Bir Arada",
-                    desc: "Dağınık Excel tablolarından kurtul. Tüm başvurularını, durumlarını ve notlarını tek bir panelde gör.",
+                    desc: "Dağınık notlardan kurtul. Tüm başvurularını, durumlarını ve notlarını tek bir panelde gör.",
                 },
                 reminders: {
                     title: "Akıllı Hatırlatıcılar",
@@ -176,13 +176,9 @@ export const tr = {
         },
         about: {
             badge: "Misyonumuz",
-            title: "Developerları Geleceklerini İnşa Etmeleri İçin Güçlendiriyoruz.",
-            desc1: "ApplyFollow bir hayal kırıklığından doğdu. Geliştiriciler olarak başkaları için harika ürünler inşa etmeye çok vakit ayırıyoruz ancak kendi kariyerlerimizi yönetmek için doğru araçlardan yoksunuz.",
-            desc2: "Misyonumuz, iş arama sürecindeki karmaşayı ortadan kaldırmak. Doğru veri ve organizasyonla, her geliştiricinin hayalindeki işe tükenmişlik yaşamadan ulaşabileceğine inanıyoruz.",
-            stats: {
-                tracked: "Takip Edilen Başvuru",
-                realized: "Gerçekleşen Hayal",
-            }
+            title: "Profesyonelleri Geleceklerini İnşa Etmeleri İçin Güçlendiriyoruz.",
+            desc1: "ApplyFollow bir ihtiyaçtan doğdu. Profesyoneller olarak işimize değer katmaya odaklanıyoruz ancak kendi kariyer süreçlerimizi yönetmek için doğru araçlardan yoksunuz.",
+            desc2: "Misyonumuz, iş arama sürecindeki karmaşayı ortadan kaldırmak. Doğru veri ve organizasyonla, herkesin hayalindeki işe tükenmişlik yaşamadan ulaşabileceğine inanıyoruz."
         },
         contact: {
             title: "Bize Ulaşın.",

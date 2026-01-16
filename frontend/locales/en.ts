@@ -195,6 +195,56 @@ export const en: Dictionary = {
             }
         }
     },
+    admin: {
+        title: "User Management",
+        loading: "Loading users...",
+        table: {
+            fullName: "Full Name",
+            email: "Email",
+            role: "Role",
+            status: "Status",
+            actions: "Actions",
+            viewDetails: "View Details",
+            active: "Active",
+            inactive: "Inactive",
+        },
+        detail: {
+            title: "User Details",
+            loading: "Loading user details...",
+            back: "Back to Users",
+            stats: {
+                title: "User Stats",
+                totalApps: "Total Applications",
+                hasCv: "Has CV?",
+                yes: "YES",
+                no: "NO",
+            },
+            tabs: {
+                overview: "Overview",
+                applications: "Applications",
+                cv: "CV / Resume",
+            },
+            cv: {
+                title: "Curriculum Vitae",
+                download: "Download Word CV",
+                downloading: "Downloading...",
+                notCreated: "User has not created a CV yet.",
+                phone: "Phone",
+                linkedin: "LinkedIn",
+                summary: "Professional Summary",
+                education: "Education",
+                experience: "Experience",
+                present: "Present",
+            },
+            apps: {
+                company: "Company",
+                position: "Position",
+                status: "Status",
+                date: "Date Applied",
+                empty: "No applications found.",
+            }
+        }
+    },
     calendar: {
         subtitle: "Manage your schedule, interviews, and deadlines.",
         today: "Today",

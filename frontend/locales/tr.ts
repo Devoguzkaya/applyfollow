@@ -193,6 +193,56 @@ export const tr = {
             }
         }
     },
+    admin: {
+        title: "Kullanıcı Yönetimi",
+        loading: "Kullanıcılar yükleniyor...",
+        table: {
+            fullName: "Ad Soyad",
+            email: "E-posta",
+            role: "Rol",
+            status: "Durum",
+            actions: "İşlemler",
+            viewDetails: "Detayları Gör",
+            active: "Aktif",
+            inactive: "Pasif",
+        },
+        detail: {
+            title: "Kullanıcı Detayları",
+            loading: "Kullanıcı detayları yükleniyor...",
+            back: "Kullanıcılara Dön",
+            stats: {
+                title: "İstatistikler",
+                totalApps: "Toplam Başvuru",
+                hasCv: "CV Var mı?",
+                yes: "EVET",
+                no: "HAYIR",
+            },
+            tabs: {
+                overview: "Genel Bakış",
+                applications: "Başvurular",
+                cv: "CV / Özgeçmiş",
+            },
+            cv: {
+                title: "Özgeçmiş (CV)",
+                download: "Word CV İndir",
+                downloading: "İndiriliyor...",
+                notCreated: "Kullanıcı henüz CV oluşturmamış.",
+                phone: "Telefon",
+                linkedin: "LinkedIn",
+                summary: "Profil Özeti",
+                education: "Eğitim",
+                experience: "Deneyim",
+                present: "Devam Ediyor",
+            },
+            apps: {
+                company: "Şirket",
+                position: "Pozisyon",
+                status: "Durum",
+                date: "Başvuru Tarihi",
+                empty: "Başvuru bulunamadı.",
+            }
+        }
+    },
     calendar: {
         subtitle: "Programını, mülakatlarını ve son tarihleri yönet.",
         today: "Bugün",

@@ -5,12 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { adminService, UserAdminResponse } from '@/services/adminService';
 import { ApplicationResponse } from '@/services/applicationService';
 import { CvData } from '@/services/cvService';
+import { useLanguage } from '@/context/LanguageContext';
 import Link from 'next/link';
 
 export default function UserDetailPage() {
     const params = useParams();
     const router = useRouter();
     const userId = params.id as string;
+    const { dict } = useLanguage();
 
     const [activeTab, setActiveTab] = useState<'applications' | 'cv' | 'overview'>('overview');
     const [loading, setLoading] = useState(true);
@@ -55,14 +57,14 @@ export default function UserDetailPage() {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Loading user details...</div>;
+    if (loading) return <div className="p-8 text-center">{dict.admin.detail.loading}</div>;
 
     return (
         <div className="container mx-auto p-6">
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <Link href="/admin/users" className="text-gray-500 hover:text-gray-700 text-sm mb-2 inline-block">← Back to Users</Link>
-                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">User Details <span className='text-sm font-normal text-gray-500'>({userId})</span></h1>
+                    <Link href="/admin/users" className="text-gray-500 hover:text-gray-700 text-sm mb-2 inline-block">← {dict.admin.detail.back}</Link>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{dict.admin.detail.title} <span className='text-sm font-normal text-gray-500'>({userId})</span></h1>
                 </div>
                 <div className="space-x-2">
                     {/* Add User Action buttons here if needed */}
@@ -76,19 +78,19 @@ export default function UserDetailPage() {
                         onClick={() => setActiveTab('overview')}
                         className={`${activeTab === 'overview' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                     >
-                        Overview
+                        {dict.admin.detail.tabs.overview}
                     </button>
                     <button
                         onClick={() => setActiveTab('applications')}
                         className={`${activeTab === 'applications' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                     >
-                        Applications ({applications.length})
+                        {dict.admin.detail.tabs.applications} ({applications.length})
                     </button>
                     <button
                         onClick={() => setActiveTab('cv')}
                         className={`${activeTab === 'cv' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                     >
-                        CV / Resume
+                        {dict.admin.detail.tabs.cv}
                     </button>
                 </nav>
             </div>
@@ -98,15 +100,15 @@ export default function UserDetailPage() {
 
                 {activeTab === 'overview' && (
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold">User Stats</h2>
+                        <h2 className="text-xl font-semibold">{dict.admin.detail.stats.title}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
-                                <span className="block text-sm text-blue-500 dark:text-blue-300">Total Applications</span>
+                                <span className="block text-sm text-blue-500 dark:text-blue-300">{dict.admin.detail.stats.totalApps}</span>
                                 <span className="block text-2xl font-bold text-blue-700 dark:text-blue-100">{applications.length}</span>
                             </div>
                             <div className="bg-green-50 dark:bg-green-900 p-4 rounded-lg">
-                                <span className="block text-sm text-green-500 dark:text-green-300">Has CV?</span>
-                                <span className="block text-2xl font-bold text-green-700 dark:text-green-100 text-sm mt-2">{cvData ? 'YES' : 'NO'}</span>
+                                <span className="block text-sm text-green-500 dark:text-green-300">{dict.admin.detail.stats.hasCv}</span>
+                                <span className="block text-2xl font-bold text-green-700 dark:text-green-100 text-sm mt-2">{cvData ? dict.admin.detail.stats.yes : dict.admin.detail.stats.no}</span>
                             </div>
                             {/* More stats can go here */}
                         </div>
@@ -118,15 +120,15 @@ export default function UserDetailPage() {
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead>
                                 <tr>
-                                    <th className="px-4 py-2 text-left">Company</th>
-                                    <th className="px-4 py-2 text-left">Position</th>
-                                    <th className="px-4 py-2 text-left">Status</th>
-                                    <th className="px-4 py-2 text-left">Date Applied</th>
+                                    <th className="px-4 py-2 text-left">{dict.admin.detail.apps.company}</th>
+                                    <th className="px-4 py-2 text-left">{dict.admin.detail.apps.position}</th>
+                                    <th className="px-4 py-2 text-left">{dict.admin.detail.apps.status}</th>
+                                    <th className="px-4 py-2 text-left">{dict.admin.detail.apps.date}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {applications.length === 0 ? (
-                                    <tr><td colSpan={4} className="p-4 text-center text-gray-500">No applications found.</td></tr>
+                                    <tr><td colSpan={4} className="p-4 text-center text-gray-500">{dict.admin.detail.apps.empty}</td></tr>
                                 ) : (
                                     applications.map(app => (
                                         <tr key={app.id}>
@@ -147,40 +149,40 @@ export default function UserDetailPage() {
                 {activeTab === 'cv' && (
                     <div>
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold">Curriculum Vitae</h2>
+                            <h2 className="text-xl font-semibold">{dict.admin.detail.cv.title}</h2>
                             {cvData && (
                                 <button
                                     onClick={handleDownloadCv}
                                     disabled={downloading}
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition flex items-center gap-2"
                                 >
-                                    {downloading ? 'Downloading...' : 'Download Word CV'}
+                                    {downloading ? dict.admin.detail.cv.downloading : dict.admin.detail.cv.download}
                                 </button>
                             )}
                         </div>
 
                         {!cvData ? (
-                            <p className="text-gray-500 italic">User has not created a CV yet.</p>
+                            <p className="text-gray-500 italic">{dict.admin.detail.cv.notCreated}</p>
                         ) : (
                             <div className="space-y-6 text-sm">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div><strong>Phone:</strong> {cvData.phoneNumber || '-'}</div>
-                                    <div><strong>LinkedIn:</strong> {cvData.linkedinUrl || '-'}</div>
-                                    <div className="col-span-2"><strong>Summary:</strong> <p className="mt-1 text-gray-600 dark:text-gray-300">{cvData.summary || '-'}</p></div>
+                                    <div><strong>{dict.admin.detail.cv.phone}:</strong> {cvData.phoneNumber || '-'}</div>
+                                    <div><strong>{dict.admin.detail.cv.linkedin}:</strong> {cvData.linkedinUrl || '-'}</div>
+                                    <div className="col-span-2"><strong>{dict.admin.detail.cv.summary}:</strong> <p className="mt-1 text-gray-600 dark:text-gray-300">{cvData.summary || '-'}</p></div>
                                 </div>
                                 <hr />
                                 <div>
-                                    <h3 className="font-semibold mb-2">Education</h3>
+                                    <h3 className="font-semibold mb-2">{dict.admin.detail.cv.education}</h3>
                                     <ul className="list-disc list-inside space-y-1">
                                         {cvData.educations.map((edu, idx) => (
                                             <li key={idx}>
-                                                <span className="font-medium">{edu.schoolName}</span> - {edu.fieldOfStudy} ({edu.startDate ? new Date(edu.startDate).getFullYear() : '?'} - {edu.isCurrent ? 'Present' : (edu.endDate ? new Date(edu.endDate).getFullYear() : '?')})
+                                                <span className="font-medium">{edu.schoolName}</span> - {edu.fieldOfStudy} ({edu.startDate ? new Date(edu.startDate).getFullYear() : '?'} - {edu.isCurrent ? dict.admin.detail.cv.present : (edu.endDate ? new Date(edu.endDate).getFullYear() : '?')})
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold mb-2">Experience</h3>
+                                    <h3 className="font-semibold mb-2">{dict.admin.detail.cv.experience}</h3>
                                     <ul className="list-disc list-inside space-y-1">
                                         {cvData.experiences.map((exp, idx) => (
                                             <li key={idx}>

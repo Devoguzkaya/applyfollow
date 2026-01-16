@@ -29,11 +29,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/applyfollow_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: REMOVED_FOR_SECURITY
-      
+
       # Security & Mail (Bunlari production'da .env dosyasindan almak en iyisidir ama simdilik buraya yaziyoruz)
-      JWT_SECRET_KEY: ApplyFollow_2026_Guvenli_JWT_Anahtari_x92!s
+      JWT_SECRET_KEY: REMOVED_FOR_SECURITY
       MAIL_PASSWORD: mail_sifresi_yok
-      
+
       # CORS (Frontend Container Name veya IP)
       CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://5.175.136.4:3000,http://frontend:3000"
     networks:
@@ -55,6 +55,7 @@ services:
 
 volumes:
   postgres_data:
+
 
 networks:
   app_network:

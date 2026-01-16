@@ -10,7 +10,7 @@ const getBaseURL = () => {
     }
 
     // 3. Default Production Fallback
-    return 'https://api.applyfollow.com';
+    return 'https://applyfollow.com/api';
 };
 
 const api = axios.create({

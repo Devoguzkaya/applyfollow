@@ -8,7 +8,7 @@
 		<version>3.2.1</version> 
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.applytrack</groupId>
+	<groupId>com.applyfollow</groupId>
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>applyfollow-backend</name>
@@ -46,6 +46,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { calendarService, CalendarEvent } from '@/services/calendarService';
 import toast from 'react-hot-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CalendarPage() {
+    const { t } = useLanguage();
+
     // State
     const [currentDate, setCurrentDate] = useState(new Date());
     const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -26,7 +29,7 @@ export default function CalendarPage() {
             setEvents(data);
         } catch (error) {
             console.error("Failed to fetch calendar events:", error);
-            toast.error("Failed to load events.");
+            toast.error(t('calendar.toast.fetchError'));
         }
     };
 
@@ -46,7 +49,9 @@ export default function CalendarPage() {
     const daysInMonth = getDaysInMonth(year, month);
     const firstDay = getFirstDayOfMonth(year, month);
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    // Safe casting for array translations
+    const monthNames = (t('calendar.monthNames') as unknown as string[]) || [];
+    const weekDays = (t('calendar.weekDays') as unknown as string[]) || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     const handlePrevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
     const handleNextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
@@ -88,7 +93,7 @@ export default function CalendarPage() {
             setIsModalOpen(false);
 
             // Success Toast
-            toast.success("Event created successfully!");
+            toast.success(t('calendar.toast.success'));
 
             // Simple alarm notification check (browser API)
             if (hasAlarm && "Notification" in window && Notification.permission !== "granted") {
@@ -96,22 +101,20 @@ export default function CalendarPage() {
             }
         } catch (error) {
             console.error("Failed to create event:", error);
-            toast.error("Failed to save event.");
+            toast.error(t('calendar.toast.saveError'));
         }
     };
 
     const handleDeleteEvent = async (id: string, eventTitle: string) => {
-        // Confirmation is good, but let's make it smoother or just rely on undo? 
-        // For now, keep native confirm but maybe custom modal later.
-        if (!confirm("Are you sure you want to delete this event?")) return;
+        if (!confirm(t('calendar.confirmDelete'))) return;
 
         try {
             await calendarService.deleteEvent(id);
             await fetchEvents(); // Refresh list
-            toast.success(`Deleted "${eventTitle}"`);
+            toast.success(t('calendar.toast.deleted').replace('{title}', eventTitle));
         } catch (error) {
             console.error("Failed to delete event:", error);
-            toast.error("Could not delete event.");
+            toast.error(t('calendar.toast.deleteError'));
         }
     };
 
@@ -133,9 +136,9 @@ export default function CalendarPage() {
                 <div
                     key={day}
                     onClick={() => handleDayClick(day)}
-                    className={`border-r border-b border-border-dark p-2 min-h-[100px] relative group hover:bg-surface-hover/30 transition-colors cursor-pointer ${isToday ? 'bg-primary/5' : ''}`}
+                    className={`border-r border-b border-border-main p-2 min-h-[100px] relative group hover:bg-surface-hover/30 transition-colors cursor-pointer ${isToday ? 'bg-primary/5' : ''}`}
                 >
-                    <span className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-primary text-[#101618] font-bold' : 'text-slate-400'}`}>
+                    <span className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-primary text-black font-bold shadow-glow' : 'text-text-muted'}`}>
                         {day}
                     </span>
 
@@ -172,28 +175,28 @@ export default function CalendarPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-display">{monthNames[month]} {year}</h1>
-                    <p className="text-slate-400">Manage your schedule, interviews, and deadlines.</p>
+                    <h1 className="text-3xl font-bold text-text-main font-display">{monthNames[month]} {year}</h1>
+                    <p className="text-text-muted">{t('calendar.subtitle')}</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={handlePrevMonth} className="p-2 rounded-lg border border-border-dark text-slate-400 hover:text-white hover:bg-surface-hover transition-colors">
+                    <button onClick={handlePrevMonth} className="p-2 rounded-lg border border-border-main text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
                         <span className="material-symbols-outlined">chevron_left</span>
                     </button>
-                    <button onClick={handleToday} className="px-4 py-2 rounded-lg border border-border-dark text-white font-medium hover:bg-surface-hover transition-colors">
-                        Today
+                    <button onClick={handleToday} className="px-4 py-2 rounded-lg border border-border-main text-text-main font-medium hover:bg-surface-hover transition-colors">
+                        {t('calendar.today')}
                     </button>
-                    <button onClick={handleNextMonth} className="p-2 rounded-lg border border-border-dark text-slate-400 hover:text-white hover:bg-surface-hover transition-colors">
+                    <button onClick={handleNextMonth} className="p-2 rounded-lg border border-border-main text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
                         <span className="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
             </div>
 
             {/* Calendar Container */}
-            <div className="flex-1 bg-surface-dark border border-border-dark rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+            <div className="flex-1 bg-surface-darker border border-border-main rounded-2xl overflow-hidden flex flex-col shadow-2xl">
                 {/* Weekday Headers */}
-                <div className="grid grid-cols-7 border-b border-border-dark bg-surface-hover/20">
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                        <div key={day} className="py-3 text-center text-sm font-bold text-slate-500 uppercase tracking-wider">
+                <div className="grid grid-cols-7 border-b border-border-main bg-surface-hover/20">
+                    {weekDays.map(day => (
+                        <div key={day} className="py-3 text-center text-sm font-bold text-text-muted uppercase tracking-wider">
                             {day}
                         </div>
                     ))}
@@ -207,99 +210,99 @@ export default function CalendarPage() {
 
             {/* Event Modal */}
             {isModalOpen && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-[#182023] border border-border-dark w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                        <div className="p-6 border-b border-border-dark flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-white">Add Event</h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
+                <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-background-main/80 backdrop-blur-sm rounded-2xl">
+                    <div className="bg-surface-card border border-border-main w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="p-6 border-b border-border-main flex items-center justify-between">
+                            <h3 className="text-xl font-bold text-text-main">{t('calendar.addEvent')}</h3>
+                            <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-text-main">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
                         <form onSubmit={handleSaveEvent} className="p-6 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Title</label>
+                                <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.title')}</label>
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="e.g. Google Interview"
-                                    className="w-full h-11 px-4 bg-black/20 border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                                    placeholder={t('calendar.form.titlePlaceholder')}
+                                    className="w-full h-11 px-4 bg-input-bg border border-border-main rounded-xl text-text-main placeholder:text-text-muted/50 focus:border-primary focus:outline-none transition-colors"
                                     autoFocus
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Date</label>
+                                    <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.date')}</label>
                                     <input
                                         type="date"
                                         value={selectedDate || ''}
                                         onChange={(e) => setSelectedDate(e.target.value)}
-                                        className="w-full h-11 px-4 bg-black/20 border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                                        className="w-full h-11 px-4 bg-input-bg border border-border-main rounded-xl text-text-main focus:border-primary focus:outline-none transition-colors"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Time</label>
+                                    <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.time')}</label>
                                     <input
                                         type="time"
                                         value={time}
                                         onChange={(e) => setTime(e.target.value)}
-                                        className="w-full h-11 px-4 bg-black/20 border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                                        className="w-full h-11 px-4 bg-input-bg border border-border-main rounded-xl text-text-main focus:border-primary focus:outline-none transition-colors"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Type</label>
+                                <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.type')}</label>
                                 <div className="flex gap-2">
-                                    {['event', 'interview', 'deadline'].map(t => (
+                                    {['event', 'interview', 'deadline'].map(tType => (
                                         <button
-                                            key={t}
+                                            key={tType}
                                             type="button"
-                                            onClick={() => setEventType(t as any)}
-                                            className={`flex-1 h-9 rounded-lg text-sm font-bold capitalize transition-all border ${eventType === t
+                                            onClick={() => setEventType(tType as any)}
+                                            className={`flex-1 h-9 rounded-lg text-sm font-bold capitalize transition-all border ${eventType === tType
                                                 ? 'bg-primary/20 border-primary text-primary'
-                                                : 'bg-black/20 border-border-dark text-slate-400 hover:text-white'}`}
+                                                : 'bg-input-bg border-border-main text-text-muted hover:text-text-main'}`}
                                         >
-                                            {t}
+                                            {t(`calendar.form.types.${tType}`) || tType}
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Notes</label>
+                                <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.notes')}</label>
                                 <textarea
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
-                                    placeholder="Add details, links, or notes..."
-                                    className="w-full h-24 p-4 bg-black/20 border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors resize-none"
+                                    placeholder={t('calendar.form.notesPlaceholder')}
+                                    className="w-full h-24 p-4 bg-input-bg border border-border-main rounded-xl text-text-main placeholder:text-text-muted/50 focus:border-primary focus:outline-none transition-colors resize-none"
                                 ></textarea>
                             </div>
 
                             <div className="space-y-3">
-                                <div className="flex items-center gap-3 p-3 bg-black/20 rounded-xl border border-border-dark cursor-pointer transition-colors hover:bg-black/30" onClick={() => setHasAlarm(!hasAlarm)}>
-                                    <div className={`size-5 rounded-md border flex items-center justify-center transition-colors ${hasAlarm ? 'bg-primary border-primary' : 'border-slate-600'}`}>
+                                <div className="flex items-center gap-3 p-3 bg-input-bg rounded-xl border border-border-main cursor-pointer transition-colors hover:bg-surface-hover/50" onClick={() => setHasAlarm(!hasAlarm)}>
+                                    <div className={`size-5 rounded-md border flex items-center justify-center transition-colors ${hasAlarm ? 'bg-primary border-primary' : 'border-border-main'}`}>
                                         {hasAlarm && <span className="material-symbols-outlined text-black text-[14px] font-bold">check</span>}
                                     </div>
-                                    <span className={`text-sm font-medium ${hasAlarm ? 'text-white' : 'text-slate-400'}`}>Set Alarm / Reminder</span>
+                                    <span className={`text-sm font-medium ${hasAlarm ? 'text-text-main' : 'text-text-muted'}`}>{t('calendar.form.alarm')}</span>
                                 </div>
 
                                 {hasAlarm && (
                                     <div className="animate-in fade-in slide-in-from-top-2 duration-200 pl-2 border-l-2 border-primary/20">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Alarm Time</label>
+                                        <label className="text-xs font-bold text-text-muted uppercase tracking-wider block mb-2">{t('calendar.form.alarmTime')}</label>
                                         <input
                                             type="time"
                                             value={alarmTime}
                                             onChange={(e) => setAlarmTime(e.target.value)}
-                                            className="w-full h-11 px-4 bg-black/20 border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                                            className="w-full h-11 px-4 bg-input-bg border border-border-main rounded-xl text-text-main focus:border-primary focus:outline-none transition-colors"
                                         />
                                     </div>
                                 )}
                             </div>
 
-                            <button type="submit" className="w-full h-12 bg-primary text-[#101618] font-bold rounded-xl mt-4 hover:bg-emerald-400 transition-colors shadow-glow">
-                                Save Event
+                            <button type="submit" className="w-full h-12 bg-primary text-black font-bold rounded-xl mt-4 hover:opacity-90 transition-opacity shadow-glow">
+                                {t('calendar.form.save')}
                             </button>
                         </form>
                     </div>

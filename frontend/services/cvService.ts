@@ -59,6 +59,7 @@ export interface CvData {
     skills: SkillDto[];
     languages: LanguageDto[];
     certificates: CertificateDto[];
+    cvTitle?: string;
 }
 
 export const cvService = {

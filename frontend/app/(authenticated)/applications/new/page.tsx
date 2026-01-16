@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { applicationService, ApplicationRequest } from "@/services/applicationService";
+import { useLanguage } from "@/context/LanguageContext";
+import toast from "react-hot-toast";
 
 export default function NewApplicationPage() {
+    const { t } = useLanguage();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -15,12 +18,13 @@ export default function NewApplicationPage() {
         position: '',
         jobUrl: '',
         status: 'APPLIED',
-        notes: ''
+        notes: '',
+        appliedAt: new Date().toISOString().split('T')[0]
     });
 
     const handleSubmit = async () => {
         if (!formData.companyName || !formData.position) {
-            setError("Company Name and Position are required/zorunlu kardeşim.");
+            setError(t('applications.new.validation.required'));
             return;
         }
 
@@ -28,12 +32,17 @@ export default function NewApplicationPage() {
         setError("");
 
         try {
-            await applicationService.createApplication(formData);
-            router.push('/applications'); // Redirect to list
-            router.refresh(); // Verileri tazelemek için
+            // Convert simple date (YYYY-MM-DD) to LocalDateTime format (YYYY-MM-DDTHH:mm:ss)
+            const requestData = {
+                ...formData,
+                appliedAt: formData.appliedAt ? `${formData.appliedAt}T00:00:00` : undefined
+            };
+            await applicationService.createApplication(requestData);
+            router.refresh();
+            toast.success(t('applications.new.success'));
         } catch (err) {
             console.error(err);
-            setError("Something went wrong. Backend ayakta mı?");
+            setError(t('applications.new.validation.genericError'));
         } finally {
             setLoading(false);
         }
@@ -46,7 +55,7 @@ export default function NewApplicationPage() {
 
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-8 py-6 border-b border-border-dark bg-surface-dark rounded-t-2xl">
-                    <h2 className="text-2xl font-bold text-white tracking-tight font-display">Add New Application</h2>
+                    <h2 className="text-2xl font-bold text-white tracking-tight font-display">{t('applications.new.title')}</h2>
                     <Link href="/dashboard" className="group p-2 rounded-full hover:bg-white/5 transition-colors text-slate-400 hover:text-white">
                         <span className="material-symbols-outlined">close</span>
                     </Link>
@@ -64,16 +73,15 @@ export default function NewApplicationPage() {
 
                     {/* Company Name Field */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium text-slate-300 ml-1">Company Name</label>
+                        <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.companyName')}</label>
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">business</span>
                             </div>
                             <input
-                                value={formData.companyName}
                                 onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                                 className="w-full h-14 pl-12 pr-4 bg-input-bg border border-border-dark rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base"
-                                placeholder="e.g. Google, Stripe"
+                                placeholder={t('applications.new.companyPlaceholder')}
                                 type="text"
                             />
                         </div>
@@ -87,10 +95,9 @@ export default function NewApplicationPage() {
                                 <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">badge</span>
                             </div>
                             <input
-                                value={formData.position}
                                 onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                                 className="w-full h-14 pl-12 pr-4 bg-input-bg border border-border-dark rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base"
-                                placeholder="e.g. Senior Product Designer"
+                                placeholder={t('applications.new.positionPlaceholder')}
                                 type="text"
                             />
                         </div>
@@ -136,6 +143,22 @@ export default function NewApplicationPage() {
                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-slate-500">expand_more</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Application Date Field */}
+                        <div className="flex flex-col gap-2 md:col-span-2">
+                            <label className="text-sm font-medium text-slate-300 ml-1">Application Date</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">calendar_month</span>
+                                </div>
+                                <input
+                                    value={formData.appliedAt}
+                                    onChange={(e) => setFormData({ ...formData, appliedAt: e.target.value })}
+                                    className="w-full h-14 pl-12 pr-4 bg-input-bg border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base [color-scheme:dark]"
+                                    type="date"
+                                />
                             </div>
                         </div>
                     </div>

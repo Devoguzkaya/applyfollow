@@ -1,20 +1,34 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 // Redux
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { authService } from '@/services/authService';
 import { login } from '@/store/features/auth/authSlice';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const { isLoading } = useAppSelector((state) => state.auth);
+    const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
+    const [shouldShowForm, setShouldShowForm] = useState(false);
+
+    // Redirect if already logged in (Check LocalStorage directly for speed)
+    useEffect(() => {
+        const user = authService.getCurrentUser();
+        if (user || isAuthenticated) {
+            router.push('/dashboard');
+        } else {
+            setShouldShowForm(true);
+        }
+    }, [isAuthenticated, router]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    if (!shouldShowForm) return null;
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,21 +1,35 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 // Redux
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { authService } from '@/services/authService';
 import { register } from '@/store/features/auth/authSlice';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const { isLoading } = useAppSelector((state) => state.auth);
+    const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
+    const [shouldShowForm, setShouldShowForm] = useState(false);
+
+    // Redirect if already logged in
+    useEffect(() => {
+        const user = authService.getCurrentUser();
+        if (user || isAuthenticated) {
+            router.push('/dashboard');
+        } else {
+            setShouldShowForm(true);
+        }
+    }, [isAuthenticated, router]);
 
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    if (!shouldShowForm) return null;
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();

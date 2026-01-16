@@ -3,6 +3,8 @@ import { Space_Grotesk, Noto_Sans } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast';
 import StoreProvider from '@/store/StoreProvider';
+import { LanguageProvider } from '@/context/LanguageContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -26,37 +28,31 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${notoSans.variable}`}>
-      <body className="bg-background-light dark:bg-background-dark font-body antialiased text-slate-200">
-        {/* Material Symbols Icon CDN */}
+    <html lang="en">
+      <body className={`${spaceGrotesk.variable} ${notoSans.variable} font-body antialiased`}>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
         <StoreProvider>
-          {/* Notifications */}
-          <Toaster position="top-right"
-            toastOptions={{
-              style: {
-                background: '#1A2321', // surface-dark
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.1)',
-                fontFamily: 'var(--font-noto-sans)'
-              },
-              success: {
-                iconTheme: {
-                  primary: '#17cf63',
-                  secondary: '#1A2321'
-                }
-              },
-              error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff'
-                }
-              }
-            }}
-          />
-
-          {children}
+          <ThemeProvider>
+            <LanguageProvider>
+              <Toaster position="top-right"
+                toastOptions={{
+                  style: {
+                    background: 'var(--surface)',
+                    color: 'var(--text-color)',
+                    border: '1px solid var(--border-color)',
+                    fontFamily: 'var(--font-noto-sans)'
+                  },
+                  success: {
+                    iconTheme: {
+                      primary: 'var(--primary)',
+                      secondary: 'var(--surface)'
+                    }
+                  }
+                }}
+              />
+              {children}
+            </LanguageProvider>
+          </ThemeProvider>
         </StoreProvider>
       </body>
     </html>

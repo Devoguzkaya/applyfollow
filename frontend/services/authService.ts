@@ -6,6 +6,7 @@ export interface User {
     id: string;
     email: string;
     fullName: string;
+    role: string;
 }
 
 export interface LoginRequest {
@@ -24,6 +25,7 @@ export interface AuthResponse {
     id: string;
     email: string;
     fullName: string;
+    role: string;
     message: string;
 }
 

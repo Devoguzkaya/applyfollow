@@ -1,0 +1,233 @@
+import { Dictionary } from "./tr";
+
+export const en: Dictionary = {
+    common: {
+        save: "Save",
+        cancel: "Cancel",
+        delete: "Delete",
+        edit: "Edit",
+        download: "Download",
+        loading: "Loading...",
+        noData: "No data found",
+    },
+    sidebar: {
+        overview: "Overview",
+        applications: "My Applications",
+        schedule: "Schedule",
+        cvBuilder: "CV Builder",
+        settings: "Settings",
+        management: "Management",
+        adminPanel: "Admin Panel",
+        users: "Users",
+        messages: "Messages",
+        upgradePlan: "Upgrade Plan",
+        proVersion: "Get premium tracking features & analytics.",
+        proButton: "Pro Version",
+    },
+    dashboard: {
+        welcome: "Welcome",
+        summary: "Summary",
+        stats: {
+            total: "Total Applications",
+            pending: "Pending",
+            interviews: "Interviews",
+            rejected: "Rejected",
+            offer: "Offer",
+            ghosted: "Ghosted",
+        }
+    },
+    profile: {
+        yourProfile: "Your Profile",
+        logout: "Log out",
+        signedInAs: "Signed in as",
+    },
+    notifications: {
+        title: "Notifications",
+        clearAll: "Clear all",
+        allCaughtUp: "All caught up!",
+        noNotifications: "No new notifications at the moment. We'll alert you when something happens.",
+    },
+    cv: {
+        preview: "CV Preview",
+        builder: "CV Builder",
+        title: "CV Title",
+        personalInfo: "Personal Info",
+        summary: "Professional Summary",
+        experience: "Experience",
+        education: "Education",
+        skills: "Skills",
+        languages: "Languages",
+        certificates: "Certificates",
+    },
+    applications: {
+        title: "Applications",
+        subtitle: "Manage and track all your opportunities in one place.",
+        searchPlaceholder: "Search companies...",
+        newButton: "New",
+        list: {
+            company: "Company",
+            position: "Position",
+            status: "Status",
+            appliedDate: "Applied Date",
+            actions: "Actions",
+            emptyTitle: "No applications yet",
+            emptyDesc: "Start your journey by adding your first job application.",
+            emptyAction: "Add Application",
+            noResult: "No applications matching \"{query}\" found.",
+            loading: "Loading your applications..."
+        },
+        new: {
+            title: "Add New Application",
+            companyName: "Company Name",
+            companyPlaceholder: "e.g. Google, Stripe",
+            position: "Job Position",
+            positionPlaceholder: "e.g. Senior Product Designer",
+            jobUrl: "Job URL (Optional)",
+            jobUrlPlaceholder: "https://...",
+            appliedDate: "Applied Date",
+            status: "Status",
+            notes: "Notes (Optional)",
+            notesPlaceholder: "Important details about this job...",
+            submit: "Create Application",
+            submitting: "Creating...",
+            success: "Application created successfully!",
+            validation: {
+                required: "Company Name and Position are required.",
+                genericError: "Something went wrong. Please try again."
+            }
+        },
+        detail: {
+            jobDetails: "Job Details",
+            visitPost: "Visit Post",
+            notes: "Notes",
+            notesPlaceholder: "Write your interview notes or thoughts here...",
+            saveNotes: "Save Notes",
+            saving: "Saving...",
+            contacts: "Contacts",
+            addContact: "Add Contact",
+            noContacts: "No contacts added yet.",
+            statusUpdated: "Status updated to ",
+            contactAdded: "Contact added successfully!",
+            notesSaved: "Notes saved successfully!",
+            noLink: "No Link Available",
+            contactModal: {
+                title: "Add New Contact",
+                name: "Name",
+                role: "Role / Position",
+                email: "Email",
+                phone: "Phone",
+                linkedin: "LinkedIn",
+                save: "Save Contact",
+                cancel: "Cancel"
+            }
+        },
+        status: {
+            APPLIED: "Applied",
+            INTERVIEW: "Interview",
+            OFFER: "Offer",
+            REJECTED: "Rejected",
+            GHOSTED: "Ghosted"
+        }
+    },
+    landing: {
+        nav: {
+            features: "Features",
+            about: "About",
+            contact: "Contact",
+            login: "Log In",
+            signup: "Sign Up",
+        },
+        hero: {
+            badge: "v1.0 Public Beta",
+            title: "Land Your Dream Job Without the Chaos.",
+            subtitle: "Stop using spreadsheets. Track applications, manage interviews, and organize your network in one powerful workspace designed for developers.",
+            getStarted: "Get Started",
+            starGithub: "Star on GitHub",
+        },
+        features: {
+            title: "Everything You Need",
+            subtitle: "Tools designed to streamline your career growth.",
+            cards: {
+                allInOne: {
+                    title: "All in One Place",
+                    desc: "Ditch the messy Excel sheets. View all your applications, statuses, and notes in a unified dashboard.",
+                },
+                reminders: {
+                    title: "Smart Reminders",
+                    desc: "Never miss an interview. Get automated notifications for upcoming calls and follow-ups.",
+                },
+                analytics: {
+                    title: "Pipeline Analytics",
+                    desc: "Visualize your progress. See how many applications are sent, interviewed, or offered.",
+                }
+            }
+        },
+        about: {
+            badge: "Our Mission",
+            title: "Empowering Developers to Build Their Future.",
+            desc1: "ApplyFollow was born out of frustration. As developers, we spend so much time building amazing products for others, yet we often lack the right tools to manage our own careers.",
+            desc2: "Our mission is to eliminate the chaos of job hunting. We believe that with the right data and organization, every developer can land their dream role without the burnout.",
+            stats: {
+                tracked: "Applications Tracked",
+                realized: "Dreams Realized",
+            }
+        },
+        contact: {
+            title: "Get in Touch.",
+            subtitle: "Have questions or feedback? We'd love to hear from you. Our team is always here to help.",
+            info: {
+                email: "Email us",
+                location: "Location",
+            },
+            form: {
+                name: "Name",
+                email: "Email",
+                subject: "Subject",
+                message: "Message",
+                send: "Send Message",
+                sending: "Sending...",
+            }
+        },
+        footer: {
+            rights: "© 2026 ApplyFollow. Built with ❤️ by Oguzhan.",
+            links: {
+                terms: "Terms",
+            }
+        }
+    },
+    calendar: {
+        subtitle: "Manage your schedule, interviews, and deadlines.",
+        today: "Today",
+        monthNames: [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ],
+        weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        addEvent: "Add Event",
+        form: {
+            title: "Title",
+            titlePlaceholder: "e.g. Google Interview",
+            date: "Date",
+            time: "Time",
+            type: "Type",
+            notes: "Notes",
+            notesPlaceholder: "Add details, links, or notes...",
+            alarm: "Set Alarm / Reminder",
+            alarmTime: "Alarm Time",
+            save: "Save Event",
+            types: {
+                event: "event",
+                interview: "interview",
+                deadline: "deadline"
+            }
+        },
+        toast: {
+            success: "Event created successfully!",
+            deleted: "\"{title}\" deleted.",
+            deleteError: "Could not delete event.",
+            fetchError: "Failed to load events.",
+            saveError: "Failed to save event."
+        },
+        confirmDelete: "Are you sure you want to delete this event?"
+    }
+};

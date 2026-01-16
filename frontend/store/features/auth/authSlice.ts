@@ -13,7 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
     user: null,
     isAuthenticated: false,
-    isLoading: true, // Uygulama açıldığında kontrol edene kadar true
+    isLoading: false,
     error: null,
 };
 

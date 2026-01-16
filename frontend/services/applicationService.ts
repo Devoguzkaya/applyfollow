@@ -29,6 +29,7 @@ export interface ApplicationRequest {
     status: JobStatus;
     jobUrl?: string;
     notes?: string;
+    appliedAt?: string;
 }
 
 // Alias for Redux slice consistency
@@ -66,6 +67,14 @@ export const applicationService = {
     // Update application status
     updateApplicationStatus: async (id: string, status: string): Promise<ApplicationResponse> => {
         const response = await api.patch<ApplicationResponse>(`/applications/${id}/status?status=${status}`);
+        return response.data;
+    },
+
+    // Update application notes
+    updateNotes: async (id: string, notes: string): Promise<ApplicationResponse> => {
+        const response = await api.patch<ApplicationResponse>(`/applications/${id}/notes`, notes, {
+            headers: { 'Content-Type': 'text/plain' }
+        });
         return response.data;
     },
 

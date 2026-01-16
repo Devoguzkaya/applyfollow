@@ -26,11 +26,30 @@ export interface ContactMessage {
     createdAt: string;
 }
 
+export interface AdminUserDetailResponse {
+    id: string;
+    email: string;
+    fullName: string;
+    role: string;
+    active: boolean;
+    phoneNumber?: string;
+    address?: string;
+    linkedinUrl?: string;
+    githubUrl?: string;
+    websiteUrl?: string;
+    summary?: string;
+}
+
 export const adminService = {
     getUsers: async (page = 0, size = 10, email = '') => {
         const response = await api.get<PageResponse<UserAdminResponse>>(`/admin/users`, {
             params: { page, size, email }
         });
+        return response.data;
+    },
+
+    getUserDetails: async (id: string) => {
+        const response = await api.get<AdminUserDetailResponse>(`/admin/users/${id}`);
         return response.data;
     },
 

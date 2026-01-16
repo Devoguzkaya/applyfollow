@@ -210,6 +210,17 @@ export const tr = {
             title: "Kullanıcı Detayları",
             loading: "Kullanıcı detayları yükleniyor...",
             back: "Kullanıcılara Dön",
+            profile: {
+                title: "Profil Bilgileri",
+                fullName: "Ad Soyad",
+                email: "E-posta",
+                phone: "Telefon",
+                address: "Adres",
+                role: "Rol",
+                active: "Durum",
+                links: "Bağlantılar",
+                notProvided: "Belirtilmemiş"
+            },
             stats: {
                 title: "İstatistikler",
                 totalApps: "Toplam Başvuru",

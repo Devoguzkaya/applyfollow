@@ -1,5 +1,6 @@
 package com.applyfollow.backend.controller;
 
+import com.applyfollow.backend.dto.AdminUserDetailResponse;
 import com.applyfollow.backend.dto.UserResponse;
 import com.applyfollow.backend.model.ContactMessage;
 import com.applyfollow.backend.model.User;
@@ -51,6 +52,27 @@ public class AdminController {
         return ResponseEntity.ok(responsePage);
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<AdminUserDetailResponse> getUserDetails(@PathVariable UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException("User not found"));
+
+        AdminUserDetailResponse response = new AdminUserDetailResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getRole().name(),
+                user.isActive(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getLinkedinUrl(),
+                user.getGithubUrl(),
+                user.getWebsiteUrl(),
+                user.getSummary());
+
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/users/{id}/toggle-status")
     public ResponseEntity<Void> toggleUserStatus(@PathVariable UUID id) {
         User user = userRepository.findById(id)
@@ -78,7 +100,8 @@ public class AdminController {
     @PatchMapping("/messages/{id}/toggle-replied")
     public ResponseEntity<ContactMessage> toggleMessageReplied(@PathVariable UUID id) {
         ContactMessage message = contactMessageRepository.findById(id)
-                .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException("Message not found"));
+                .orElseThrow(
+                        () -> new com.applyfollow.backend.exception.ResourceNotFoundException("Message not found"));
 
         message.setReplied(!message.isReplied());
         return ResponseEntity.ok(contactMessageRepository.save(message));
@@ -90,4 +113,3 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 }
-

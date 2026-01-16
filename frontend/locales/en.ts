@@ -212,6 +212,17 @@ export const en: Dictionary = {
             title: "User Details",
             loading: "Loading user details...",
             back: "Back to Users",
+            profile: {
+                title: "Profile Information",
+                fullName: "Full Name",
+                email: "Email",
+                phone: "Phone",
+                address: "Address",
+                role: "Role",
+                active: "Active",
+                links: "Links",
+                notProvided: "Not provided"
+            },
             stats: {
                 title: "User Stats",
                 totalApps: "Total Applications",

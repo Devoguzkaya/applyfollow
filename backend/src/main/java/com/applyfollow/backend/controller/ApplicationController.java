@@ -31,6 +31,12 @@ public class ApplicationController {
         return service.getAllApplications(user.getId());
     }
 
+    // Admin endpoint to view other users' applications
+    @GetMapping("/user/{userId}")
+    public List<ApplicationResponse> findAllByUserId(@PathVariable UUID userId) {
+        return service.getAllApplications(userId);
+    }
+
     @GetMapping("/{id}")
     public ApplicationResponse findById(@PathVariable UUID id) {
         return service.getApplicationById(id);
@@ -67,4 +73,3 @@ public class ApplicationController {
         return service.updateStatus(id, status);
     }
 }
-

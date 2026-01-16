@@ -49,5 +49,28 @@ public class CvController {
                                                                  // application/vnd.openxmlformats-officedocument.wordprocessingml.document
                 .body(wordContent);
     }
-}
 
+    // Admin endpoint to view user's CV
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CvUpdateRequest> getCvByUserId(@PathVariable java.util.UUID userId) {
+        return ResponseEntity.ok(cvService.getCv(userId));
+    }
+
+    // Admin endpoint to download user's CV
+    @GetMapping("/user/{userId}/download")
+    public ResponseEntity<byte[]> downloadCvByUserId(@PathVariable java.util.UUID userId) throws IOException {
+        // We need to fetch user details to get the name for filename
+        // Assuming userService.findById exists or similar mechanism
+        // For simplicity, using a generic name or fetching via service layer if
+        // possible.
+        // Let's use cvService to generate, filename might simple.
+
+        byte[] wordContent = cvService.generateWordCv(userId);
+        String filename = "CV_User_" + userId + ".docx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(wordContent);
+    }
+}

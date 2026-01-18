@@ -25,7 +25,10 @@ public class Application extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
     private String jobUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String notes;
+
     private LocalDateTime appliedAt = LocalDateTime.now();
 
 }

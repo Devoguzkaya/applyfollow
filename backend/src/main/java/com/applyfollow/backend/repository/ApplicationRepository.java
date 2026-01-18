@@ -4,10 +4,12 @@ import com.applyfollow.backend.model.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, UUID> {
-    List<Application> findByUserId(UUID userId);
-}
+    List<Application> findAllByUserId(UUID userId);
 
+    // Duplicate kontrolü için
+    Optional<Application> findByUserIdAndCompany_NameAndPosition(UUID userId, String companyName, String position);
+}

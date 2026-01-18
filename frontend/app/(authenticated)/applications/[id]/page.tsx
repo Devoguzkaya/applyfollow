@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { use, useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { applicationService, ApplicationResponse, ContactDto } from "@/services/applicationService";
 import { useLanguage } from "@/context/LanguageContext";
 import toast from 'react-hot-toast';
@@ -9,6 +10,7 @@ import toast from 'react-hot-toast';
 export default function ApplicationDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { t } = useLanguage();
     const { id } = use(params);
+    const router = useRouter();
 
     // --- ALL HOOKS MUST BE AT THE TOP ---
     const [application, setApplication] = useState<ApplicationResponse | null>(null);
@@ -18,8 +20,9 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [newContact, setNewContact] = useState<ContactDto>({ name: '', role: '', email: '', phone: '', linkedIn: '' });
     const [contactLoading, setContactLoading] = useState(false);
+    const [notesLoading, setNotesLoading] = useState(false);
 
-    // Expanded Contact State (MOVED HERE)
+    // Expanded Contact State
     const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -54,6 +57,22 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
         window.open(url, '_blank');
     }, [application?.jobUrl]);
 
+    const handleDelete = async () => {
+        if (!application) return;
+        if (!window.confirm("Are you sure you want to delete this application? This action cannot be undone.")) {
+            return;
+        }
+
+        try {
+            await applicationService.deleteApplication(application.id);
+            toast.success("Application deleted successfully");
+            router.push('/dashboard');
+        } catch (error) {
+            console.error("Failed to delete application:", error);
+            toast.error("Failed to delete application");
+        }
+    };
+
     const handleAddContact = useCallback(async () => {
         if (!newContact.name) {
             toast.error(t('applications.new.validation.required'));
@@ -64,7 +83,6 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
             const addedContact = await applicationService.addContact(id, newContact);
             setContacts(prev => [...prev, addedContact]);
             setNewContact({ name: '', role: '', email: '', phone: '', linkedIn: '' });
-            setNewContact({ name: '', role: '', email: '', phone: '', linkedIn: '' });
             setIsContactModalOpen(false);
             toast.success(t('applications.detail.contactAdded'));
         } catch (error) {
@@ -73,14 +91,12 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
         } finally {
             setContactLoading(false);
         }
-    }, [id, newContact]);
+    }, [id, newContact, t]);
 
     const toggleContact = useCallback((contactId: string | undefined) => {
         if (!contactId) return;
         setExpandedContactId(prev => (prev === contactId ? null : contactId));
     }, []);
-
-    const [notesLoading, setNotesLoading] = useState(false);
 
     const handleSaveNotes = useCallback(async () => {
         setNotesLoading(true);
@@ -93,7 +109,7 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
         } finally {
             setNotesLoading(false);
         }
-    }, [id, notes]);
+    }, [id, notes, t]);
 
     const handleStatusUpdate = async (newStatus: string) => {
         if (!application) return;
@@ -245,6 +261,14 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                                     <span className="material-symbols-outlined text-lg">link_off</span> {t('applications.detail.noLink')}
                                 </button>
                             )}
+                            {/* Delete Button */}
+                            <button
+                                onClick={handleDelete}
+                                className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 text-sm font-medium transition-colors border border-red-500/20 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                            >
+                                <span className="material-symbols-outlined text-lg">delete</span>
+                                {t('applications.detail.delete') || 'Delete'} {/* Fallback text */}
+                            </button>
                         </div>
                     </article>
 

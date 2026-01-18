@@ -72,4 +72,10 @@ public class ApplicationController {
     public ApplicationResponse updateStatus(@PathVariable UUID id, @RequestParam String status) {
         return service.updateStatus(id, status);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        service.deleteApplication(id);
+    }
 }

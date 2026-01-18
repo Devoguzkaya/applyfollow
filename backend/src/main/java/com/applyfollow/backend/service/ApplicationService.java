@@ -35,7 +35,7 @@ public class ApplicationService {
     }
 
     public List<ApplicationResponse> getAllApplications(UUID userId) {
-        return applicationRepository.findByUserId(userId).stream()
+        return applicationRepository.findAllByUserId(userId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -49,6 +49,14 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse createApplication(ApplicationRequest request, UUID userId) {
+        // Duplicate Check
+        java.util.Optional<Application> existing = applicationRepository.findByUserIdAndCompany_NameAndPosition(
+                userId, request.companyName(), request.position());
+
+        if (existing.isPresent()) {
+            return mapToResponse(existing.get());
+        }
+
         Company company = companyService.findOrCreateCompany(request.companyName());
         com.applyfollow.backend.model.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException("User not found"));
@@ -66,6 +74,15 @@ public class ApplicationService {
 
         Application savedApplication = applicationRepository.save(application);
         return mapToResponse(savedApplication);
+    }
+
+    @Transactional
+    public void deleteApplication(UUID id) {
+        if (!applicationRepository.existsById(id)) {
+            throw new com.applyfollow.backend.exception.ResourceNotFoundException(
+                    "Application not found with id: " + id);
+        }
+        applicationRepository.deleteById(id);
     }
 
     // --- Contacts Methods ---
@@ -146,4 +163,3 @@ public class ApplicationService {
                 application.getAppliedAt());
     }
 }
-

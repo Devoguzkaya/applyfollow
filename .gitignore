@@ -42,3 +42,8 @@ backend/logs/
 *.DS_Store
 Thumbs.db
 *.log
+
+# --- Security (Privacy) ---
+.env
+.env.production
+postgres_data/

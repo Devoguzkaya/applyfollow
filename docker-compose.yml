@@ -26,7 +26,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - acme:/etc/acme.sh
     environment:
-      - DEFAULT_EMAIL=info@applyfollow.com
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
     networks:
       - app_network
     restart: always
@@ -37,9 +37,9 @@ services:
     container_name: applyfollow_db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: REMOVED_FOR_SECURITY
-      POSTGRES_DB: applyfollow_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -57,23 +57,24 @@ services:
       - db
     environment:
       # Database Config
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/applyfollow_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: REMOVED_FOR_SECURITY
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
       # Security
-      JWT_SECRET_KEY: REMOVED_FOR_SECURITY
-      MAIL_PASSWORD: mail_sifresi_yok
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
-      # CORS - Same Domain oldugu icin aslinda cok esnek olabilir artik
+      # Mail Config
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      # CORS
       CORS_ALLOWED_ORIGINS: "*"
 
-      # NGINX CONFIG - ANA DOMAIN ALTINDA /api
-      # Frontend ile aynı domaini paylasacak
-      VIRTUAL_HOST: applyfollow.com,www.applyfollow.com
-      # Bu path ile baslayan istekleri bana (Backend 8080'e) gonder
+      # NGINX CONFIG
+      VIRTUAL_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
       VIRTUAL_PATH: /api,/v3/api-docs,/swagger-ui
-      LETSENCRYPT_HOST: applyfollow.com,www.applyfollow.com
+      LETSENCRYPT_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
 
     networks:
       - app_network
@@ -82,7 +83,6 @@ services:
     build:
       context: ./frontend
       args:
-        # Frontend relative path
         NEXT_PUBLIC_API_URL: /api
     container_name: applyfollow_frontend
     restart: always
@@ -91,13 +91,12 @@ services:
     depends_on:
       - backend
     environment:
-      # Browser -> Relative /api (Same Origin)
       NEXT_PUBLIC_API_URL: /api
 
-      # NGINX CONFIG - ANA DOMAIN (Kalan her sey buraya)
-      VIRTUAL_HOST: applyfollow.com,www.applyfollow.com
+      # NGINX CONFIG
+      VIRTUAL_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
       VIRTUAL_PORT: 3000
-      LETSENCRYPT_HOST: applyfollow.com,www.applyfollow.com
+      LETSENCRYPT_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
     networks:
       - app_network
 

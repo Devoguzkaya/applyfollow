@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,12 +56,14 @@ class ApplicationServiceTest {
         application.setUser(user);
         application.setCompany(company);
         application.setStatus(ApplicationStatus.APPLIED);
+        application.setPosition("Dev"); // Ensure position is set
         application.setCreatedAt(LocalDateTime.now());
     }
 
     @Test
     void getAllApplications_ShouldReturnList() {
-        when(applicationRepository.findByUserId(user.getId())).thenReturn(List.of(application));
+        // Corrected findAllByUserId
+        when(applicationRepository.findAllByUserId(user.getId())).thenReturn(List.of(application));
 
         List<ApplicationResponse> result = applicationService.getAllApplications(user.getId());
 
@@ -94,6 +95,10 @@ class ApplicationServiceTest {
         ApplicationRequest request = new ApplicationRequest("Test Company", "Dev", ApplicationStatus.APPLIED,
                 "http://url", "Notes", null);
 
+        // Mock Duplicate Check returns Empty (No duplicate)
+        when(applicationRepository.findByUserIdAndCompany_NameAndPosition(any(), anyString(), anyString()))
+                .thenReturn(Optional.empty());
+
         when(companyService.findOrCreateCompany(anyString())).thenReturn(company);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(applicationRepository.save(any(Application.class))).thenReturn(application);
@@ -103,6 +108,41 @@ class ApplicationServiceTest {
         assertNotNull(result);
         assertEquals("Test Company", result.company().name());
         verify(applicationRepository).save(any(Application.class));
+    }
+
+    @Test
+    void createApplication_WhenDuplicate_ShouldReturnExisting() {
+        ApplicationRequest request = new ApplicationRequest("Test Company", "Dev", ApplicationStatus.APPLIED,
+                "http://url", "Notes", null);
+
+        // Mock Duplicate Check returns Existing Application
+        when(applicationRepository.findByUserIdAndCompany_NameAndPosition(user.getId(), "Test Company", "Dev"))
+                .thenReturn(Optional.of(application));
+
+        ApplicationResponse result = applicationService.createApplication(request, user.getId());
+
+        assertNotNull(result);
+        assertEquals(application.getId(), result.id());
+        // Verify save is NOT called
+        verify(applicationRepository, never()).save(any(Application.class));
+    }
+
+    @Test
+    void deleteApplication_ShouldDelete() {
+        UUID appId = application.getId();
+        when(applicationRepository.existsById(appId)).thenReturn(true);
+
+        applicationService.deleteApplication(appId);
+
+        verify(applicationRepository).deleteById(appId);
+    }
+
+    @Test
+    void deleteApplication_WhenNotExists_ShouldThrowException() {
+        UUID appId = UUID.randomUUID();
+        when(applicationRepository.existsById(appId)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> applicationService.deleteApplication(appId));
     }
 
     @Test
@@ -122,4 +162,3 @@ class ApplicationServiceTest {
         verify(contactRepository).save(any(Contact.class));
     }
 }
-

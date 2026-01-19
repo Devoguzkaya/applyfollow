@@ -31,8 +31,9 @@ jobs:
         with:
           context: ./backend
           push: true
+          # Github Owner adını burada manuel küçülterek yazıyoruz (Docker hatasını çözmek için)
           tags: |
-            ghcr.io/${{ github.repository_owner }}/applyfollow-backend:latest
+            ghcr.io/devoguzkaya/applyfollow-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -42,7 +43,7 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/applyfollow-frontend:latest
+            ghcr.io/devoguzkaya/applyfollow-frontend:latest
           build-args: |
             NEXT_PUBLIC_API_URL=/api
           cache-from: type=gha
@@ -60,24 +61,21 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
-            # Dizin kontrolü
             cd ~/applyfollow || cd /root/Repositories/ApplyFollow
             
-            echo "Updating configs..."
             git fetch origin master
             git reset --hard origin/master
             
-            # Repo sahibini kucuk harf yap (Docker image pathler kucuk harf olmali)
-            REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            # VPS tarafında da her ihtimale karşı küçük harfi garantileyelim
+            echo "GITHUB_REPOSITORY_OWNER=devoguzkaya" > .env
             
-            echo "Logging in to GHCR..."
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            echo "Pulling latest images..."
-            GITHUB_REPOSITORY_OWNER=$REPO_OWNER docker compose pull
+            echo "Pulling latest images from GHCR..."
+            GITHUB_REPOSITORY_OWNER=devoguzkaya docker compose pull
             
             echo "Restarting services..."
-            GITHUB_REPOSITORY_OWNER=$REPO_OWNER docker compose up -d
+            GITHUB_REPOSITORY_OWNER=devoguzkaya docker compose up -d
             
             docker image prune -f
             echo "Deployment successful! 🚀"

@@ -19,7 +19,7 @@ export interface ChangePasswordRequest {
 }
 
 export interface AuthResponse {
-    token: string;
+    token?: string;
     id: string;
     email: string;
     fullName: string;
@@ -36,6 +36,11 @@ export interface AuthResponse {
 export const userService = {
     updateProfile: async (data: UpdateProfileRequest): Promise<AuthResponse> => {
         const response = await api.put<AuthResponse>(`${SECTION_URL}/profile`, data);
+        return response.data;
+    },
+
+    getProfile: async (): Promise<AuthResponse> => {
+        const response = await api.get<AuthResponse>(`${SECTION_URL}/profile`);
         return response.data;
     },
 

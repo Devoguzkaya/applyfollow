@@ -1,28 +1,27 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useNotifications } from '@/context/NotificationContext';
-// Redux Imports
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logout, checkAuth } from '@/store/features/auth/authSlice';
 import toast from 'react-hot-toast';
 
 import { MdNotifications, MdNotificationsOff, MdPerson, MdExpandMore, MdSettings, MdLogout, MdInfo, MdAlarm, MdMenu } from "react-icons/md";
-import { toggleSidebar } from '@/store/features/ui/uiSlice';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useUI } from '@/context/UIContext';
 
 export default function Header() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
+    const { toggleSidebar } = useUI();
 
     // Auth State from Redux
-    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
 
     const [mounted, setMounted] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -62,7 +61,7 @@ export default function Header() {
             <div className="flex items-center gap-3 sm:gap-4">
                 {/* Mobile Menu Trigger */}
                 <button
-                    onClick={() => dispatch(toggleSidebar())}
+                    onClick={toggleSidebar}
                     className="lg:hidden size-10 rounded-xl bg-surface-hover flex items-center justify-center text-text-muted hover:text-text-main transition-all active:scale-95 border border-border-main"
                 >
                     <MdMenu className="text-2xl" />

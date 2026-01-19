@@ -48,6 +48,7 @@ export type Language = LanguageDto;
 export type Certificate = CertificateDto;
 
 export interface CvData {
+    id?: string;
     summary?: string;
     phoneNumber?: string;
     address?: string;
@@ -68,7 +69,7 @@ export const cvService = {
         return response.data;
     },
 
-    updateCv: async (data: CvData): Promise<void> => {
+    saveCv: async (data: CvData): Promise<void> => {
         await api.post('/cv', data);
     },
 
@@ -87,7 +88,7 @@ export const cvService = {
         let fileName = 'My_CV.docx';
         if (contentDisposition) {
             const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-            if (fileNameMatch.length === 2)
+            if (fileNameMatch && fileNameMatch.length === 2)
                 fileName = fileNameMatch[1].replace(/"/g, ''); // Tırnakları temizle
         }
 

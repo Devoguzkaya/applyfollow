@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { applicationService, ApplicationRequest } from "@/services/applicationService";
 import { useLanguage } from "@/context/LanguageContext";
 import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function NewApplicationPage() {
     const { t } = useLanguage();
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const queryClient = useQueryClient(); // Access the client
     const [error, setError] = useState("");
 
     const [formData, setFormData] = useState<ApplicationRequest>({
@@ -22,31 +23,37 @@ export default function NewApplicationPage() {
         appliedAt: new Date().toISOString().split('T')[0]
     });
 
+    const createMutation = useMutation({
+        mutationFn: (data: ApplicationRequest) => applicationService.createApplication(data),
+        onSuccess: () => {
+            toast.success(t('applications.new.success'));
+            // Invalidate 'applications' query so Dashboard refreshes instantly
+            queryClient.invalidateQueries({ queryKey: ['applications'] });
+            router.push('/dashboard');
+        },
+        onError: (err) => {
+            console.error(err);
+            setError(t('applications.new.validation.genericError'));
+        }
+    });
+
     const handleSubmit = async () => {
         if (!formData.companyName || !formData.position) {
             setError(t('applications.new.validation.required'));
             return;
         }
-
-        setLoading(true);
         setError("");
 
-        try {
-            // Convert simple date (YYYY-MM-DD) to LocalDateTime format (YYYY-MM-DDTHH:mm:ss)
-            const requestData = {
-                ...formData,
-                appliedAt: formData.appliedAt ? `${formData.appliedAt}T00:00:00` : undefined
-            };
-            await applicationService.createApplication(requestData);
-            router.refresh();
-            toast.success(t('applications.new.success'));
-        } catch (err) {
-            console.error(err);
-            setError(t('applications.new.validation.genericError'));
-        } finally {
-            setLoading(false);
-        }
+        // Convert simple date (YYYY-MM-DD) to LocalDateTime format
+        const requestData = {
+            ...formData,
+            appliedAt: formData.appliedAt ? `${formData.appliedAt}T00:00:00` : undefined
+        };
+
+        createMutation.mutate(requestData as ApplicationRequest);
     };
+
+    const loading = createMutation.isPending;
 
     return (
         <div className="flex items-center justify-center min-h-[calc(100vh-100px)]">

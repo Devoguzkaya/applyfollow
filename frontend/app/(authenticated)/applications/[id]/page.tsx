@@ -1,54 +1,92 @@
 "use client";
 
 import Link from "next/link";
-import { use, useState, useEffect, useCallback } from "react";
+import { use, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { applicationService, ApplicationResponse, ContactDto } from "@/services/applicationService";
+import { applicationService, ContactDto } from "@/services/applicationService";
 import { useLanguage } from "@/context/LanguageContext";
 import toast from 'react-hot-toast';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ApplicationDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { t } = useLanguage();
     const { id } = use(params);
     const router = useRouter();
+    const queryClient = useQueryClient();
 
-    // --- ALL HOOKS MUST BE AT THE TOP ---
-    const [application, setApplication] = useState<ApplicationResponse | null>(null);
-    const [contacts, setContacts] = useState<ContactDto[]>([]);
-    const [loading, setLoading] = useState(true);
+    // --- STATES ---
+    // Only local UI states remain, data states are managed by TanStack Query
     const [notes, setNotes] = useState("");
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [newContact, setNewContact] = useState<ContactDto>({ name: '', role: '', email: '', phone: '', linkedIn: '' });
-    const [contactLoading, setContactLoading] = useState(false);
-    const [notesLoading, setNotesLoading] = useState(false);
-
-    // Expanded Contact State
     const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchApplication = async () => {
-            try {
-                const [appData, contactsData] = await Promise.all([
-                    applicationService.getApplicationById(id),
-                    applicationService.getContacts(id)
-                ]);
+    // --- 1. DATA FETCHING (TanStack Query) ---
 
-                setApplication(appData);
-                setContacts(contactsData);
-                setNotes(appData.notes || "");
-            } catch (error) {
-                console.error("Failed to fetch application:", error);
-                toast.error("Failed to load application details.");
-            } finally {
-                setLoading(false);
-            }
+    // Fetch Application Details
+    const { data: application, isLoading: appLoading, isError: appError } = useQuery({
+        queryKey: ['application', id],
+        queryFn: async () => {
+            const data = await applicationService.getApplicationById(id);
+            // Sync notes on first load if empty
+            if (data.notes && !notes) setNotes(data.notes);
+            return data;
+        },
+        enabled: !!id
+    });
 
-        };
+    // Fetch Contacts
+    const { data: contacts = [] } = useQuery({
+        queryKey: ['contacts', id],
+        queryFn: () => applicationService.getContacts(id),
+        enabled: !!id
+    });
 
-        if (id) fetchApplication();
-    }, [id]);
+    // --- 2. MUTATIONS ---
 
-    // --- Helper Functions mapped with useCallback for performance ---
+    // Update Notes
+    const updateNotesMutation = useMutation({
+        mutationFn: (newNotes: string) => applicationService.updateNotes(id, newNotes),
+        onSuccess: () => {
+            toast.success(t('applications.detail.notesSaved'));
+            queryClient.invalidateQueries({ queryKey: ['application', id] });
+        },
+        onError: () => toast.error(t('applications.new.validation.genericError'))
+    });
+
+    // Add Contact
+    const addContactMutation = useMutation({
+        mutationFn: (contact: ContactDto) => applicationService.addContact(id, contact),
+        onSuccess: () => {
+            toast.success(t('applications.detail.contactAdded'));
+            setNewContact({ name: '', role: '', email: '', phone: '', linkedIn: '' });
+            setIsContactModalOpen(false);
+            queryClient.invalidateQueries({ queryKey: ['contacts', id] });
+        },
+        onError: () => toast.error(t('applications.new.validation.genericError'))
+    });
+
+    // Update Status
+    const updateStatusMutation = useMutation({
+        mutationFn: (status: string) => applicationService.updateApplicationStatus(id, status),
+        onSuccess: (_, newStatus) => {
+            toast.success(t('applications.detail.statusUpdated') + t(`applications.status.${newStatus}`));
+            queryClient.invalidateQueries({ queryKey: ['application', id] });
+        },
+        onError: () => toast.error(t('applications.new.validation.genericError'))
+    });
+
+    // Delete Application
+    const deleteMutation = useMutation({
+        mutationFn: () => applicationService.deleteApplication(id),
+        onSuccess: () => {
+            toast.success("Application deleted successfully");
+            router.push('/dashboard');
+        },
+        onError: () => toast.error("Failed to delete application")
+    });
+
+    // --- HANDLERS ---
 
     const handleVisitJobPost = useCallback(() => {
         if (!application?.jobUrl) return;
@@ -58,74 +96,30 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
     }, [application?.jobUrl]);
 
     const handleDelete = async () => {
-        if (!application) return;
-        if (!window.confirm("Are you sure you want to delete this application? This action cannot be undone.")) {
-            return;
-        }
-
-        try {
-            await applicationService.deleteApplication(application.id);
-            toast.success("Application deleted successfully");
-            router.push('/dashboard');
-        } catch (error) {
-            console.error("Failed to delete application:", error);
-            toast.error("Failed to delete application");
-        }
+        if (!window.confirm("Are you sure you want to delete this application? This action cannot be undone.")) return;
+        deleteMutation.mutate();
     };
 
-    const handleAddContact = useCallback(async () => {
+    const handleAddContact = () => {
         if (!newContact.name) {
             toast.error(t('applications.new.validation.required'));
             return;
         }
-        setContactLoading(true);
-        try {
-            const addedContact = await applicationService.addContact(id, newContact);
-            setContacts(prev => [...prev, addedContact]);
-            setNewContact({ name: '', role: '', email: '', phone: '', linkedIn: '' });
-            setIsContactModalOpen(false);
-            toast.success(t('applications.detail.contactAdded'));
-        } catch (error) {
-            console.error("Failed to add contact:", error);
-            toast.error(t('applications.new.validation.genericError'));
-        } finally {
-            setContactLoading(false);
-        }
-    }, [id, newContact, t]);
-
-    const toggleContact = useCallback((contactId: string | undefined) => {
-        if (!contactId) return;
-        setExpandedContactId(prev => (prev === contactId ? null : contactId));
-    }, []);
-
-    const handleSaveNotes = useCallback(async () => {
-        setNotesLoading(true);
-        try {
-            await applicationService.updateNotes(id, notes);
-            toast.success(t('applications.detail.notesSaved'));
-        } catch (error) {
-            console.error("Failed to save notes:", error);
-            toast.error(t('applications.new.validation.genericError'));
-        } finally {
-            setNotesLoading(false);
-        }
-    }, [id, notes, t]);
-
-    const handleStatusUpdate = async (newStatus: string) => {
-        if (!application) return;
-        try {
-            await applicationService.updateApplicationStatus(application.id, newStatus);
-            setApplication(prev => prev ? { ...prev, status: newStatus as any } : null);
-            toast.success(t('applications.detail.statusUpdated') + t(`applications.status.${newStatus}`));
-        } catch (error) {
-            console.error("Status update failed:", error);
-            toast.error(t('applications.new.validation.genericError'));
-        }
+        addContactMutation.mutate(newContact);
     };
 
-    // --- Conditional Returns (MUST BE AFTER HOOKS) ---
+    const handleSaveNotes = () => {
+        updateNotesMutation.mutate(notes);
+    };
 
-    if (loading) {
+    const toggleContact = (contactId: string | undefined) => {
+        if (!contactId) return;
+        setExpandedContactId(prev => (prev === contactId ? null : contactId));
+    };
+
+    // --- RENDER ---
+
+    if (appLoading) {
         return (
             <div role="status" className="w-full h-full flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -136,7 +130,7 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
         );
     }
 
-    if (!application) {
+    if (appError || !application) {
         return (
             <div className="w-full h-full flex items-center justify-center flex-col gap-4">
                 <span className="material-symbols-outlined text-4xl text-slate-600" aria-hidden="true">error</span>
@@ -145,8 +139,6 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
             </div>
         );
     }
-
-    // --- Render Constants ---
 
     const steps = [
         { key: 'APPLIED', label: t('applications.status.APPLIED'), icon: 'check' },
@@ -162,14 +154,14 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
     const isRejected = application.status === 'REJECTED';
     const isGhosted = application.status === 'GHOSTED';
 
-    const statusStyles = {
+    const statusStyles: Record<string, string> = {
         'APPLIED': 'text-blue-400 bg-blue-500/10 border-blue-500/20',
         'INTERVIEW': 'text-amber-500 bg-amber-500/10 border-amber-500/20',
         'OFFER': 'text-primary bg-primary/10 border-primary/20',
         'REJECTED': 'text-red-400 bg-red-500/10 border-red-500/20',
         'GHOSTED': 'text-slate-400 bg-slate-500/10 border-slate-500/20',
     };
-    const activeStyle = statusStyles[application.status] || statusStyles['APPLIED'];
+    const activeStyle = statusStyles[application.status as string] || statusStyles['APPLIED'];
 
     return (
         <main className="w-full max-w-[1400px] mx-auto flex flex-col gap-8 h-[calc(100vh-140px)]">
@@ -223,7 +215,7 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                             <div className="relative group/status w-fit">
                                 <select
                                     value={application.status}
-                                    onChange={(e) => handleStatusUpdate(e.target.value)}
+                                    onChange={(e) => updateStatusMutation.mutate(e.target.value)}
                                     className={`appearance-none bg-transparent border rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider cursor-pointer outline-none focus:ring-1 focus:ring-primary transition-all pr-7 ${activeStyle}`}
                                 >
                                     <option value="APPLIED" className="bg-[#0A0C10]">{t('applications.status.APPLIED')}</option>
@@ -261,7 +253,6 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                                     <span className="material-symbols-outlined text-lg">link_off</span> {t('applications.detail.noLink')}
                                 </button>
                             )}
-                            {/* Delete Button */}
                             <button
                                 onClick={handleDelete}
                                 className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 text-sm font-medium transition-colors border border-red-500/20 focus:ring-2 focus:ring-red-500 focus:outline-none"
@@ -369,11 +360,11 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                         <div className="p-4 border-t border-border-dark bg-surface-dark flex items-center justify-end gap-4 shrink-0">
                             <button
                                 onClick={handleSaveNotes}
-                                disabled={notesLoading}
+                                disabled={updateNotesMutation.isPending}
                                 className="px-4 py-2 rounded-lg bg-primary text-[#101618] hover:bg-emerald-400 text-sm font-bold transition-all shadow-glow flex items-center gap-2"
                             >
-                                {notesLoading && <span className="size-4 border-2 border-[#101618]/30 border-t-[#101618] rounded-full animate-spin"></span>}
-                                {notesLoading ? t('applications.detail.saving') : t('applications.detail.saveNotes')}
+                                {updateNotesMutation.isPending && <span className="size-4 border-2 border-[#101618]/30 border-t-[#101618] rounded-full animate-spin"></span>}
+                                {updateNotesMutation.isPending ? t('applications.detail.saving') : t('applications.detail.saveNotes')}
                             </button>
                         </div>
                     </div>
@@ -412,8 +403,8 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                         </div>
                         <div className="p-6 border-t border-border-dark flex justify-end gap-3 bg-surface-hover/10 rounded-b-2xl">
                             <button onClick={() => setIsContactModalOpen(false)} className="px-4 py-2 rounded-lg text-slate-400 hover:text-white text-sm font-bold">{t('applications.detail.contactModal.cancel')}</button>
-                            <button onClick={handleAddContact} disabled={contactLoading} className="px-6 py-2 rounded-lg bg-primary text-[#101618] hover:bg-emerald-400 text-sm font-bold shadow-glow flex items-center gap-2">
-                                {contactLoading ? t('applications.detail.saving') : t('applications.detail.contactModal.save')}
+                            <button onClick={handleAddContact} disabled={addContactMutation.isPending} className="px-6 py-2 rounded-lg bg-primary text-[#101618] hover:bg-emerald-400 text-sm font-bold shadow-glow flex items-center gap-2">
+                                {addContactMutation.isPending ? t('applications.detail.saving') : t('applications.detail.contactModal.save')}
                             </button>
                         </div>
                     </div>

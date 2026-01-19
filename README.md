@@ -1,41 +1,64 @@
-# ApplyFollow
+# ApplyFollow 🚀
 
-ApplyFollow is a modern Job Application Tracking CRM designed for developers to manage their job search process intelligently.
+ApplyFollow is a professional, high-performance **Job Application CRM** designed for modern developers. It helps you track your job search lifecycle from initial application to final offer, ensuring you never lose track of an opportunity or get "ghosted" without notice.
 
-## Features
+![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-blue?logo=github-actions)
+![Next.js](https://img.shields.io/badge/Frontend-Next.js%2015-black?logo=next.js)
+![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot%203-green?logo=springboot)
+![TanStack Query](https://img.shields.io/badge/State-TanStack%20Query%20v5-ff4154?logo=react-query)
 
-- **Dashboard**: Track applications status (Applied, Interview, Offer, Rejected).
-- **CV Builder**: Create and manage your professional resume.
-- **My CV**: Preview and share your CV.
-- **Kanban Board**: Drag and drop applications.
-- **Analytics**: Visualize your pipeline.
+## ✨ Core Features
 
-## Tech Stack
+- **📊 Intelligent Dashboard**: Real-time overview of your pipeline with KPIs (Applied, Interview, Offer, Rejected).
+- **📝 Application Management**: Detailed tracking of company info, status, notes, and contacts for each role.
+- **📅 Smart Calendar**: Never miss an interview. Integrated event management with alarm support.
+- **📄 CV Builder & Portfolio**: Build your professional CV and showcase your profile with a unique slug URL.
+- **🌐 Multilingual Support**: Fully localized in English and Turkish.
+- **🔒 Secure Architecture**: Role-based access control with JWT authentication.
 
-- **Frontend**: Next.js 16, TypeScript, Tailwind CSS, Redux Toolkit
-- **Backend**: Java Spring Boot, PostgreSQL, Spring Security (JWT)
+## 🛠️ Technical Excellence
 
-## Getting Started
+- **Data Fetching & Caching**: Powered by **TanStack Query (React Query)** for lightning-fast UI updates and efficient server state management.
+- **Clean Architecture**: Strictly followed Layered Architecture (Controller -> Service -> DTO -> Repository) on the backend.
+- **Optimized Database**: Fine-tuned **HikariCP** connection pooling for high concurrency.
+- **Modern UI**: Dark-themed, glassmorphic design using **Tailwind CSS v4**.
+- **DevOps**: Automated CI/CD pipeline with **GitHub Actions** checking build integrity on every push.
 
-Clone the repository:
+## 🚀 Getting Started
 
-```bash
-git clone https://github.com/Devoguzkaya/applyfollow.git
-cd applyfollow
-```
+### Prerequisites
 
-### Backend
+- JDK 17+
+- Node.js 20+
+- PostgreSQL
 
-1. Navigate to `backend` folder.
-2. Configure `application.properties` for your PostgreSQL database.
-3. Run `mvn spring-boot:run`.
+### Installation
 
-### Frontend
+1. **Clone the repository:**
 
-1. Navigate to `frontend` folder.
-2. Run `npm install`.
-3. Run `npm run dev`.
-4. Open [http://localhost:3000](http://localhost:3000).
+   ```bash
+   git clone https://github.com/Devoguzkaya/applyfollow.git
+   cd applyfollow
+   ```
+
+2. **Backend Setup:**
+
+   ```bash
+   cd backend
+   # Configure application.properties with your DB credentials
+   mvn spring-boot:run
+   ```
+
+3. **Frontend Setup:**
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+4. **Access the App:**
+   Open [http://localhost:3000](http://localhost:3000)
 
 ---
-© 2026 ApplyFollow. Built by Oguzhan.
+© 2026 ApplyFollow. Built with ❤️ by **Oguzhan**.

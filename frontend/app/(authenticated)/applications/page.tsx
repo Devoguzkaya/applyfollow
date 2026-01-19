@@ -1,48 +1,46 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { applicationService, ApplicationResponse } from '@/services/applicationService';
 import { useLanguage } from "@/context/LanguageContext";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ApplicationsPage() {
     const { t } = useLanguage();
-    const [applications, setApplications] = useState<ApplicationResponse[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const fetchApps = async () => {
-            try {
-                const data = await applicationService.getAllApplications();
-                setApplications(data);
-            } catch (error) {
-                console.error("Fetch error:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchApps();
-    }, []);
+    // 1. Fetch All Applications
+    const { data: applications = [], isLoading: loading } = useQuery({
+        queryKey: ['applications'],
+        queryFn: applicationService.getAllApplications
+    });
+
+    // 2. Update Status Mutation
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ id, status }: { id: string, status: string }) =>
+            applicationService.updateApplicationStatus(id, status),
+        onSuccess: () => {
+            // Automatically refetch the list to show updated status
+            queryClient.invalidateQueries({ queryKey: ['applications'] });
+        },
+        onError: (err) => {
+            console.error("Status update failed:", err);
+        }
+    });
 
     const filteredApplications = applications.filter(app =>
         app.company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.position.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleStatusUpdate = async (id: string, newStatus: string) => {
-        try {
-            await applicationService.updateApplicationStatus(id, newStatus);
-            setApplications(prev => prev.map(app =>
-                app.id === id ? { ...app, status: newStatus as any } : app
-            ));
-        } catch (error) {
-            console.error("Status update failed:", error);
-        }
+    const handleStatusUpdate = (id: string, newStatus: string) => {
+        updateStatusMutation.mutate({ id, status: newStatus });
     };
 
     const getStatusBadge = (app: ApplicationResponse) => {
-        const styles = {
+        const styles: Record<string, string> = {
             'APPLIED': 'text-blue-400 bg-blue-500/10 border-blue-500/20',
             'INTERVIEW': 'text-amber-500 bg-amber-500/10 border-amber-500/20',
             'OFFER': 'text-primary bg-primary/10 border-primary/20',
@@ -51,12 +49,15 @@ export default function ApplicationsPage() {
         };
 
         const activeStyle = styles[app.status] || styles['APPLIED'];
+        // Disable select while mutating to prevent spam
+        const isMutating = updateStatusMutation.isPending && updateStatusMutation.variables?.id === app.id;
 
         return (
-            <div className="relative group/status w-fit">
+            <div className={`relative group/status w-fit ${isMutating ? 'opacity-50 cursor-wait' : ''}`}>
                 <select
                     value={app.status}
                     onChange={(e) => handleStatusUpdate(app.id, e.target.value)}
+                    disabled={isMutating}
                     className={`appearance-none bg-transparent border rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wider cursor-pointer outline-none focus:ring-1 focus:ring-primary transition-all pr-7 ${activeStyle}`}
                 >
                     <option value="APPLIED" className="bg-surface-card">{t('applications.status.APPLIED')}</option>
@@ -65,7 +66,8 @@ export default function ApplicationsPage() {
                     <option value="REJECTED" className="bg-surface-card">{t('applications.status.REJECTED')}</option>
                     <option value="GHOSTED" className="bg-surface-card">{t('applications.status.GHOSTED')}</option>
                 </select>
-                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[14px] pointer-events-none opacity-50">expand_more</span>
+                {!isMutating && <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[14px] pointer-events-none opacity-50">expand_more</span>}
+                {isMutating && <span className="absolute right-2 top-1/2 -translate-y-1/2 size-3 border-2 border-primary/50 border-t-primary rounded-full animate-spin"></span>}
             </div>
         );
     };

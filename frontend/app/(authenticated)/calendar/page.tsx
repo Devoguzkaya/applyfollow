@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { calendarService, CalendarEvent } from '@/services/calendarService';
+import { useState } from 'react';
+import { calendarService } from '@/services/calendarService';
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function CalendarPage() {
     const { t } = useLanguage();
+    const queryClient = useQueryClient();
 
     // State
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -22,20 +23,38 @@ export default function CalendarPage() {
     const [alarmTime, setAlarmTime] = useState("");
     const [eventType, setEventType] = useState<'event' | 'interview' | 'deadline'>('event');
 
-    // Fetch events from Backend
-    const fetchEvents = async () => {
-        try {
-            const data = await calendarService.getAllEvents();
-            setEvents(data);
-        } catch (error) {
-            console.error("Failed to fetch calendar events:", error);
-            toast.error(t('calendar.toast.fetchError'));
-        }
-    };
+    // 1. Fetch Events (TanStack Query)
+    const { data: events = [] } = useQuery({
+        queryKey: ['events'],
+        queryFn: calendarService.getAllEvents
+    });
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+    // 2. Create Event Mutation
+    const createEventMutation = useMutation({
+        mutationFn: (data: any) => calendarService.createEvent(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+            setIsModalOpen(false);
+            toast.success(t('calendar.toast.success'));
+            if (hasAlarm && "Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        },
+        onError: (err) => {
+            console.error(err);
+            toast.error(t('calendar.toast.saveError'));
+        }
+    });
+
+    // 3. Delete Event Mutation
+    const deleteEventMutation = useMutation({
+        mutationFn: (id: string) => calendarService.deleteEvent(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+            toast.success(t('calendar.toast.deleted').replace('{title}', "Event"));
+        },
+        onError: () => toast.error(t('calendar.toast.deleteError'))
+    });
 
     // Calendar Helper Functions
     const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -49,7 +68,6 @@ export default function CalendarPage() {
     const daysInMonth = getDaysInMonth(year, month);
     const firstDay = getFirstDayOfMonth(year, month);
 
-    // Safe casting for array translations
     const monthNames = (t('calendar.monthNames') as unknown as string[]) || [];
     const weekDays = (t('calendar.weekDays') as unknown as string[]) || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -70,52 +88,28 @@ export default function CalendarPage() {
         setIsModalOpen(true);
     };
 
-    const handleSaveEvent = async (e: React.FormEvent) => {
+    const handleSaveEvent = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title || !selectedDate) return;
 
-        try {
-            // Append :00 to time if necessary for backend LocalTime parsing
-            const formattedTime = time.length === 5 ? `${time}:00` : time;
-            const formattedAlarmTime = (hasAlarm && alarmTime) ? (alarmTime.length === 5 ? `${alarmTime}:00` : alarmTime) : undefined;
+        // Append :00 to time if necessary for backend LocalTime parsing
+        const formattedTime = time.length === 5 ? `${time}:00` : time;
+        const formattedAlarmTime = (hasAlarm && alarmTime) ? (alarmTime.length === 5 ? `${alarmTime}:00` : alarmTime) : undefined;
 
-            await calendarService.createEvent({
-                date: selectedDate,
-                title,
-                time: formattedTime,
-                notes,
-                hasAlarm,
-                alarmTime: formattedAlarmTime,
-                type: eventType
-            });
-
-            await fetchEvents(); // Refresh list
-            setIsModalOpen(false);
-
-            // Success Toast
-            toast.success(t('calendar.toast.success'));
-
-            // Simple alarm notification check (browser API)
-            if (hasAlarm && "Notification" in window && Notification.permission !== "granted") {
-                Notification.requestPermission();
-            }
-        } catch (error) {
-            console.error("Failed to create event:", error);
-            toast.error(t('calendar.toast.saveError'));
-        }
+        createEventMutation.mutate({
+            date: selectedDate,
+            title,
+            time: formattedTime,
+            notes,
+            hasAlarm,
+            alarmTime: formattedAlarmTime,
+            type: eventType
+        });
     };
 
-    const handleDeleteEvent = async (id: string, eventTitle: string) => {
+    const handleDeleteEvent = (id: string, eventTitle: string) => {
         if (!confirm(t('calendar.confirmDelete'))) return;
-
-        try {
-            await calendarService.deleteEvent(id);
-            await fetchEvents(); // Refresh list
-            toast.success(t('calendar.toast.deleted').replace('{title}', eventTitle));
-        } catch (error) {
-            console.error("Failed to delete event:", error);
-            toast.error(t('calendar.toast.deleteError'));
-        }
+        deleteEventMutation.mutate(id);
     };
 
     // Render Calendar Grid
@@ -301,8 +295,8 @@ export default function CalendarPage() {
                                 )}
                             </div>
 
-                            <button type="submit" className="w-full h-12 bg-primary text-black font-bold rounded-xl mt-4 hover:opacity-90 transition-opacity shadow-glow">
-                                {t('calendar.form.save')}
+                            <button type="submit" disabled={createEventMutation.isPending} className="w-full h-12 bg-primary text-black font-bold rounded-xl mt-4 hover:opacity-90 transition-opacity shadow-glow disabled:opacity-50">
+                                {createEventMutation.isPending ? 'Saving...' : t('calendar.form.save')}
                             </button>
                         </form>
                     </div>

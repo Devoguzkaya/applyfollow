@@ -1,18 +1,18 @@
 "use client";
-import Link from 'next/link';
+import Link from 'next/image';
+import NextLink from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { calendarService } from '@/services/calendarService';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setSidebarOpen } from '@/store/features/ui/uiSlice';
+import { useAppSelector } from '@/store/hooks';
 import { useLanguage } from '@/context/LanguageContext';
+import { useUI } from '@/context/UIContext';
 
 export default function Sidebar() {
     const pathname = usePathname();
-    const dispatch = useAppDispatch();
     const { t } = useLanguage();
-    const isSidebarOpen = useAppSelector((state) => state.ui.isSidebarOpen);
+    const { isSidebarOpen, setSidebarOpen } = useUI();
     const { user } = useAppSelector((state) => state.auth);
     const [todayCount, setTodayCount] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
@@ -53,9 +53,9 @@ export default function Sidebar() {
     // Close sidebar on mobile after navigation
     useEffect(() => {
         if (isMobile) {
-            dispatch(setSidebarOpen(false));
+            setSidebarOpen(false);
         }
-    }, [pathname, dispatch, isMobile]);
+    }, [pathname, isMobile, setSidebarOpen]);
 
     const getLinkClasses = (path: string) => {
         const isActive = path === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(path);
@@ -74,7 +74,7 @@ export default function Sidebar() {
             {isSidebarOpen && (
                 <div
                     className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
-                    onClick={() => dispatch(setSidebarOpen(false))}
+                    onClick={() => setSidebarOpen(false)}
                 />
             )}
 
@@ -87,31 +87,31 @@ export default function Sidebar() {
             `}>
                 {/* Logo Area */}
                 <div className="h-20 flex items-center px-6 border-b border-border-main">
-                    <Link href="/" className="flex items-center gap-3 group/logo w-full">
+                    <NextLink href="/" className="flex items-center gap-3 group/logo w-full">
                         <div className="relative size-10 shrink-0 bg-slate-900 rounded-lg p-1 border border-white/5 transition-transform group-hover/logo:scale-105">
                             <Image src="/ApplyFollowLogo.png" alt="ApplyFollow" fill className="object-contain" priority />
                         </div>
                         <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary">
                             Apply<span className="text-primary font-black">Follow</span>
                         </h1>
-                    </Link>
+                    </NextLink>
                 </div>
 
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto py-8 flex flex-col gap-2.5 px-4 scrollbar-hide">
-                    <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
+                    <NextLink href="/dashboard" className={getLinkClasses("/dashboard")}>
                         <span className="material-symbols-outlined text-[24px]">grid_view</span>
                         <span className="whitespace-nowrap transition-all">{t('sidebar.overview')}</span>
                         {pathname === "/dashboard" && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                    </Link>
+                    </NextLink>
 
-                    <Link href="/applications" className={getLinkClasses("/applications")}>
+                    <NextLink href="/applications" className={getLinkClasses("/applications")}>
                         <span className="material-symbols-outlined text-[24px]">work</span>
                         <span className="whitespace-nowrap">{t('sidebar.applications')}</span>
                         {pathname?.startsWith("/applications") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                    </Link>
+                    </NextLink>
 
-                    <Link href="/calendar" className={getLinkClasses("/calendar")}>
+                    <NextLink href="/calendar" className={getLinkClasses("/calendar")}>
                         <span className="material-symbols-outlined text-[24px]">event</span>
                         <div className="flex items-center justify-between w-full">
                             <span className="whitespace-nowrap">{t('sidebar.schedule')}</span>
@@ -122,27 +122,23 @@ export default function Sidebar() {
                             )}
                         </div>
                         {pathname?.startsWith("/calendar") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                    </Link>
+                    </NextLink>
 
-                    <Link href="/my-cv" className={getLinkClasses("/my-cv")}>
+                    <NextLink href="/my-cv" className={getLinkClasses("/my-cv")}>
                         <span className="material-symbols-outlined text-[24px]">description</span>
                         <span className="whitespace-nowrap">{t('sidebar.cvBuilder')}</span>
                         {pathname?.startsWith("/my-cv") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                    </Link>
+                    </NextLink>
 
                     {/* Section Spacer / Label */}
                     <div className="mt-8 mb-2 px-3">
-                        {/* Hidden divider line since we always use text now? Or keep standard visual? 
-                            Original code hid line when Open. Let's align with Open design. 
-                            If open, we show Text.
-                        */}
                         <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{t('sidebar.management')}</p>
                     </div>
 
-                    <Link href="/profile" className={getLinkClasses("/profile")}>
+                    <NextLink href="/profile" className={getLinkClasses("/profile")}>
                         <span className="material-symbols-outlined text-[24px]">manage_accounts</span>
                         <span className="whitespace-nowrap">{t('sidebar.settings')}</span>
-                    </Link>
+                    </NextLink>
 
                     {/* Admin Section */}
                     {user?.role === 'ADMIN' && (
@@ -151,17 +147,17 @@ export default function Sidebar() {
                                 <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('sidebar.adminPanel')}</p>
                             </div>
 
-                            <Link href="/admin/users" className={getLinkClasses("/admin/users")}>
+                            <NextLink href="/admin/users" className={getLinkClasses("/admin/users")}>
                                 <span className="material-symbols-outlined text-[24px]">group</span>
                                 <span className="whitespace-nowrap">{t('sidebar.users')}</span>
                                 {pathname?.startsWith("/admin/users") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                            </Link>
+                            </NextLink>
 
-                            <Link href="/admin/messages" className={getLinkClasses("/admin/messages")}>
+                            <NextLink href="/admin/messages" className={getLinkClasses("/admin/messages")}>
                                 <span className="material-symbols-outlined text-[24px]">forum</span>
                                 <span className="whitespace-nowrap">{t('sidebar.messages')}</span>
                                 {pathname?.startsWith("/admin/messages") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
-                            </Link>
+                            </NextLink>
                         </>
                     )}
                 </nav>

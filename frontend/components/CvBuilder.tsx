@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { CvData, EducationDto, ExperienceDto, SkillDto, LanguageDto, CertificateDto } from '@/services/cvService';
+import { CvData, EducationDto, ExperienceDto, SkillDto, LanguageDto, CertificateDto, cvService } from '@/services/cvService';
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
-// Redux
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchCv, saveCv, downloadCv } from '@/store/features/cv/cvSlice';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MdSave, MdDownload, MdVisibility } from "react-icons/md";
 
 // Sub-components
@@ -22,11 +20,10 @@ interface CvBuilderProps {
 }
 
 export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
-    const dispatch = useAppDispatch();
     const { t } = useLanguage();
-    const { data: reduxData, isLoading, isSaving } = useAppSelector((state) => state.cv);
+    const queryClient = useQueryClient();
 
-    // Local state for all form data
+    // Local state for all form data (for real-time editing)
     const [data, setData] = useState<CvData>({
         summary: '',
         phoneNumber: '',
@@ -42,49 +39,64 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
         cvTitle: ''
     });
 
-    // 1. Fetch CV on mount
-    useEffect(() => {
-        dispatch(fetchCv());
-    }, [dispatch]);
+    // 1. Fetch CV Data (TanStack Query)
+    const { data: serverData, isLoading } = useQuery({
+        queryKey: ['cv'],
+        queryFn: cvService.getCv
+    });
 
-    // 2. Sync Redux data to Local state when fetched
+    // 2. Sync server data to local form state
     useEffect(() => {
-        if (reduxData) {
+        if (serverData) {
             setData({
-                summary: reduxData.summary || '',
-                phoneNumber: reduxData.phoneNumber || '',
-                address: reduxData.address || '',
-                linkedinUrl: reduxData.linkedinUrl || '',
-                githubUrl: reduxData.githubUrl || '',
-                websiteUrl: reduxData.websiteUrl || '',
-                educations: reduxData.educations || [],
-                experiences: reduxData.experiences || [],
-                skills: reduxData.skills || [],
-                languages: reduxData.languages || [],
-                certificates: reduxData.certificates || [],
-                cvTitle: reduxData.cvTitle || ''
+                summary: serverData.summary || '',
+                phoneNumber: serverData.phoneNumber || '',
+                address: serverData.address || '',
+                linkedinUrl: serverData.linkedinUrl || '',
+                githubUrl: serverData.githubUrl || '',
+                websiteUrl: serverData.websiteUrl || '',
+                educations: serverData.educations || [],
+                experiences: serverData.experiences || [],
+                skills: serverData.skills || [],
+                languages: serverData.languages || [],
+                certificates: serverData.certificates || [],
+                cvTitle: serverData.cvTitle || ''
             });
         }
-    }, [reduxData]);
+    }, [serverData]);
+
+    // 3. Save Mutation
+    const saveMutation = useMutation({
+        mutationFn: (newData: CvData) => cvService.saveCv(newData),
+        onSuccess: () => {
+            toast.success(t('common.saved'));
+            queryClient.invalidateQueries({ queryKey: ['cv'] });
+        },
+        onError: () => {
+            toast.error("Failed to save CV");
+        }
+    });
+
+    // 4. Download Mutation
+    const downloadMutation = useMutation({
+        mutationFn: cvService.downloadCv,
+        onError: () => {
+            toast.error("Failed to download CV");
+        }
+    });
 
     const handleSave = async () => {
-        try {
-            await dispatch(saveCv(data)).unwrap();
-            toast.success(t('common.saved'));
-        } catch (error) {
-            // Error handled in slice
-        }
+        saveMutation.mutate(data);
     };
 
     const handleDownload = async () => {
-        try {
-            // First save, then download
-            await dispatch(saveCv(data)).unwrap();
-            await dispatch(downloadCv()).unwrap();
-            toast.success(t('cv.preview') + " " + t('common.download') + "!");
-        } catch (error) {
-            toast.error("Failed to download CV");
-        }
+        // Save first then download
+        saveMutation.mutate(data, {
+            onSuccess: () => {
+                downloadMutation.mutate();
+                toast.success(t('cv.preview') + " " + t('common.download') + "!");
+            }
+        });
     };
 
     // --- Helpers ---
@@ -185,17 +197,18 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
                     </button>
                     <button
                         onClick={handleSave}
-                        disabled={isSaving}
+                        disabled={saveMutation.isPending}
                         className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2"
                     >
-                        {isSaving ? <span className="size-4 border-2 border-text-main/50 border-t-text-main rounded-full animate-spin"></span> : <MdSave className="text-[20px]" />}
+                        {saveMutation.isPending ? <span className="size-4 border-2 border-text-main/50 border-t-text-main rounded-full animate-spin"></span> : <MdSave className="text-[20px]" />}
                         {t('common.save')}
                     </button>
                     <button
                         onClick={handleDownload}
-                        className="px-6 py-2.5 rounded-xl bg-primary text-black font-bold hover:opacity-90 hover:shadow-glow transition-all flex items-center gap-2"
+                        disabled={downloadMutation.isPending}
+                        className="px-6 py-2.5 rounded-xl bg-primary text-black font-bold hover:opacity-90 hover:shadow-glow transition-all flex items-center gap-2 disabled:opacity-50"
                     >
-                        <MdDownload className="text-[20px]" />
+                        {downloadMutation.isPending ? <span className="size-4 border-2 border-black/50 border-t-black rounded-full animate-spin"></span> : <MdDownload className="text-[20px]" />}
                         {t('common.download')} .docx
                     </button>
                 </div>

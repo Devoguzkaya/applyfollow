@@ -120,4 +120,13 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
     }
+
+    public AuthResponse getProfile(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return new AuthResponse(null, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
+                "Profile fetched", user.getPhoneNumber(), user.getAddress(), user.getLinkedinUrl(),
+                user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
+    }
 }

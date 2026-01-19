@@ -2,17 +2,18 @@
 
 import { useLanguage } from '@/context/LanguageContext';
 import { useState, useEffect } from 'react';
-import { userService, UpdateProfileRequest } from '@/services/userService';
+import { userService, UpdateProfileRequest, ChangePasswordRequest } from '@/services/userService';
 import toast from 'react-hot-toast';
 import { FaUser, FaLock, FaSave, FaLinkedin, FaGithub, FaGlobe } from 'react-icons/fa';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ProfilePage() {
     const { dict } = useLanguage();
-    const t = dict; // Use dict directly for typed access
+    const t = dict;
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<'personal' | 'security'>('personal');
-    const [loading, setLoading] = useState(false);
 
-    // Profile State
+    // Profile State (Local Form State)
     const [profile, setProfile] = useState<UpdateProfileRequest>({
         fullName: '',
         email: '',
@@ -31,27 +32,62 @@ export default function ProfilePage() {
         confirmPassword: '',
     });
 
-    // Load initial data from localStorage (AuthResponse)
+    // 1. Fetch Profile Data (Source of Truth: Backend)
+    const { data: user, isLoading: isProfileLoading } = useQuery({
+        queryKey: ['profile'],
+        queryFn: userService.getProfile
+    });
+
+    // Sync form with fetched data
     useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            try {
-                const user = JSON.parse(savedUser);
-                setProfile({
-                    fullName: user.fullName || '',
-                    email: user.email || '',
-                    phoneNumber: user.phoneNumber || '',
-                    address: user.address || '',
-                    linkedinUrl: user.linkedinUrl || '',
-                    githubUrl: user.githubUrl || '',
-                    websiteUrl: user.websiteUrl || '',
-                    summary: user.summary || ''
-                });
-            } catch (e) {
-                console.error("Failed to parse user from local storage", e);
-            }
+        if (user) {
+            setProfile({
+                fullName: user.fullName || '',
+                email: user.email || '',
+                phoneNumber: user.phoneNumber || '',
+                address: user.address || '',
+                linkedinUrl: user.linkedinUrl || '',
+                githubUrl: user.githubUrl || '',
+                websiteUrl: user.websiteUrl || '',
+                summary: user.summary || ''
+            });
         }
-    }, []);
+    }, [user]);
+
+    // 2. Update Profile Mutation
+    const updateProfileMutation = useMutation({
+        mutationFn: (data: UpdateProfileRequest) => userService.updateProfile(data),
+        onSuccess: (updatedUser) => {
+            toast.success(t.profilePage.toast.profileUpdated);
+            // Update cache with new data returned from backend
+            queryClient.setQueryData(['profile'], updatedUser);
+            // Update local storage to keep auth state consistent if used elsewhere
+            // Note: Ideally, AuthContext should also listen to this or use React Query.
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                const currentUser = JSON.parse(savedUser);
+                const mergedUser = { ...currentUser, ...updatedUser };
+                localStorage.setItem('user', JSON.stringify(mergedUser));
+            }
+        },
+        onError: (err) => {
+            console.error(err);
+            toast.error(t.profilePage.toast.genericError);
+        }
+    });
+
+    // 3. Change Password Mutation
+    const changePasswordMutation = useMutation({
+        mutationFn: (data: ChangePasswordRequest) => userService.changePassword(data),
+        onSuccess: () => {
+            toast.success(t.profilePage.toast.passwordChanged);
+            setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        },
+        onError: (err) => {
+            console.error(err);
+            toast.error(t.profilePage.toast.genericError);
+        }
+    });
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -61,47 +97,35 @@ export default function ProfilePage() {
         setPasswords({ ...passwords, [e.target.name]: e.target.value });
     };
 
-    const onUpdateProfile = async (e: React.FormEvent) => {
+    const onUpdateProfile = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        try {
-            const updatedUser = await userService.updateProfile(profile);
-            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-            const mergedUser = { ...currentUser, ...updatedUser };
-            localStorage.setItem('user', JSON.stringify(mergedUser));
-
-            toast.success(t.profilePage.toast.profileUpdated);
-        } catch (error) {
-            console.error(error);
-            toast.error(t.profilePage.toast.genericError);
-        } finally {
-            setLoading(false);
-        }
+        updateProfileMutation.mutate(profile);
     };
 
-    const onChangePassword = async (e: React.FormEvent) => {
+    const onChangePassword = (e: React.FormEvent) => {
         e.preventDefault();
         if (passwords.newPassword !== passwords.confirmPassword) {
             toast.error(t.profilePage.toast.matchError);
             return;
         }
-        setLoading(true);
-        try {
-            await userService.changePassword({
-                currentPassword: passwords.currentPassword,
-                newPassword: passwords.newPassword,
-            });
-            toast.success(t.profilePage.toast.passwordChanged);
-            setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        } catch (error) {
-            console.error(error);
-            toast.error(t.profilePage.toast.genericError);
-        } finally {
-            setLoading(false);
-        }
+        changePasswordMutation.mutate({
+            currentPassword: passwords.currentPassword,
+            newPassword: passwords.newPassword,
+        });
     };
 
-    if (!t.profilePage) return null; // Guard clause if translations aren't loaded
+    if (!t.profilePage) return null;
+
+    if (isProfileLoading) {
+        return (
+            <div role="status" className="w-full h-[calc(100vh-200px)] flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="size-10 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                    <p className="text-slate-400 font-medium">Loading profile...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 animate-fadeIn">
@@ -118,8 +142,8 @@ export default function ProfilePage() {
                 <button
                     onClick={() => setActiveTab('personal')}
                     className={`pb-3 px-4 flex items-center gap-2 transition-colors relative ${activeTab === 'personal'
-                            ? 'text-[#00D632] font-medium'
-                            : 'text-gray-400 hover:text-white'
+                        ? 'text-[#00D632] font-medium'
+                        : 'text-gray-400 hover:text-white'
                         }`}
                 >
                     <FaUser />
@@ -131,8 +155,8 @@ export default function ProfilePage() {
                 <button
                     onClick={() => setActiveTab('security')}
                     className={`pb-3 px-4 flex items-center gap-2 transition-colors relative ${activeTab === 'security'
-                            ? 'text-[#00D632] font-medium'
-                            : 'text-gray-400 hover:text-white'
+                        ? 'text-[#00D632] font-medium'
+                        : 'text-gray-400 hover:text-white'
                         }`}
                 >
                     <FaLock />
@@ -264,15 +288,15 @@ export default function ProfilePage() {
                         <div className="flex justify-end pt-4">
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={updateProfileMutation.isPending}
                                 className="flex items-center gap-2 bg-[#00D632] hover:bg-[#00D632]/90 text-black font-semibold px-6 py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,214,50,0.3)] hover:shadow-[0_0_30px_rgba(0,214,50,0.4)]"
                             >
-                                {loading ? (
+                                {updateProfileMutation.isPending ? (
                                     <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                                 ) : (
                                     <FaSave />
                                 )}
-                                {loading ? t.profilePage.personal.saving : t.profilePage.personal.save}
+                                {updateProfileMutation.isPending ? t.profilePage.personal.saving : t.profilePage.personal.save}
                             </button>
                         </div>
                     </form>
@@ -325,15 +349,15 @@ export default function ProfilePage() {
                         <div className="flex justify-end pt-4">
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={changePasswordMutation.isPending}
                                 className="flex items-center gap-2 bg-[#00D632] hover:bg-[#00D632]/90 text-black font-semibold px-6 py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,214,50,0.3)] hover:shadow-[0_0_30px_rgba(0,214,50,0.4)]"
                             >
-                                {loading ? (
+                                {changePasswordMutation.isPending ? (
                                     <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                                 ) : (
                                     <FaLock />
                                 )}
-                                {loading ? t.profilePage.security.changing : t.profilePage.security.changePassword}
+                                {changePasswordMutation.isPending ? t.profilePage.security.changing : t.profilePage.security.changePassword}
                             </button>
                         </div>
                     </form>

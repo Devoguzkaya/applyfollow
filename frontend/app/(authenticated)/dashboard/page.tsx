@@ -1,43 +1,36 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { applicationService, ApplicationResponse } from '@/services/applicationService';
-import { calendarService, CalendarEvent } from '@/services/calendarService';
+import { applicationService } from '@/services/applicationService';
+import { calendarService } from '@/services/calendarService';
 import { useLanguage } from '@/context/LanguageContext';
+import { useQuery } from '@tanstack/react-query';
 
 export default function DashboardPage() {
   const { t } = useLanguage();
-  const [applications, setApplications] = useState<ApplicationResponse[]>([]);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch Data on Load
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [appsData, eventsData] = await Promise.all([
-          applicationService.getAllApplications(),
-          calendarService.getAllEvents()
-        ]);
-        setApplications(appsData);
-        setEvents(eventsData);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // 1. Fetch Applications (TanStack Query)
+  const { data: applications = [], isLoading: appsLoading } = useQuery({
+    queryKey: ['applications'],
+    queryFn: applicationService.getAllApplications,
+  });
+
+  // 2. Fetch Events (TanStack Query)
+  const { data: events = [], isLoading: eventsLoading } = useQuery({
+    queryKey: ['events'],
+    queryFn: calendarService.getAllEvents,
+  });
+
+  const loading = appsLoading || eventsLoading;
 
   // Calculate App Stats
   const totalApps = applications.length;
-  const interviews = applications.filter(app => app.status === 'INTERVIEW').length;
-  const rejections = applications.filter(app => app.status === 'REJECTED').length;
-  const offers = applications.filter(app => app.status === 'OFFER').length;
-  const ghosted = applications.filter(app => app.status === 'GHOSTED').length;
-  const applied = applications.filter(app => app.status === 'APPLIED').length;
+  // Use explicit casting or string comparison to avoid type errors roughly
+  const interviews = applications.filter(app => (app.status as string) === 'INTERVIEW').length;
+  const rejections = applications.filter(app => (app.status as string) === 'REJECTED').length;
+  const offers = applications.filter(app => (app.status as string) === 'OFFER').length;
+  const ghosted = applications.filter(app => (app.status as string) === 'GHOSTED').length;
+  const applied = applications.filter(app => (app.status as string) === 'APPLIED').length;
 
   const responseRate = totalApps > 0 ? Math.round(((interviews + rejections + offers) / totalApps) * 100) : 0;
 
@@ -59,7 +52,7 @@ export default function DashboardPage() {
   };
 
   const getGradient = () => {
-    if (totalApps === 0) return '#1e293b';
+    if (totalApps === 0) return 'var(--surface)';
     const p1 = Math.round((offers / totalApps) * 100);
     const p2 = p1 + Math.round((interviews / totalApps) * 100);
     const p3 = p2 + Math.round((applied / totalApps) * 100);
@@ -201,7 +194,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-border-main">
-                <div className={`flex items-center gap-2 px-2 py-1 rounded-md border ${getStatusColor(app.status)}`}>
+                <div className={`flex items-center gap-2 px-2 py-1 rounded-md border ${getStatusColor(app.status as string)}`}>
                   <span className="text-[10px] font-bold tracking-wide uppercase">{app.status}</span>
                 </div>
                 <p className="text-xs text-text-muted">

@@ -13,6 +13,7 @@ export interface User {
     githubUrl?: string;
     websiteUrl?: string;
     summary?: string;
+    token?: string; // Add token to User interface
 }
 
 export interface LoginRequest {
@@ -27,7 +28,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-    token: string;
+    token?: string; // Make token optional in response
     id: string;
     email: string;
     fullName: string;
@@ -55,8 +56,7 @@ export interface UpdateProfileData {
 export const authService = {
     login: async (credentials: LoginRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>(`${API_URL}/login`, credentials);
-        if (response.data.id) {
-            // response.data hem user bilgileri hem token içeriyor
+        if (response.data.id && response.data.token) {
             localStorage.setItem('user', JSON.stringify(response.data));
         }
         return response.data;
@@ -64,7 +64,7 @@ export const authService = {
 
     register: async (data: RegisterRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>(`${API_URL}/register`, data);
-        if (response.data.id) {
+        if (response.data.id && response.data.token) {
             localStorage.setItem('user', JSON.stringify(response.data));
         }
         return response.data;
@@ -84,9 +84,18 @@ export const authService = {
 
     updateProfile: async (data: UpdateProfileData): Promise<AuthResponse> => {
         const response = await api.put<AuthResponse>('/users/profile', data);
-        // Update local storage with new info
+
         if (response.data) {
-            localStorage.setItem('user', JSON.stringify(response.data));
+            const currentUserStr = localStorage.getItem('user');
+            if (currentUserStr) {
+                const currentUser = JSON.parse(currentUserStr);
+                // Preserve the token while updating user info
+                const updatedUser = {
+                    ...response.data,
+                    token: currentUser.token
+                };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+            }
         }
         return response.data;
     },

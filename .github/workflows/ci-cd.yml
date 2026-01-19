@@ -56,9 +56,8 @@ jobs:
   # ------------------------------------------------------------------
   deploy:
     needs: [backend-build, frontend-build]
-    on:
-      push:
-        branches: [ "main", "master" ]
+    # Sadece push yapıldığında çalışsın (PR'larda deploy olmasın)
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
     - name: Deploy to VPS via SSH
@@ -71,7 +70,7 @@ jobs:
           cd /root/Repositories/ApplyFollow
           
           echo "Updating source code..."
-          git pull origin main
+          git pull origin master
           
           # 1. Backend Update & Restart
           echo "Building Backend..."
@@ -79,9 +78,7 @@ jobs:
           mvn clean package -DskipTests
           
           echo "Restarting Backend Service..."
-          # Varsayılan olarak systemd veya pm2 kullanıldığını varsayıyoruz. 
-          # Eğer servis adın farklıysa vps terminalinden "systemctl restart applyfollow" demelisin.
-          systemctl restart applyfollow-backend || pm2 restart applyfollow-backend || echo "Backend restart command failed, check manual service name."
+          systemctl restart applyfollow-backend || pm2 restart applyfollow-backend || echo "Backend restart command failed."
           
           # 2. Frontend Update & Restart
           echo "Building Frontend..."
@@ -90,7 +87,6 @@ jobs:
           npm run build
           
           echo "Restarting Frontend Service..."
-          # Next.js genelde PM2 ile yönetilir.
           pm2 restart applyfollow-frontend || npm run start &
           
           echo "Deployment successful! 🚀"

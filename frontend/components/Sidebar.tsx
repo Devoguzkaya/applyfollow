@@ -8,19 +8,35 @@ import { calendarService } from '@/services/calendarService';
 import { useAppSelector } from '@/store/hooks';
 import { useLanguage } from '@/context/LanguageContext';
 import { useUI } from '@/context/UIContext';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Sidebar() {
     const pathname = usePathname();
     const { t } = useLanguage();
     const { isSidebarOpen, setSidebarOpen } = useUI();
-    const { user } = useAppSelector((state) => state.auth);
-    const [todayCount, setTodayCount] = useState(0);
+    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
     const [isMobile, setIsMobile] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Fetch alerts for badge using TanStack Query
+    // It's much cleaner than useEffect + setInterval
+    const { data: events } = useQuery({
+        queryKey: ['calendar-events-count'],
+        queryFn: () => calendarService.getAllEvents(),
+        enabled: mounted && !!user, // Only fetch if user is logged in
+        refetchInterval: 60000, // Refresh every minute
+        staleTime: 30000,
+    });
+
+    const todayCount = events ? (() => {
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        return events.filter(e => e.date === todayStr).length;
+    })() : 0;
 
     // Initial check for mobile
     useEffect(() => {
@@ -30,24 +46,6 @@ export default function Sidebar() {
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
-    // Fetch alerts for badge
-    useEffect(() => {
-        const fetchCount = async () => {
-            try {
-                const events = await calendarService.getAllEvents();
-                const today = new Date();
-                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-                const count = events.filter(e => e.date === todayStr).length;
-                setTodayCount(count);
-            } catch (error) {
-                console.error("Failed to fetch sidebar counts", error);
-            }
-        };
-        fetchCount();
-        const interval = setInterval(fetchCount, 60000);
-        return () => clearInterval(interval);
     }, []);
 
     // Close sidebar on mobile after navigation

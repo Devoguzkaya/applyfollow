@@ -9,7 +9,7 @@ permissions:
   packages: write
 
 jobs:
-  # 1. GitHub tarafında Imajları Build et ve GHCR'ye yükle
+  # 1. GitHub tarafında imajları inşa et
   build-and-push:
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -31,9 +31,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          # Github Owner adını burada manuel küçülterek yazıyoruz (Docker hatasını çözmek için)
-          tags: |
-            ghcr.io/devoguzkaya/applyfollow-backend:latest
+          tags: ghcr.io/devoguzkaya/applyfollow-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -42,19 +40,18 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: |
-            ghcr.io/devoguzkaya/applyfollow-frontend:latest
+          tags: ghcr.io/devoguzkaya/applyfollow-frontend:latest
           build-args: |
             NEXT_PUBLIC_API_URL=/api
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # 2. VPS tarafına sadece 'Pull' emri gönder
+  # 2. VPS tarafında sadece güncellemeyi tetikle (Safe Mode)
   deploy:
     needs: [build-and-push]
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to VPS via SSH
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -63,19 +60,16 @@ jobs:
           script: |
             cd ~/applyfollow || cd /root/Repositories/ApplyFollow
             
+            # ASLA .env dosyasını silme/üzerine yazma! Sadece docker-compose.yml gibi kodları güncelle.
             git fetch origin master
             git reset --hard origin/master
             
-            # VPS tarafında da her ihtimale karşı küçük harfi garantileyelim
-            echo "GITHUB_REPOSITORY_OWNER=devoguzkaya" > .env
-            
+            # GitHub Login
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            echo "Pulling latest images from GHCR..."
-            GITHUB_REPOSITORY_OWNER=devoguzkaya docker compose pull
-            
-            echo "Restarting services..."
-            GITHUB_REPOSITORY_OWNER=devoguzkaya docker compose up -d
+            # Sadece yeni imajları çek ve konteynerları yenile
+            docker compose pull
+            docker compose up -d
             
             docker image prune -f
-            echo "Deployment successful! 🚀"
+            echo "Safe deployment finished! 🐳🚀"

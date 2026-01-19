@@ -56,7 +56,6 @@ jobs:
   # ------------------------------------------------------------------
   deploy:
     needs: [backend-build, frontend-build]
-    # Sadece push yapıldığında çalışsın (PR'larda deploy olmasın)
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -69,24 +68,30 @@ jobs:
         script: |
           cd /root/Repositories/ApplyFollow
           
-          echo "Updating source code..."
-          git pull origin master
+          echo "Syncing with GitHub..."
+          git fetch origin master
+          git reset --hard origin/master
           
-          # 1. Backend Update & Restart
-          echo "Building Backend..."
+          # 1. Backend Deployment
+          echo "Updating Backend..."
           cd backend
           mvn clean package -DskipTests
+          systemctl restart applyfollow-backend || pm2 restart applyfollow-backend || echo "Backend restart failed."
           
-          echo "Restarting Backend Service..."
-          systemctl restart applyfollow-backend || pm2 restart applyfollow-backend || echo "Backend restart command failed."
-          
-          # 2. Frontend Update & Restart
-          echo "Building Frontend..."
+          # 2. Frontend Deployment (The Forceful Way)
+          echo "Updating Frontend..."
           cd ../frontend
           npm install
+          
+          # Delete existing build to prevent stale cache
+          rm -rf .next
+          
+          echo "Running Fresh Build..."
           npm run build
           
           echo "Restarting Frontend Service..."
-          pm2 restart applyfollow-frontend || npm run start &
+          # PM2 restart can sometimes keep old assets, delete and start is safer for a major update
+          pm2 delete applyfollow-frontend || true
+          pm2 start npm --name "applyfollow-frontend" -- start
           
-          echo "Deployment successful! 🚀"
+          echo "Deployment successful! Site should be fresh now. 🚀"

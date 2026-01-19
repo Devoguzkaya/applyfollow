@@ -195,7 +195,7 @@ export default function UserDetailPage() {
                                     <div className="space-y-3 text-sm">
                                         <p><span className="font-semibold text-gray-600 dark:text-gray-400 w-32 inline-block">{dict.admin.detail.profile.phone}:</span> <span className="text-gray-800 dark:text-gray-200">{userDetails?.phoneNumber || dict.admin.detail.profile.notProvided}</span></p>
                                         <p><span className="font-semibold text-gray-600 dark:text-gray-400 w-32 inline-block">{dict.admin.detail.profile.address}:</span> <span className="text-gray-800 dark:text-gray-200">{userDetails?.address || dict.admin.detail.profile.notProvided}</span></p>
-                                        {userDetails?.linkedinUrl && <p><span className="font-semibold text-gray-600 dark:text-gray-400 w-32 inline-block">LinkedIn:</span> <a href={userDetails.linkedinUrl} target="_blank" className="text-indigo-600 hover:underline">View Profile</a></p>}
+                                        {userDetails?.linkedinUrl && <p><span className="font-semibold text-gray-600 dark:text-gray-400 w-32 inline-block">LinkedIn:</span> <a href={userDetails.linkedinUrl.startsWith('http') ? userDetails.linkedinUrl : `https://${userDetails.linkedinUrl}`} target="_blank" className="text-indigo-600 hover:underline">View Profile</a></p>}
                                     </div>
                                 </div>
                             </div>

@@ -62,16 +62,16 @@ jobs:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
         password: ${{ secrets.REMOTE_PASSWORD }}
+        command_timeout: 30m  # SSH bağlantısına 30 dakika süre tanıyoruz
         script: |
-          # Proje dizinine git (Senin terminalde gördüğümüz yol)
           cd ~/applyfollow || cd /root/Repositories/ApplyFollow
           
           echo "Updating source from GitHub..."
           git fetch origin master
           git reset --hard origin/master
           
-          echo "Rebuilding and restarting Docker containers..."
-          # Docker Compose ile her şeyi baştan inşa et ve başlat
+          echo "Rebuilding and restarting Docker containers (this might take a while)..."
+          # Docker Compose ile baştan inşa et
           docker compose up -d --build
           
           echo "Deployment successful! 🐳🚀"

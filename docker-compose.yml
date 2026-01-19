@@ -49,6 +49,7 @@ services:
 
   backend:
     build: ./backend
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/applyfollow-backend:latest
     container_name: applyfollow_backend
     restart: always
     expose:
@@ -84,6 +85,7 @@ services:
       context: ./frontend
       args:
         NEXT_PUBLIC_API_URL: /api
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/applyfollow-frontend:latest
     container_name: applyfollow_frontend
     restart: always
     expose:

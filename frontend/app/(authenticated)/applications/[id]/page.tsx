@@ -267,7 +267,7 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                                 className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 text-sm font-medium transition-colors border border-red-500/20 focus:ring-2 focus:ring-red-500 focus:outline-none"
                             >
                                 <span className="material-symbols-outlined text-lg">delete</span>
-                                {t('applications.detail.delete') || 'Delete'} {/* Fallback text */}
+                                {t('applications.detail.delete') === 'applications.detail.delete' ? 'Delete Application' : t('applications.detail.delete')}
                             </button>
                         </div>
                     </article>

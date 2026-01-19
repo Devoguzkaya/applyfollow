@@ -441,17 +441,25 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full text-center py-12 text-text-muted text-sm border-t border-border-main bg-surface-card transition-colors">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link href="/" className="flex items-center gap-6 group/flogo">
-            <div className="relative size-16 shrink-0 bg-slate-900 rounded-xl p-2 border border-white/10 transition-transform group-hover/flogo:scale-105">
-              <Image
-                src="/ApplyFollowLogo.png"
-                alt="ApplyFollow Logo"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <span className="font-display font-bold text-text-main tracking-tight">Apply<span className="text-primary">Follow</span></span>
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-4 group/flogo">
+              <div className="relative size-12 shrink-0 bg-slate-900 rounded-xl p-2 border border-white/10 transition-transform group-hover/flogo:scale-105">
+                <Image
+                  src="/ApplyFollowLogo.png"
+                  alt="ApplyFollow Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="font-display font-bold text-text-main tracking-tight">Apply<span className="text-primary">Follow</span></span>
+                <span className="text-[10px] font-black text-emerald-500 flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  CD SYSTEM ACTIVE
+                </span>
+              </div>
+            </Link>
+          </div>
           <p>{t('landing.footer.rights')}</p>
           <div className="flex items-center gap-6">
             <a href="https://www.linkedin.com/in/oğuzhan-kaya-fullstackdeveloper" target="_blank" rel="noreferrer" className="hover:text-text-main transition-colors">LinkedIn</a>

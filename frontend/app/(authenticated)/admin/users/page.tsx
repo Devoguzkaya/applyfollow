@@ -58,7 +58,7 @@ export default function UsersPage() {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <Link href={`/admin/users/${user.id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">
+                                    <Link href={`/admin/users/${user.email.split('@')[0]}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">
                                         {dict.admin.table.viewDetails}
                                     </Link>
                                     {/* Additional actions like Toggle Status can be added here */}

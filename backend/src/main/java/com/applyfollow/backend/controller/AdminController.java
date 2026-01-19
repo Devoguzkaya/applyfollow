@@ -73,6 +73,28 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/users/slug/{slug}")
+    public ResponseEntity<AdminUserDetailResponse> getUserDetailsBySlug(@PathVariable String slug) {
+        User user = userRepository.findFirstByEmailStartingWith(slug)
+                .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
+                        "User not found by slug: " + slug));
+
+        AdminUserDetailResponse response = new AdminUserDetailResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getRole().name(),
+                user.isActive(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getLinkedinUrl(),
+                user.getGithubUrl(),
+                user.getWebsiteUrl(),
+                user.getSummary());
+
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/users/{id}/toggle-status")
     public ResponseEntity<Void> toggleUserStatus(@PathVariable UUID id) {
         User user = userRepository.findById(id)

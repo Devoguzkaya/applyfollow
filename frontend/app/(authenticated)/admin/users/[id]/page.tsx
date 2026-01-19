@@ -32,37 +32,49 @@ export default function UserDetailPage() {
 
     const loadData = async () => {
         try {
-            // Load all data in parallel
-            // Note: We log any errors specifically for CV to debug access issues
-            const [userRes, appsData] = await Promise.all([
-                adminService.getUserDetails(userId),
-                adminService.getUserApplications(userId).catch(() => []),
-            ]);
+            let userRes: AdminUserDetailResponse;
+
+            // Simple check for UUID format (8-4-4-4-12 hex digits)
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+
+            if (isUuid) {
+                userRes = await adminService.getUserDetails(userId);
+            } else {
+                userRes = await adminService.getUserDetailsBySlug(userId);
+            }
 
             setUserDetails(userRes);
+
+            // Use the REAL ID from the fetched user for related data
+            const realId = userRes.id;
+
+            // Load related data using the real ID
+            const appsData = await adminService.getUserApplications(realId).catch(() => []);
             setApplications(appsData);
 
-            // Fetch CV separately to better handle logging
+            // Fetch CV separately
             try {
-                const cvDataRes = await adminService.getUserCv(userId);
-                console.log("CV Data Loaded:", cvDataRes); // Debug log
+                const cvDataRes = await adminService.getUserCv(realId);
+                console.log("CV Data Loaded:", cvDataRes);
                 setCvData(cvDataRes);
             } catch (cvError) {
-                console.warn("Could not load CV data (might be empty or unauthorized):", cvError);
+                console.warn("Could not load CV data:", cvError);
                 setCvData(null);
             }
 
         } catch (error) {
             console.error('Error loading user data:', error);
+            // Optional: Redirect to list or show 404
         } finally {
             setLoading(false);
         }
     };
 
     const handleDownloadCv = async () => {
+        if (!userDetails) return;
         try {
             setDownloading(true);
-            await adminService.downloadUserCv(userId);
+            await adminService.downloadUserCv(userDetails.id);
         } catch (error) {
             console.error('Error downloading CV:', error);
             alert('Failed to download CV');

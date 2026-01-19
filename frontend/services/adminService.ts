@@ -53,6 +53,11 @@ export const adminService = {
         return response.data;
     },
 
+    getUserDetailsBySlug: async (slug: string) => {
+        const response = await api.get<AdminUserDetailResponse>(`/admin/users/slug/${slug}`);
+        return response.data;
+    },
+
     toggleUserStatus: async (id: string) => {
         const response = await api.patch(`/admin/users/${id}/toggle-status`, {});
         return response.data;

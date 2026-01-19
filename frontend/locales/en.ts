@@ -194,6 +194,7 @@ export const en: Dictionary = {
             contactAdded: "Contact added successfully!",
             notesSaved: "Notes saved successfully!",
             noLink: "No Link Available",
+            delete: "Delete Application",
             contactModal: {
                 title: "Add New Contact",
                 name: "Name",

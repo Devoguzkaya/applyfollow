@@ -192,6 +192,7 @@ export const tr = {
             contactAdded: "Kişi başarıyla eklendi!",
             notesSaved: "Notlar kaydedildi!",
             noLink: "Link Yok",
+            delete: "Başvuruyu Sil",
             contactModal: {
                 title: "Yeni Kişi Ekle",
                 name: "İsim",

@@ -223,11 +223,11 @@ export const en: Dictionary = {
             signup: "Sign Up",
         },
         hero: {
-            badge: "v1.0 Public Beta",
+            badge: "",
             title: "Land Your Dream Job Without the Chaos.",
             subtitle: "Stop using spreadsheets. Track applications, manage interviews, and organize your network in one powerful workspace designed for professionals.",
             getStarted: "Get Started",
-            starGithub: "Star on GitHub",
+            starGithub: "",
         },
         features: {
             title: "Everything You Need",

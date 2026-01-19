@@ -204,11 +204,6 @@ export default function Home() {
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 pt-16 pb-20 flex flex-col items-center text-center">
 
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-border-main mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <span className="size-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="text-xs font-bold text-text-muted uppercase tracking-widest">{t('landing.hero.badge')}</span>
-          </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black leading-[1.1] mb-6 text-text-main animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 px-4">
@@ -228,15 +223,6 @@ export default function Home() {
               {t('landing.hero.getStarted')}
               <span className="material-symbols-outlined">arrow_forward</span>
             </Link>
-            <a
-              href="https://github.com/Devoguzkaya/applyfollow"
-              target="_blank"
-              rel="noreferrer"
-              className="h-12 px-8 rounded-lg bg-surface-card border border-border-main text-text-main font-medium text-base flex items-center gap-2 hover:bg-surface-hover transition-all"
-            >
-              <i className="devicon-github-original text-xl"></i>
-              {t('landing.hero.starGithub')}
-            </a>
           </div>
 
           {/* Mockup / Visual */}
@@ -446,7 +432,6 @@ export default function Home() {
           <p>{t('landing.footer.rights')}</p>
           <div className="flex items-center gap-6">
             <a href="https://www.linkedin.com/in/oğuzhan-kaya-fullstackdeveloper" target="_blank" rel="noreferrer" className="hover:text-text-main transition-colors">LinkedIn</a>
-            <a href="https://github.com/Devoguzkaya" target="_blank" rel="noreferrer" className="hover:text-text-main transition-colors">GitHub</a>
             <Link href="#" className="hover:text-text-main transition-colors">{t('landing.footer.links.terms')}</Link>
           </div>
         </div>

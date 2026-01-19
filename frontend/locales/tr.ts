@@ -221,11 +221,11 @@ export const tr = {
             signup: "Kayıt Ol",
         },
         hero: {
-            badge: "v1.0 Açık Beta",
+            badge: "",
             title: "Hayalindeki İşe Karmaşa Olmadan Kavuş.",
             subtitle: "Excel tablolarını bırak. Profesyoneller için tasarlanmış güçlü bir çalışma alanında başvurularını takip et, mülakatlarını yönet ve ağını düzenle.",
             getStarted: "Hemen Başla",
-            starGithub: "GitHub'da İncele",
+            starGithub: "",
         },
         features: {
             title: "İhtiyacın Olan Her Şey",

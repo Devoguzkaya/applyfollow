@@ -61,6 +61,11 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
+      # JVM Memory Limits (Critical for VPS)
+      # -Xms256m: Initial heap size
+      # -Xmx512m: Max heap size (Leaves room for OS & other containers)
+      JAVA_TOOL_OPTIONS: "-Xms256m -Xmx512m"
+
       # Security
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
@@ -75,6 +80,14 @@ services:
       VIRTUAL_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
       VIRTUAL_PATH: /api,/v3/api-docs,/swagger-ui
       LETSENCRYPT_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
+
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.90'
+        reservations:
+          memory: 512M
 
     networks:
       - app_network
@@ -98,6 +111,10 @@ services:
       VIRTUAL_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
       VIRTUAL_PORT: 3000
       LETSENCRYPT_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     networks:
       - app_network
 

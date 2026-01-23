@@ -47,7 +47,23 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Extract backend error message if available
+        // 1. Handle Token Expiration (401 Unauthorized)
+        if (error.response && error.response.status === 401) {
+            // Check if we are already on the login page to avoid infinite loops
+            if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+                // Clear all auth data
+                localStorage.removeItem('user');
+
+                // Optional: Trigger a custom event if you want to show a toast via UI components
+                // window.dispatchEvent(new Event('auth:unauthorized'));
+
+                // Force redirect to login
+                window.location.href = '/login?expired=true';
+                return Promise.reject(error);
+            }
+        }
+
+        // 2. Extract backend error message if available
         if (error.response && error.response.data) {
             // Support Spring Boot 3 ProblemDetail (RFC 7807) 'detail' field
             // Fallback to legacy 'message' or 'error' fields

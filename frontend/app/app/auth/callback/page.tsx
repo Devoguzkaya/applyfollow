@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { authService } from '@/services/authService';
 import { fetchUser } from '@/store/features/auth/authSlice';
 import toast from 'react-hot-toast';
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const dispatch = useAppDispatch();
@@ -51,5 +51,17 @@ export default function AuthCallbackPage() {
                 <p className="text-slate-400 font-medium animate-pulse">Giriş yapılıyor...</p>
             </div>
         </div>
+    );
+}
+
+export default function AuthCallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#0A0C10]">
+                <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        }>
+            <AuthCallbackContent />
+        </Suspense>
     );
 }

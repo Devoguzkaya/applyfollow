@@ -36,7 +36,7 @@ public class AuthControllerTest {
 
         @Test
         public void register_ShouldReturnAuthResponse_WhenRequestIsValid() throws Exception {
-                RegisterRequest request = new RegisterRequest("Test User", "test@example.com", "password123");
+                RegisterRequest request = new RegisterRequest("Test User", "test@example.com", "password123", false);
                 AuthResponse response = new AuthResponse("jwt-token", UUID.randomUUID(), "test@example.com",
                                 "Test User", "USER",
                                 "Success", null, null, null, null, null, null);

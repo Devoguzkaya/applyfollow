@@ -1,0 +1,47 @@
+# ApplyFollow - Frontend Code Review Raporu
+# Tarih: 24.01.2026
+# Hazırlayan: Gemini CLI (Frontend Specialist & Code Reviewer)
+
+Bu dosya, frontend kod tabanının (Next.js/React) analizi sonucunda oluşturulan bulguları ve aksiyon planını içerir.
+
+---
+
+## 🛡️ 1. Güvenlik ve Auth Akışı (P1 - Yüksek Öncelik)
+
+### A. LocalStorage Token Saklama
+- **Konum:** `services/authService.ts`
+- **Durum:** JWT Token `localStorage` içinde saklanıyor.
+- **Risk:** XSS (Cross-Site Scripting) saldırılarına karşı savunmasız. JS kodu çalıştırabilen bir saldırgan token'ı çalabilir.
+- **Aksiyon (Uzun Vade):** Token saklama işini **HttpOnly Cookie** yöntemine taşıyın.
+- **Aksiyon (Kısa Vade):** Kullanıcı girdilerini (özellikle `dangerouslySetInnerHTML` varsa) çok sıkı sanitize edin.
+
+### B. Hardcoded API URL
+- **Konum:** `services/api.ts`
+- **Durum:** `http://localhost:8080/api` kod içine gömülmüş.
+- **Risk:** Mixed Content hataları (HTTPS -> HTTP) ve Production ortamında yanlış adrese istek atma riski.
+- **Aksiyon:** `process.env.NEXT_PUBLIC_API_URL` kullanımını zorunlu kılın ve fallback değerini kaldırın.
+
+---
+
+## ⚛️ 2. React & Next.js Mimarisi (P2 - Orta Öncelik)
+
+### A. Provider Hell (İç İçe Providerlar)
+- **Konum:** `app/layout.tsx`
+- **Durum:** 5 katmanlı iç içe geçmiş Provider yapısı (`StoreProvider`, `UIProvider`, `ThemeProvider`...).
+- **Sorun:** Okunabilirliği düşürüyor.
+- **Aksiyon:** Tüm providerları tek bir `AppProviders` bileşeni altında toplayın (`components/providers/AppProviders.tsx`).
+
+### B. Navigation (Yönlendirme)
+- **Konum:** `services/api.ts` -> `window.location.href = '/login?expired=true'`
+- **Sorun:** SPA (Single Page App) mantığını bozarak sayfayı tamamen yeniliyor (Full Reload).
+- **Aksiyon:** `useRouter` hook'unu kullanamadığınız yerlerde (Axios interceptor gibi), custom event veya global state kullanarak yönlendirmeyi UI katmanında tetikleyin.
+
+---
+
+## 📅 Aksiyon Planı
+
+1. [ ] `.env` dosyasını oluştur ve `NEXT_PUBLIC_API_URL` değişkenini tanımla.
+2. [ ] `api.ts` içindeki hardcoded URL'i temizle.
+3. [ ] `layout.tsx` dosyasını `AppProviders` bileşeni ile sadeleştir.
+4. [ ] Giriş/Kayıt formlarında XSS kontrolü yap (React otomatik yapar ama `dangerouslySetInnerHTML` varsa dikkat).
+

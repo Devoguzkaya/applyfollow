@@ -23,7 +23,9 @@ import java.util.UUID;
 public class User extends BaseEntity implements UserDetails {
 
     @Builder
-    public User(UUID id, String email, String passwordHash, String fullName, Role role, boolean active,
+    public User(UUID id, String email, String passwordHash, String fullName, Role role, AuthProvider provider,
+            String providerId, boolean active,
+            boolean marketDataConsent,
             String summary, String phoneNumber, String address, String linkedinUrl, String githubUrl, String websiteUrl,
             String cvTitle,
             List<Application> applications, Set<Education> educations,
@@ -33,7 +35,10 @@ public class User extends BaseEntity implements UserDetails {
         this.passwordHash = passwordHash;
         this.fullName = fullName;
         this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
         this.active = active;
+        this.marketDataConsent = marketDataConsent;
         this.summary = summary;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -68,8 +73,16 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    private String providerId;
+
     @Column(nullable = false)
     private boolean active = true;
+
+    @Column(nullable = false)
+    private boolean marketDataConsent = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @lombok.ToString.Exclude

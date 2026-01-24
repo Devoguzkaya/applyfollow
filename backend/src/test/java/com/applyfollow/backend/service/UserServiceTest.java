@@ -41,7 +41,7 @@ class UserServiceTest {
 
     @Test
     void register_WhenEmailExists_ShouldThrowException() {
-        RegisterRequest request = new RegisterRequest("Test", "test@test.com", "pass");
+        RegisterRequest request = new RegisterRequest("Test", "test@test.com", "pass", false);
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(new User()));
 
         assertThrows(BadRequestException.class, () -> userService.register(request));
@@ -49,15 +49,14 @@ class UserServiceTest {
 
     @Test
     void register_WhenSuccess_ShouldReturnToken() {
-        RegisterRequest request = new RegisterRequest("Test", "new@test.com", "pass");
+        RegisterRequest request = new RegisterRequest("Test", "new@test.com", "pass", false);
         User savedUser = User.builder().id(UUID.randomUUID()).email(request.email()).fullName(request.fullName())
                 .build();
 
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPass");
         when(jwtService.generateToken(any(User.class))).thenReturn("jwt-token");
-        // capture save is redundant if we verify method call frequency, assume save
-        // works void
 
         AuthResponse response = userService.register(request);
 

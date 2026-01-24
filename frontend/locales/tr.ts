@@ -170,6 +170,7 @@ export const tr = {
             status: "Durum",
             notes: "Notlar (Opsiyonel)",
             notesPlaceholder: "Bu işle ilgili önemli detaylar...",
+            notesWarning: "Lütfen sağlık verisi, siyasi görüş vb. hassas kişisel verilerinizi girmeyiniz.",
             submit: "Başvuruyu Kaydet",
             submitting: "Kaydediliyor...",
             success: "Başvuru başarıyla oluşturuldu!",
@@ -212,6 +213,13 @@ export const tr = {
             GHOSTED: "Cevap Yok"
         }
     },
+    auth: {
+        consent: {
+            term1: "Anonimleştirilmiş verilerimin (maaş, mülakat süreci vb.) toplulukla paylaşılmasına ve istatistiksel amaçlarla kullanılmasına izin veriyorum.",
+            term2: "Kullanıcı Sözleşmesi ve Gizlilik Politikası'nı okudum ve kabul ediyorum.",
+            validation: "Devam etmek için şartları kabul etmelisiniz."
+        }
+    },
     landing: {
         nav: {
             features: "Özellikler",
@@ -220,6 +228,7 @@ export const tr = {
             login: "Giriş Yap",
             signup: "Kayıt Ol",
         },
+
         hero: {
             badge: "",
             title: "Hayalindeki İşe Karmaşa Olmadan Kavuş.",

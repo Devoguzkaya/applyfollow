@@ -172,6 +172,7 @@ export const en: Dictionary = {
             status: "Status",
             notes: "Notes (Optional)",
             notesPlaceholder: "Important details about this job...",
+            notesWarning: "Please do not enter sensitive personal data (health, political views, etc.).",
             submit: "Create Application",
             submitting: "Creating...",
             success: "Application created successfully!",
@@ -214,6 +215,13 @@ export const en: Dictionary = {
             GHOSTED: "Ghosted"
         }
     },
+    auth: {
+        consent: {
+            term1: "I consent to my anonymized data (salary, interview process, etc.) being shared significantly with the community and used for statistical purposes.",
+            term2: "I have read and agree to the Terms of Service and Privacy Policy.",
+            validation: "You must accept the terms to proceed."
+        }
+    },
     landing: {
         nav: {
             features: "Features",
@@ -222,6 +230,7 @@ export const en: Dictionary = {
             login: "Log In",
             signup: "Sign Up",
         },
+
         hero: {
             badge: "",
             title: "Land Your Dream Job Without the Chaos.",

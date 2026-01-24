@@ -1,15 +1,10 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-    // 1. Environment variable (Docker/Vercel sets this)
+    // 1. Environment variable (Always prefer this)
     if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
 
-    // 2. Localhost development fallback
-    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-        return 'http://localhost:8080/api';
-    }
-
-    // 3. Default Production Fallback (Relative path for Same Domain)
+    // 2. Default Fallback (Relative path assumes same domain or proxy)
     return '/api';
 };
 
@@ -54,11 +49,8 @@ api.interceptors.response.use(
                 // Clear all auth data
                 localStorage.removeItem('user');
 
-                // Optional: Trigger a custom event if you want to show a toast via UI components
-                // window.dispatchEvent(new Event('auth:unauthorized'));
-
-                // Force redirect to login
-                window.location.href = '/login?expired=true';
+                // Trigger a custom event for UI components to handle the redirect cleanly (SPA friendly)
+                window.dispatchEvent(new Event('auth:unauthorized'));
                 return Promise.reject(error);
             }
         }

@@ -169,32 +169,50 @@ export default function NewApplicationPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div className="flex flex-col gap-2 md:col-span-2">
+                        <label className="text-sm font-medium text-slate-300 ml-1">{t('applications.new.notes')}</label>
+                        <div className="relative group">
+                            <div className="absolute top-4 left-0 pl-4 flex items-start pointer-events-none">
+                                <span className="material-symbols-outlined text-slate-500 group-focus-within:text-primary transition-colors">description</span>
+                            </div>
+                            <textarea
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                className="w-full h-32 pl-12 pr-4 py-3 bg-input-bg border border-border-dark rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-normal text-base resize-none"
+                                placeholder={t('applications.new.notesPlaceholder')}
+                            />
+                        </div>
+                        <p className="text-xs text-amber-500/80 flex items-center gap-1 ml-1">
+                            <span className="material-symbols-outlined text-[14px]">warning</span>
+                            {t('applications.new.notesWarning')}
+                        </p>
+                    </div>
 
-                {/* FOOTER ACTIONS */}
-                <div className="px-8 py-6 bg-surface-dark rounded-b-2xl border-t border-border-dark flex items-center justify-end gap-4">
-                    <Link href="/dashboard" className="px-6 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        {t('common.cancel')}
-                    </Link>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="px-8 py-3 rounded-xl text-sm font-bold text-[#101618] bg-primary hover:bg-emerald-400 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#11161d] focus:ring-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {loading ? (
-                            <span>{t('applications.new.submitting')}</span>
-                        ) : (
-                            <>
-                                <span className="material-symbols-outlined text-[20px]">check</span>
-                                {t('applications.new.submit')}
-                            </>
-                        )}
-                    </button>
                 </div>
-
-                {/* Subtle decorative gradient */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50 rounded-t-2xl"></div>
             </div>
+
+            {/* FOOTER ACTIONS */}
+            <div className="px-8 py-6 bg-surface-dark rounded-b-2xl border-t border-border-dark flex items-center justify-end gap-4">
+                <Link href="/dashboard" className="px-6 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    {t('common.cancel')}
+                </Link>
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="px-8 py-3 rounded-xl text-sm font-bold text-[#101618] bg-primary hover:bg-emerald-400 shadow-glow transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#11161d] focus:ring-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {loading ? (
+                        <span>{t('applications.new.submitting')}</span>
+                    ) : (
+                        <>
+                            <span className="material-symbols-outlined text-[20px]">check</span>
+                            {t('applications.new.submit')}
+                        </>
+                    )}
+                </button>
+            </div>
+
+            {/* Subtle decorative gradient */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50 rounded-t-2xl"></div>
         </div>
     );
 }

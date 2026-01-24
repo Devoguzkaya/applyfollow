@@ -92,6 +92,41 @@ export default function LoginPage() {
                     </button>
                 </form>
 
+                <div className="flex items-center gap-4 my-6">
+                    <div className="h-px bg-slate-700 flex-1"></div>
+                    <span className="text-sm text-slate-500">Or continue with</span>
+                    <div className="h-px bg-slate-700 flex-1"></div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            // API_URL genellikle "http://localhost:8080/api" formatındadır.
+                            // Backend artik /api prefix'ini bekliyor.
+                            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+                            // const baseUrl = apiUrl.replace(/\/api$/, ''); // ARTIK SILMIYORUZ
+                            window.location.href = `${apiUrl}/oauth2/authorization/google`;
+                        }}
+                        className="flex items-center justify-center gap-2 bg-white text-black font-medium py-2.5 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="size-5" />
+                        Google
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+                            // const baseUrl = apiUrl.replace(/\/api$/, ''); // ARTIK SILMIYORUZ
+                            window.location.href = `${apiUrl}/oauth2/authorization/github`;
+                        }}
+                        className="flex items-center justify-center gap-2 bg-[#24292e] text-white font-medium py-2.5 rounded-lg hover:bg-[#2f363d] transition-colors border border-slate-600"
+                    >
+                        <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className="size-5 invert" />
+                        GitHub
+                    </button>
+                </div>
+
                 <div className="mt-6 text-center text-sm text-slate-500">
                     Don't have an account? <Link href="/register" className="text-primary hover:underline font-bold">Sign up</Link>
                 </div>

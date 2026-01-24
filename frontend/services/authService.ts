@@ -24,7 +24,9 @@ export interface LoginRequest {
 export interface RegisterRequest {
     fullName: string;
     email: string;
+
     password: string;
+    marketDataConsent: boolean;
 }
 
 export interface AuthResponse {
@@ -82,6 +84,10 @@ export const authService = {
         return null;
     },
 
+    setCurrentUser: (user: User) => {
+        localStorage.setItem('user', JSON.stringify(user));
+    },
+
     updateProfile: async (data: UpdateProfileData): Promise<AuthResponse> => {
         const response = await api.put<AuthResponse>('/users/profile', data);
 
@@ -102,5 +108,24 @@ export const authService = {
 
     changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
         await api.post('/users/change-password', { currentPassword, newPassword });
+    },
+
+    // OAuth2 Helpers
+    fetchUserProfile: async (): Promise<User> => {
+        const response = await api.get<AuthResponse>('/users/me');
+        if (response.data) {
+            const token = localStorage.getItem('token') || authService.getCurrentUser()?.token;
+            const userWithToken = { ...response.data, token };
+            localStorage.setItem('user', JSON.stringify(userWithToken));
+            return userWithToken;
+        }
+        throw new Error('User profile could not be fetched');
+    },
+
+    setToken: (token: string) => {
+        // Create a temporary user object with token to satisfy auth checks until full profile is fetched
+        const tempUser = { token };
+        // We can also store token in a separate key if api interceptor uses it
+        localStorage.setItem('user', JSON.stringify(tempUser));
     }
 };

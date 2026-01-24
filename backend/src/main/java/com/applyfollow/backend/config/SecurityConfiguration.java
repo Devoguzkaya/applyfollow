@@ -13,9 +13,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.applyfollow.backend.security.oauth2.CustomOAuth2UserService;
+import com.applyfollow.backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
 
 import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
@@ -28,6 +31,8 @@ public class SecurityConfiguration {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final AuthenticationProvider authenticationProvider;
+        private final CustomOAuth2UserService customOAuth2UserService;
+        private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
         @Value("#{'${cors.allowed.origins}'.split(',')}")
         private List<String> allowedOrigins;
@@ -37,7 +42,8 @@ public class SecurityConfiguration {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/api/contact/**"
+                        "/api/contact/**",
+                        "/login/oauth2/code/**" // Allow OAuth2 callback endpoints
         };
 
         @Bean
@@ -57,6 +63,22 @@ public class SecurityConfiguration {
                                                                                                         // stateless
                                                                                                         // olmalı
                                 )
+                                .oauth2Login(oauth2 -> oauth2
+                                                .authorizationEndpoint(authorization -> authorization
+                                                                .baseUri("/api/oauth2/authorization"))
+                                                .redirectionEndpoint(redirection -> redirection
+                                                                .baseUri("/api/login/oauth2/code/*"))
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                                .failureHandler((request, response, exception) -> {
+                                                        System.out.println("OAuth2 Login Failed: "
+                                                                        + exception.getMessage());
+                                                        exception.printStackTrace();
+                                                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                                                        "OAuth2 Login Failed: "
+                                                                                        + exception.getMessage());
+                                                }))
                                 .authenticationProvider(authenticationProvider)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 // Yetkisiz erişimlerde 403 yerine 401 dönmesi için (Frontend redirect için
@@ -81,4 +103,3 @@ public class SecurityConfiguration {
                 return source;
         }
 }
-

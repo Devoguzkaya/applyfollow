@@ -43,6 +43,11 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async ({ ful
     return await authService.updateProfile({ fullName, email });
 });
 
+// 5. Fetch User (For OAuth2 & Session Refresh)
+export const fetchUser = createAsyncThunk('auth/fetchUser', async () => {
+    return await authService.fetchUserProfile();
+});
+
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -55,6 +60,11 @@ export const authSlice = createSlice({
         },
         clearError: (state) => {
             state.error = null;
+        },
+        setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
+            state.user = action.payload.user;
+            state.isAuthenticated = true;
+            state.isLoading = false;
         },
     },
     extraReducers: (builder) => {
@@ -107,8 +117,19 @@ export const authSlice = createSlice({
         builder.addCase(updateProfile.fulfilled, (state, action) => {
             state.user = action.payload;
         });
+
+        // Fetch User
+        builder.addCase(fetchUser.fulfilled, (state, action) => {
+            state.user = action.payload;
+            state.isAuthenticated = true;
+            state.isLoading = false;
+        });
+        builder.addCase(fetchUser.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.error.message || 'Failed to fetch user profile';
+        });
     },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setCredentials } = authSlice.actions;
 export default authSlice.reducer;

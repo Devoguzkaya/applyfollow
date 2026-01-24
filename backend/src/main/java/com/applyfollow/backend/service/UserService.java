@@ -47,7 +47,9 @@ public class UserService {
                 .email(request.email())
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(role)
+                .role(role)
                 .active(true)
+                .marketDataConsent(request.marketDataConsent())
                 .build();
 
         userRepository.save(user);

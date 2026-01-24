@@ -2,6 +2,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import AlarmSystem from "@/components/AlarmSystem";
 import { NotificationProvider } from "@/context/NotificationContext";
+import FloatingAddButton from "@/components/applications/FloatingAddButton";
 
 export default function DashboardLayout({
     children,
@@ -23,6 +24,8 @@ export default function DashboardLayout({
                     <div className="flex-1 overflow-y-auto p-6 lg:p-10 relative z-0">
                         {children}
                     </div>
+
+                    <FloatingAddButton />
                 </main>
             </div>
         </NotificationProvider>

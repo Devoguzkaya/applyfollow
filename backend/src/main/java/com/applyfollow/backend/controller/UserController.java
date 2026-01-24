@@ -35,6 +35,11 @@ public class UserController {
         return userService.getProfile(user.getId());
     }
 
+    @GetMapping("/me")
+    public AuthResponse getCurrentUser(org.springframework.security.core.Authentication authentication) {
+        return getProfile(authentication);
+    }
+
     @PutMapping("/profile")
     public AuthResponse updateProfile(
             org.springframework.security.core.Authentication authentication,

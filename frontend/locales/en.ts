@@ -11,6 +11,12 @@ export const en: Dictionary = {
         loading: "Loading...",
         noData: "No data found",
         viewAll: "View All",
+        or: "Or",
+        actions: {
+            back: "Back",
+            save: "Save",
+            cancel: "Cancel",
+        }
     },
     sidebar: {
         overview: "Overview",
@@ -220,11 +226,29 @@ export const en: Dictionary = {
             term1: "I consent to my anonymized data (salary, interview process, etc.) being shared with the community and used for statistical purposes.",
             term2: "I have read and agree to the User Agreement and Privacy Policy.",
             validation: "You must accept the terms to continue."
+        },
+        login: {
+            title: "Sign In",
+            subtitle: "Enter your credentials to access your dashboard.",
+            submit: "Sign In",
+            forgotPassword: "Forgot Password?",
+            noAccount: "Don't have an account?",
+            createAccount: "Sign Up",
+        },
+        register: {
+            title: "Sign Up",
+            subtitle: "Start tracking your job applications today.",
+            submit: "Create Account",
+            alreadyHaveAccount: "Already have an account?",
+            fullName: "FULL NAME",
+            email: "EMAIL",
+            password: "PASSWORD",
         }
     },
     landing: {
         nav: {
             features: "Features",
+            howItWorks: "How It Works",
             about: "About",
             contact: "Contact",
             login: "Login",
@@ -233,8 +257,8 @@ export const en: Dictionary = {
 
         hero: {
             badge: "Next-Gen Career Management",
-            title: "Land Your Dream Job Without the Chaos.",
-            subtitle: "Ditch the spreadsheets. Track applications, manage interviews, and organize your network in a powerful workspace designed for professionals.",
+            title: "End the Chaos, Take Control of Your Career Journey.",
+            subtitle: "Ditch the messy spreadsheets. Organize applications, schedule interviews, and pave your way to success with a professional workspace.",
             getStarted: "Get Started Now",
             starGithub: "Star on GitHub",
         },

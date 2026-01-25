@@ -9,6 +9,12 @@ export const tr = {
         loading: "Yükleniyor...",
         noData: "Veri bulunamadı",
         viewAll: "Tümünü Gör",
+        or: "Veya",
+        actions: {
+            back: "Geri Dön",
+            save: "Kaydet",
+            cancel: "İptal",
+        }
     },
     sidebar: {
         overview: "Genel Bakış",
@@ -218,11 +224,29 @@ export const tr = {
             term1: "Anonimleştirilmiş verilerimin (maaş, mülakat süreci vb.) toplulukla paylaşılmasına ve istatistiksel amaçlarla kullanılmasına izin veriyorum.",
             term2: "Kullanıcı Sözleşmesi ve Gizlilik Politikası'nı okudum ve kabul ediyorum.",
             validation: "Devam etmek için şartları kabul etmelisiniz."
+        },
+        login: {
+            title: "Giriş Yap",
+            subtitle: "Giriş yaparak kariyerine yön vermeye devam et.",
+            submit: "Giriş Yap",
+            forgotPassword: "Şifremi Unuttum?",
+            noAccount: "Henüz hesabın yok mu?",
+            createAccount: "Hesap Oluştur",
+        },
+        register: {
+            title: "Kayıt Ol",
+            subtitle: "Kariyerini organize etmeye bugün başla.",
+            submit: "Hesap Oluştur",
+            alreadyHaveAccount: "Zaten bir hesabın var mı?",
+            fullName: "TAM ADIN",
+            email: "E-POSTA",
+            password: "ŞİFRE",
         }
     },
     landing: {
         nav: {
             features: "Özellikler",
+            howItWorks: "Nasıl Çalışır?",
             about: "Hakkımızda",
             contact: "İletişim",
             login: "Giriş Yap",
@@ -231,8 +255,8 @@ export const tr = {
 
         hero: {
             badge: "Yeni Nesil Kariyer Yönetimi",
-            title: "Hayalindeki İşe Karmaşa Olmadan Kavuş.",
-            subtitle: "Excel tablolarını bırak. Profesyoneller için tasarlanmış güçlü bir çalışma alanında başvurularını takip et, mülakatlarını yönet ve ağını düzenle.",
+            title: "Kariyer Yolculuğunda Kaosu Bitir, Kontrolü Ele Al.",
+            subtitle: "Karmaşık tablolardan kurtul. Başvurularını organize et, mülakatlarını planla ve kariyer hedeflerine giden yolu profesyonel bir çalışma alanıyla döşe.",
             getStarted: "Hemen Başla",
             starGithub: "GitHub'da İncele",
         },

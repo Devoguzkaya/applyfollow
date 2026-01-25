@@ -67,6 +67,7 @@ class CvServiceTest {
                 null, false);
         CvUpdateRequest request = new CvUpdateRequest(
                 null, null, null, null, null, null, null,
+                null, null,
                 List.of(eduDto), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                 Collections.emptyList());
 

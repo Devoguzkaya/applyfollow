@@ -78,21 +78,23 @@ public class ApplicationService {
     }
 
     @Transactional
-    public void deleteApplication(UUID id) {
-        if (!applicationRepository.existsById(id)) {
-            throw new com.applyfollow.backend.exception.ResourceNotFoundException(
-                    "Application not found with id: " + id);
-        }
-        applicationRepository.deleteById(id);
+    public void deleteApplication(UUID id, UUID userId) {
+        Application application = applicationRepository.findById(id)
+                .filter(app -> app.getUser().getId().equals(userId))
+                .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
+                        "Application not found or unauthorized"));
+        applicationRepository.delete(application);
     }
 
     // --- Contacts Methods ---
 
     @Transactional
-    public ContactDto addContact(UUID applicationId, ContactDto contactDto) {
+    public ContactDto addContact(UUID applicationId, ContactDto contactDto, UUID userId) {
         Application application = applicationRepository.findById(applicationId)
+                .filter(app -> app.getUser().getId().equals(userId))
                 .orElseThrow(
-                        () -> new com.applyfollow.backend.exception.ResourceNotFoundException("Application not found"));
+                        () -> new com.applyfollow.backend.exception.ResourceNotFoundException(
+                                "Application not found or unauthorized"));
 
         Contact contact = new Contact();
         contact.setName(contactDto.name());
@@ -106,17 +108,24 @@ public class ApplicationService {
         return mapToContactDto(savedContact);
     }
 
-    public List<ContactDto> getContacts(UUID applicationId) {
+    public List<ContactDto> getContacts(UUID applicationId, UUID userId) {
+        // First verify ownership of the application
+        if (!applicationRepository.existsByIdAndUser_Id(applicationId, userId)) {
+            throw new com.applyfollow.backend.exception.ResourceNotFoundException(
+                    "Application not found or unauthorized");
+        }
+
         return contactRepository.findByApplicationId(applicationId).stream()
                 .map(this::mapToContactDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public ApplicationResponse updateNotes(UUID id, String notes) {
+    public ApplicationResponse updateNotes(UUID id, String notes, UUID userId) {
         Application application = applicationRepository.findById(id)
+                .filter(app -> app.getUser().getId().equals(userId))
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
-                        "Application not found with id: " + id));
+                        "Application not found or unauthorized"));
 
         application.setNotes(notes);
         Application savedApplication = applicationRepository.save(application);
@@ -124,10 +133,11 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationResponse updateStatus(UUID id, String status) {
+    public ApplicationResponse updateStatus(UUID id, String status, UUID userId) {
         Application application = applicationRepository.findById(id)
+                .filter(app -> app.getUser().getId().equals(userId))
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
-                        "Application not found with id: " + id));
+                        "Application not found or unauthorized"));
 
         application.setStatus(com.applyfollow.backend.model.ApplicationStatus.valueOf(status));
         Application savedApplication = applicationRepository.save(application);

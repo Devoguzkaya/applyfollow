@@ -12,4 +12,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     // Duplicate kontrolü için
     Optional<Application> findByUserIdAndCompany_NameAndPosition(UUID userId, String companyName, String position);
+
+    boolean existsByIdAndUser_Id(UUID id, UUID userId);
 }

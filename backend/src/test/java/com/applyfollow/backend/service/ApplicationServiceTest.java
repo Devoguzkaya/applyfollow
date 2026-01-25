@@ -76,7 +76,7 @@ class ApplicationServiceTest {
     void getApplicationById_WhenExists_ShouldReturnApplication() {
         when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
 
-        ApplicationResponse result = applicationService.getApplicationById(application.getId());
+        ApplicationResponse result = applicationService.getApplicationById(application.getId(), user.getId());
 
         assertNotNull(result);
         assertEquals(application.getId(), result.id());
@@ -87,7 +87,8 @@ class ApplicationServiceTest {
         UUID randomId = UUID.randomUUID();
         when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> applicationService.getApplicationById(randomId));
+        assertThrows(ResourceNotFoundException.class,
+                () -> applicationService.getApplicationById(randomId, user.getId()));
     }
 
     @Test
@@ -130,19 +131,19 @@ class ApplicationServiceTest {
     @Test
     void deleteApplication_ShouldDelete() {
         UUID appId = application.getId();
-        when(applicationRepository.existsById(appId)).thenReturn(true);
+        when(applicationRepository.findById(appId)).thenReturn(Optional.of(application));
 
-        applicationService.deleteApplication(appId);
+        applicationService.deleteApplication(appId, user.getId());
 
-        verify(applicationRepository).deleteById(appId);
+        verify(applicationRepository).delete(application);
     }
 
     @Test
     void deleteApplication_WhenNotExists_ShouldThrowException() {
         UUID appId = UUID.randomUUID();
-        when(applicationRepository.existsById(appId)).thenReturn(false);
+        when(applicationRepository.findById(appId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> applicationService.deleteApplication(appId));
+        assertThrows(ResourceNotFoundException.class, () -> applicationService.deleteApplication(appId, user.getId()));
     }
 
     @Test
@@ -155,7 +156,7 @@ class ApplicationServiceTest {
         when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
         when(contactRepository.save(any(Contact.class))).thenReturn(contact);
 
-        ContactDto result = applicationService.addContact(application.getId(), contactDto);
+        ContactDto result = applicationService.addContact(application.getId(), contactDto, user.getId());
 
         assertNotNull(result);
         assertEquals("John Doe", result.name());

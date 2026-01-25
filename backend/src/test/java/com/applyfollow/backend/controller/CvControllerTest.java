@@ -59,7 +59,8 @@ public class CvControllerTest {
         @Test
         public void getCv_ShouldReturnCvData() throws Exception {
                 CvUpdateRequest cvData = new CvUpdateRequest(
-                                null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, // summary to title
+                                null, null, // colors
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());
@@ -73,7 +74,8 @@ public class CvControllerTest {
         @Test
         public void updateCv_ShouldReturnOk() throws Exception {
                 CvUpdateRequest request = new CvUpdateRequest(
-                                null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, // summary to title
+                                null, null, // colors
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());
@@ -96,4 +98,3 @@ public class CvControllerTest {
                                 .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM));
         }
 }
-

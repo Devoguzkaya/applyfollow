@@ -54,28 +54,36 @@ public class ApplicationController {
 
     @PostMapping("/{id}/contacts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ContactDto addContact(@PathVariable UUID id, @RequestBody ContactDto contactDto) {
-        return service.addContact(id, contactDto);
+    public ContactDto addContact(@PathVariable UUID id, @RequestBody ContactDto contactDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.addContact(id, contactDto, user.getId());
     }
 
     @GetMapping("/{id}/contacts")
-    public List<ContactDto> getContacts(@PathVariable UUID id) {
-        return service.getContacts(id);
+    public List<ContactDto> getContacts(@PathVariable UUID id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.getContacts(id, user.getId());
     }
 
     @PatchMapping("/{id}/notes")
-    public ApplicationResponse updateNotes(@PathVariable UUID id, @RequestBody String notes) {
-        return service.updateNotes(id, notes);
+    public ApplicationResponse updateNotes(@PathVariable UUID id, @RequestBody String notes,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.updateNotes(id, notes, user.getId());
     }
 
     @PatchMapping("/{id}/status")
-    public ApplicationResponse updateStatus(@PathVariable UUID id, @RequestParam String status) {
-        return service.updateStatus(id, status);
+    public ApplicationResponse updateStatus(@PathVariable UUID id, @RequestParam String status,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.updateStatus(id, status, user.getId());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        service.deleteApplication(id);
+    public void delete(@PathVariable UUID id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        service.deleteApplication(id, user.getId());
     }
 }

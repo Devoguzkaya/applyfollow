@@ -69,6 +69,8 @@ public class User extends BaseEntity implements UserDetails {
     private String githubUrl;
     private String websiteUrl;
     private String cvTitle;
+    private String themeColor;
+    private String accentColor;
 
     @Enumerated(EnumType.STRING)
     private Role role;

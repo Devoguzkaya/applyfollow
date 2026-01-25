@@ -24,7 +24,7 @@ export default function CertificatesForm({ certificates, addCertificate, removeC
             <div className="flex flex-col gap-6">
                 {certificates.map((cert, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group animate-fadeIn">
-                        <button onClick={() => removeCertificate(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
+                        <button onClick={() => removeCertificate(idx)} className="absolute top-2 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">{t('cv.sections.certificates.name')}</label><input value={cert.name} onChange={e => updateCertificate(idx, 'name', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="e.g. AWS Certified Solutions Architect" /></div>
                             <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">{t('cv.sections.certificates.issuer')}</label><input value={cert.issuer || ''} onChange={e => updateCertificate(idx, 'issuer', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" placeholder="e.g. Amazon Web Services" /></div>

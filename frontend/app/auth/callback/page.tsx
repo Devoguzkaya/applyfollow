@@ -16,25 +16,22 @@ function CallbackContent() {
         const token = searchParams.get('token');
 
         if (token) {
-            // 1. Manually set/decode payload if needed, or assume backend verified
-            // For now, we replicate what logging in does:
-            const user = {
-                fullName: 'User', // Will update after first profile fetch or decode JWT
-                email: 'user@example.com',
-                token: token,
-                id: 'oauth-user',
-                role: 'USER',
-                active: true
-            };
+            // 2. Persist token immediately
+            authService.setToken(token);
 
-            // 2. Persist to local storage
-            authService.setCurrentUser(user);
-
-            // 3. Update Redux state
-            dispatch(setCredentials({ user, token }));
-
-            toast.success("Successfully logged in via OAuth!");
-            router.push('/dashboard');
+            // 3. Fetch real user profile
+            authService.fetchUserProfile()
+                .then(user => {
+                    // 4. Update Redux with real user data
+                    dispatch(setCredentials({ user, token }));
+                    toast.success("Successfully logged in via OAuth!");
+                    router.push('/dashboard');
+                })
+                .catch(err => {
+                    console.error("OAuth profile fetch failed", err);
+                    toast.error("Failed to fetch user profile.");
+                    authService.logout();
+                });
         } else {
             toast.error("Login failed. No token received.");
             router.push('/login');

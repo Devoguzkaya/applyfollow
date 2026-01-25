@@ -58,7 +58,7 @@ export default function NewApplicationPage() {
     return (
         <div className="flex items-center justify-center min-h-[calc(100vh-100px)]">
             {/* MODAL CONTAINER (Centered in page) */}
-            <div className="w-full max-w-2xl relative flex flex-col bg-surface-dark border border-border-dark rounded-2xl shadow-glow transition-all">
+            <div className="w-full relative flex flex-col bg-surface-dark border border-border-dark rounded-2xl shadow-glow transition-all">
 
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-8 py-6 border-b border-border-dark bg-surface-dark rounded-t-2xl">

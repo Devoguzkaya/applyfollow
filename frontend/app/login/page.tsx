@@ -48,7 +48,7 @@ export default function LoginPage() {
             {/* Background Effects */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full -z-10"></div>
 
-            <div className="w-full max-w-md bg-surface-dark border border-border-dark rounded-2xl shadow-2xl p-8 animate-in fade-in zoom-in duration-300">
+            <div className="w-full bg-surface-dark border border-border-dark rounded-2xl shadow-2xl p-8 animate-in fade-in zoom-in duration-300">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-display font-bold text-white mb-2">Welcome Back</h1>
                     <p className="text-slate-400">Enter your credentials to access your dashboard.</p>

@@ -14,6 +14,8 @@ public record CvUpdateRequest(
                 String githubUrl,
                 String websiteUrl,
                 String cvTitle,
+                String themeColor,
+                String accentColor,
                 List<EducationDto> educations,
                 List<ExperienceDto> experiences,
                 List<SkillDto> skills,
@@ -60,4 +62,3 @@ public record CvUpdateRequest(
                         String url) {
         }
 }
-

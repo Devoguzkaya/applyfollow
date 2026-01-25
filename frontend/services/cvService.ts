@@ -61,6 +61,9 @@ export interface CvData {
     languages: LanguageDto[];
     certificates: CertificateDto[];
     cvTitle?: string;
+    profileImage?: string; // Base64 string for profile picture
+    themeColor?: string; // Hex color code for Header Background
+    accentColor?: string; // Hex color code for Titles, Icons, Borders
 }
 
 export const cvService = {

@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/applications")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ApplicationController {
 
     private final ApplicationService service;
@@ -38,8 +37,9 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
-    public ApplicationResponse findById(@PathVariable UUID id) {
-        return service.getApplicationById(id);
+    public ApplicationResponse findById(@PathVariable UUID id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.getApplicationById(id, user.getId());
     }
 
     @PostMapping

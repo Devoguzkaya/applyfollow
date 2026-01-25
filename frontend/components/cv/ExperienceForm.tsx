@@ -24,7 +24,7 @@ export default function ExperienceForm({ experiences, addExperience, removeExper
             <div className="flex flex-col gap-6">
                 {experiences.map((exp, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group animate-fadeIn">
-                        <button onClick={() => removeExperience(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
+                        <button onClick={() => removeExperience(idx)} className="absolute top-2 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-xs text-text-muted font-bold">{t('cv.sections.experience.company')}</label>

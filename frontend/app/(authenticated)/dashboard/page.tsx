@@ -61,7 +61,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-10">
+    <div className="w-full flex flex-col gap-10">
       {/* Header Section */}
       <div>
         <h1 className="text-4xl md:text-5xl font-black text-text-main tracking-tight mb-2">{t('sidebar.overview')}</h1>

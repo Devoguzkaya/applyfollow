@@ -165,7 +165,7 @@ export default function CalendarPage() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col relative">
+        <div className="w-full h-[calc(100vh-140px)] flex flex-col relative">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>

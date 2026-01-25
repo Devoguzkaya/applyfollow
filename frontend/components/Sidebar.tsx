@@ -18,9 +18,20 @@ export default function Sidebar() {
     const [isMobile, setIsMobile] = useState(false);
     const [mounted, setMounted] = useState(false);
 
+    const [collapsed, setCollapsed] = useState(false);
+
     useEffect(() => {
         setMounted(true);
+        // Auto collapse on smaller desktop screens if needed, or read from localStorage
+        const savedState = localStorage.getItem('sidebar-collapsed');
+        if (savedState) setCollapsed(savedState === 'true');
     }, []);
+
+    const toggleCollapse = () => {
+        const newState = !collapsed;
+        setCollapsed(newState);
+        localStorage.setItem('sidebar-collapsed', String(newState));
+    };
 
     // Fetch alerts for badge using TanStack Query
     // It's much cleaner than useEffect + setInterval
@@ -41,7 +52,11 @@ export default function Sidebar() {
     // Initial check for mobile
     useEffect(() => {
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 1024);
+            const isMob = window.innerWidth < 1024;
+            setIsMobile(isMob);
+            if (isMob) {
+                setCollapsed(false); // Mobile sidebar is always full width but off-canvas
+            }
         };
         checkMobile();
         window.addEventListener('resize', checkMobile);
@@ -57,7 +72,7 @@ export default function Sidebar() {
 
     const getLinkClasses = (path: string) => {
         const isActive = path === "/dashboard" ? pathname === "/dashboard" : pathname?.startsWith(path);
-        const baseClasses = "flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden";
+        const baseClasses = `flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden ${collapsed ? 'justify-center' : ''}`;
         const activeClasses = "bg-primary/10 text-primary border border-primary/20 font-bold shadow-lg shadow-primary/5";
         const inactiveClasses = "text-text-muted hover:text-text-main hover:bg-surface-hover font-medium";
 
@@ -81,79 +96,104 @@ export default function Sidebar() {
                 h-full flex flex-col 
                 bg-background-main border-r border-border-main
                 transition-all duration-300 ease-in-out
-                ${isSidebarOpen ? 'translate-x-0 w-80' : '-translate-x-full lg:translate-x-0 w-80'}
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                ${collapsed && !isMobile ? 'w-24' : 'w-80'}
             `}>
                 {/* Logo Area */}
-                <div className="h-20 flex items-center px-6 border-b border-border-main">
-                    <NextLink href="/" className="flex items-center gap-3 group/logo w-full">
+                <div className={`h-20 flex items-center ${collapsed ? 'justify-center px-2' : 'px-6'} border-b border-border-main relative transition-all`}>
+                    <NextLink href="/" className="flex items-center gap-3 group/logo w-full justify-center lg:justify-start">
                         <div className="relative size-10 shrink-0 bg-slate-900 rounded-lg p-1 border border-white/5 transition-transform group-hover/logo:scale-105">
                             <Image src="/ApplyFollowLogo.png" alt="ApplyFollow" fill className="object-contain" priority />
                         </div>
-                        <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary">
-                            Apply<span className="text-primary font-black">Follow</span>
-                        </h1>
+                        {(!collapsed || isMobile) && (
+                            <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary whitespace-nowrap">
+                                Apply<span className="text-primary font-black">Follow</span>
+                            </h1>
+                        )}
                     </NextLink>
+
+                    {/* Collapse Button (Desktop Only) */}
+                    {!isMobile && (
+                        <button
+                            onClick={toggleCollapse}
+                            className={`absolute -right-3 top-1/2 -translate-y-1/2 size-6 rounded-full bg-surface-card border border-border-main flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-all shadow-sm z-50 ${collapsed ? 'rotate-180' : ''}`}
+                        >
+                            <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                        </button>
+                    )}
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto py-8 flex flex-col gap-2.5 px-4 scrollbar-hide">
-                    <NextLink href="/dashboard" className={getLinkClasses("/dashboard")}>
+                <nav className="flex-1 overflow-y-auto py-8 flex flex-col gap-2.5 px-3 scrollbar-hide">
+                    <NextLink href="/dashboard" className={getLinkClasses("/dashboard")} title={collapsed ? t('sidebar.overview') : ''}>
                         <span className="material-symbols-outlined text-[24px]">grid_view</span>
-                        <span className="whitespace-nowrap transition-all">{t('sidebar.overview')}</span>
+                        {(!collapsed || isMobile) && <span className="whitespace-nowrap transition-all">{t('sidebar.overview')}</span>}
                         {pathname === "/dashboard" && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </NextLink>
 
-                    <NextLink href="/applications" className={getLinkClasses("/applications")}>
+                    <NextLink href="/applications" className={getLinkClasses("/applications")} title={collapsed ? t('sidebar.applications') : ''}>
                         <span className="material-symbols-outlined text-[24px]">work</span>
-                        <span className="whitespace-nowrap">{t('sidebar.applications')}</span>
+                        {(!collapsed || isMobile) && <span className="whitespace-nowrap">{t('sidebar.applications')}</span>}
                         {pathname?.startsWith("/applications") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </NextLink>
 
-                    <NextLink href="/calendar" className={getLinkClasses("/calendar")}>
+                    <NextLink href="/calendar" className={getLinkClasses("/calendar")} title={collapsed ? t('sidebar.schedule') : ''}>
                         <span className="material-symbols-outlined text-[24px]">event</span>
-                        <div className="flex items-center justify-between w-full">
-                            <span className="whitespace-nowrap">{t('sidebar.schedule')}</span>
-                            {todayCount > 0 && (
-                                <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-primary/30">
-                                    {todayCount}
-                                </span>
-                            )}
-                        </div>
+                        {(!collapsed || isMobile) ? (
+                            <div className="flex items-center justify-between w-full">
+                                <span className="whitespace-nowrap">{t('sidebar.schedule')}</span>
+                                {todayCount > 0 && (
+                                    <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-full ring-1 ring-primary/30">
+                                        {todayCount}
+                                    </span>
+                                )}
+                            </div>
+                        ) : (
+                            todayCount > 0 && <span className="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+                        )}
                         {pathname?.startsWith("/calendar") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </NextLink>
 
-                    <NextLink href="/my-cv" className={getLinkClasses("/my-cv")}>
+                    <NextLink href="/my-cv" className={getLinkClasses("/my-cv")} title={collapsed ? t('sidebar.cvBuilder') : ''}>
                         <span className="material-symbols-outlined text-[24px]">description</span>
-                        <span className="whitespace-nowrap">{t('sidebar.cvBuilder')}</span>
+                        {(!collapsed || isMobile) && <span className="whitespace-nowrap">{t('sidebar.cvBuilder')}</span>}
                         {pathname?.startsWith("/my-cv") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                     </NextLink>
 
                     {/* Section Spacer / Label */}
-                    <div className="mt-8 mb-2 px-3">
-                        <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{t('sidebar.management')}</p>
+                    <div className={`mt-8 mb-2 px-3 ${collapsed && !isMobile ? 'text-center' : ''}`}>
+                        {(!collapsed || isMobile) ? (
+                            <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{t('sidebar.management')}</p>
+                        ) : (
+                            <div className="h-[1px] bg-border-main w-full"></div>
+                        )}
                     </div>
 
-                    <NextLink href="/profile" className={getLinkClasses("/profile")}>
+                    <NextLink href="/profile" className={getLinkClasses("/profile")} title={collapsed ? t('sidebar.settings') : ''}>
                         <span className="material-symbols-outlined text-[24px]">manage_accounts</span>
-                        <span className="whitespace-nowrap">{t('sidebar.settings')}</span>
+                        {(!collapsed || isMobile) && <span className="whitespace-nowrap">{t('sidebar.settings')}</span>}
                     </NextLink>
 
                     {/* Admin Section */}
                     {user?.role === 'ADMIN' && (
                         <>
-                            <div className="mt-8 mb-2 px-3">
-                                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('sidebar.adminPanel')}</p>
+                            <div className={`mt-8 mb-2 px-3 ${collapsed && !isMobile ? 'text-center' : ''}`}>
+                                {(!collapsed || isMobile) ? (
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('sidebar.adminPanel')}</p>
+                                ) : (
+                                    <div className="h-[1px] bg-primary/20 w-full"></div>
+                                )}
                             </div>
 
-                            <NextLink href="/admin/users" className={getLinkClasses("/admin/users")}>
+                            <NextLink href="/admin/users" className={getLinkClasses("/admin/users")} title={collapsed ? t('sidebar.users') : ''}>
                                 <span className="material-symbols-outlined text-[24px]">group</span>
-                                <span className="whitespace-nowrap">{t('sidebar.users')}</span>
+                                {(!collapsed || isMobile) && <span className="whitespace-nowrap">{t('sidebar.users')}</span>}
                                 {pathname?.startsWith("/admin/users") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                             </NextLink>
 
-                            <NextLink href="/admin/messages" className={getLinkClasses("/admin/messages")}>
+                            <NextLink href="/admin/messages" className={getLinkClasses("/admin/messages")} title={collapsed ? t('sidebar.messages') : ''}>
                                 <span className="material-symbols-outlined text-[24px]">forum</span>
-                                <span className="whitespace-nowrap">{t('sidebar.messages')}</span>
+                                {(!collapsed || isMobile) && <span className="whitespace-nowrap">{t('sidebar.messages')}</span>}
                                 {pathname?.startsWith("/admin/messages") && <span className="absolute left-0 w-1 h-6 bg-primary rounded-full"></span>}
                             </NextLink>
                         </>
@@ -161,15 +201,17 @@ export default function Sidebar() {
                 </nav>
 
                 {/* Bottom Section */}
-                <div className="px-4 py-8 border-t border-border-main scrollbar-hide">
-                    <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                        <p className="text-[10px] font-bold text-primary uppercase mb-1">{t('sidebar.upgradePlan')}</p>
-                        <p className="text-xs text-text-muted mb-3 leading-snug">{t('sidebar.proVersion')}</p>
-                        <button className="w-full py-2 bg-primary text-black text-xs font-black rounded-lg hover:bg-primary-dark transition-colors">
-                            {t('sidebar.proButton')}
-                        </button>
+                {(!collapsed || isMobile) && (
+                    <div className="px-4 py-8 border-t border-border-main scrollbar-hide animate-in fade-in slide-in-from-bottom-2">
+                        <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+                            <p className="text-[10px] font-bold text-primary uppercase mb-1">{t('sidebar.upgradePlan')}</p>
+                            <p className="text-xs text-text-muted mb-3 leading-snug">{t('sidebar.proVersion')}</p>
+                            <button className="w-full py-2 bg-primary text-black text-xs font-black rounded-lg hover:bg-primary-dark transition-colors">
+                                {t('sidebar.proButton')}
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
             </aside>
         </>
     );

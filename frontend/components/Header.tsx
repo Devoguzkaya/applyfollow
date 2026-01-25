@@ -56,7 +56,7 @@ export default function Header() {
     };
 
     return (
-        <header className="h-20 border-b border-border-main flex items-center justify-between px-4 sm:px-6 lg:px-10 z-20 bg-surface-card sticky top-0 w-full shrink-0 transition-colors">
+        <header className="h-20 border-b border-border-main flex items-center justify-between px-4 sm:px-6 lg:px-10 z-20 bg-background-main sticky top-0 w-full shrink-0 transition-colors">
             {/* Left Side: Hamburger & Brand */}
             <div className="flex items-center gap-3 sm:gap-4">
                 {/* Mobile Menu Trigger */}

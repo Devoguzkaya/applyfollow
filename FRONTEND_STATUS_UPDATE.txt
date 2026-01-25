@@ -1,0 +1,45 @@
+# ApplyFollow - Frontend Durum Güncellemesi (Status Update)
+# Tarih: 24.01.2026
+# Kapsam: Son eklenen özellikler ve mevcut teknik borçlar
+
+Bu dosya, projenin en güncel frontend durumunu, tamamlanan özellikleri ve acil çözülmesi gereken eksikleri özetler.
+
+---
+
+## ✅ 1. Tamamlanan Özellikler (Done)
+
+### A. Kanban Board
+- **Durum:** Hazır (`components/applications/KanbanBoard.tsx`).
+- **Teknoloji:** `@dnd-kit` kullanılarak modern, erişilebilir (klavye destekli) sürükle-bırak yapısı kuruldu.
+- **Özellikler:** Optimistic UI update, sürükleme animasyonları, statüye göre kolonlar.
+
+### B. Hızlı Ekle (Quick Add)
+- **Durum:** Hazır (`components/applications/QuickAddModal.tsx`).
+- **Özellikler:** Minimalist modal, validasyon, işlem sonrası otomatik liste yenileme (React Query invalidation).
+
+### C. Legal Sayfaları
+- **Durum:** Hazır (`app/legal/*`).
+- **Sayfalar:** KVKK, Gizlilik Politikası (Privacy), Kullanıcı Sözleşmesi (Terms).
+- **İçerik:** Hukuki metinler yerleştirildi.
+
+---
+
+## ⚠️ 2. Kritik Eksikler ve Teknik Borçlar (To-Do)
+
+### A. OAuth Entegrasyonu (Auth Callback) - YÜKSEK ÖNCELİK
+- **Dosya:** `app/auth/callback/page.tsx`
+- **Sorun:** OAuth girişinde dönen Token alınıyor ancak kullanıcı bilgileri (ID, Email, İsim) **hardcoded (sahte)** verilerle dolduruluyor (`id: 'oauth-user'`, `email: 'user@example.com'`).
+- **Risk:** Kullanıcı giriş yapmış gibi görünse de, kendi verilerini çekemeyecek (IDOR kontrolü ve profil endpointleri patlayacak).
+- **Çözüm:** 
+  1. Token (`jwt-decode` vb. ile) decode edilmeli.
+  2. Token içindeki `sub` (ID) ve `email` bilgileri state'e yazılmalı.
+  3. Veya token ile `/api/auth/me` gibi bir endpoint çağrılıp gerçek kullanıcı verisi çekilmeli.
+
+### B. Bağlantılar (Linking)
+- **Sorun:** Oluşturulan Legal sayfalarına (KVKK, Terms) `Register` sayfasından veya `Footer`dan link verilip verilmediği kontrol edilmeli.
+
+---
+
+## 📅 Özet
+Proje görsel ve fonksiyonel olarak MVP seviyesini aştı. Kanban ve QuickAdd gibi özellikler UX kalitesini artırdı. Tek kritik engel (Blocker), OAuth akışındaki dummy data kullanımıdır.
+

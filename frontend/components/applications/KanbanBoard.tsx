@@ -130,7 +130,7 @@ export default function KanbanBoard({ applications }: { applications: Applicatio
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="flex gap-6 overflow-x-auto pb-6 h-[calc(100vh-200px)]">
+            <div className="flex gap-4 overflow-x-auto md:overflow-hidden pb-2 h-[calc(100vh-200px)] w-full">
                 {COLUMNS.map(col => (
                     <Column
                         key={col.id}
@@ -171,7 +171,7 @@ function Column({ column, items }: { column: { id: string; title: string, color:
     return (
         <div
             ref={setNodeRef}
-            className={`flex-shrink-0 w-80 flex flex-col rounded-xl border max-h-full transition-colors duration-200 ${isOver
+            className={`flex-1 min-w-[200px] flex flex-col rounded-xl border max-h-full transition-colors duration-200 ${isOver
                 ? 'bg-surface-hover border-primary/50 shadow-[0_0_15px_rgba(52,211,153,0.1)]'
                 : 'bg-surface-card/50 border-border-main/50'
                 }`}

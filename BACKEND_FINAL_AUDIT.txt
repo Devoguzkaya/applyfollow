@@ -1,0 +1,36 @@
+# ApplyFollow - Backend Final Denetim Raporu (Real-Time)
+# Tarih: 24.01.2026
+# Dayanak: Anlık dosya okuması (UserService, ApplicationController, vb.)
+
+Bu rapor, kullanıcının talebi üzerine dosyaların anlık durumu okunarak, hafızadan bağımsız olarak oluşturulmuştur.
+
+---
+
+## 🚨 1. Backdoor (Arka Kapı)
+- **Durum:** MEVCUT (SİLİNMEMİŞ)
+- **Konum:** `UserService.java`, `register` metodu.
+- **Kod:** `if (request.email().equalsIgnoreCase("dev.oguzhankaya@gmail.com")) { role = Role.ADMIN; }`
+- **Aksiyon:** Bu satırları derhal silin.
+
+## 🚨 2. IDOR (Yetkisiz Erişim)
+- **Durum:** MEVCUT
+- **Konum:** `ApplicationController.java`
+- **Kod:** `findById(@PathVariable UUID id)` metodu servise sadece ID gönderiyor.
+- **Aksiyon:** Metoda `@AuthenticationPrincipal User user` ekleyin ve servise `id, user.getId()` gönderin.
+
+## ⚠️ 3. CORS Yapılandırması
+- **Durum:** HARDCODED (MEVCUT)
+- **Konum:** `ApplicationController.java` (Sınıf başı)
+- **Kod:** `@CrossOrigin(origins = "http://localhost:3000")`
+- **Aksiyon:** Bu satırı silin. `SecurityConfiguration.java` zaten merkezi yönetim yapıyor.
+
+## ✅ 4. Legal (KVKK)
+- **Durum:** EKLENMİŞ
+- **Konum:** `UserService.java`
+- **Kod:** `marketDataConsent` alanı builder içinde mevcut.
+
+---
+
+## 📅 Özet
+Güvenlik açıkları (Backdoor, IDOR, CORS) kod tabanında aktif olarak durmaktadır. Sadece Legal (Consent) kısmı düzeltilmiştir.
+

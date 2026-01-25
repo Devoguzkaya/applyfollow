@@ -5,7 +5,9 @@ import { CvData, EducationDto, ExperienceDto, SkillDto, LanguageDto, Certificate
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MdSave, MdDownload, MdVisibility } from "react-icons/md";
+import { MdSave, MdDownload, MdVisibility, MdPalette, MdExpandMore } from "react-icons/md";
+import { useAppSelector } from '@/store/hooks';
+import CvPreview from './CvPreview';
 
 // Sub-components
 import PersonalInfoForm from './cv/PersonalInfoForm';
@@ -22,6 +24,10 @@ interface CvBuilderProps {
 export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
     const { t } = useLanguage();
     const queryClient = useQueryClient();
+
+    // Get user data for preview
+    const { user } = useAppSelector((state) => state.auth);
+    const displayUser = user || { fullName: 'Your Name', email: 'email@example.com' };
 
     // Local state for all form data (for real-time editing)
     const [data, setData] = useState<CvData>({
@@ -180,61 +186,118 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
     if (isLoading && !data.summary) return <div className="p-8 text-center text-slate-500">{t('common.loading')}</div>;
 
     return (
-        <div className="flex flex-col gap-8 animate-in fade-in duration-500 pb-20">
-            {/* Header / Actions */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-card p-6 rounded-2xl border border-border-main shadow-lg">
-                <div>
-                    <h2 className="text-2xl font-bold text-text-main mb-1">{t('cv.builder')}</h2>
-                    <p className="text-text-muted text-sm">Craft your professional resume.</p>
+        <div className="flex flex-col xl:flex-row gap-6 animate-in fade-in duration-500 items-start h-[calc(100vh-120px)]">
+
+            {/* LEFT COLUMN: EDITOR FORM */}
+            <div className="flex-1 w-full flex flex-col gap-8 min-w-0 overflow-y-auto h-full pr-2 scrollbar-thin scrollbar-thumb-border-main scrollbar-track-transparent">
+                {/* Header / Actions */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-card p-6 rounded-2xl border border-border-main shadow-lg">
+                    <div>
+                        <h2 className="text-2xl font-bold text-text-main mb-1">{t('cv.builder')}</h2>
+                        <p className="text-text-muted text-sm">Craft your professional resume.</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => setIsEditing(false)}
+                            className="xl:hidden px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2 group"
+                        >
+                            <MdVisibility className="text-[20px] group-hover:text-primary transition-colors" />
+                            {t('cv.preview')}
+                        </button>
+                        <button
+                            onClick={handleSave}
+                            disabled={saveMutation.isPending}
+                            className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2"
+                        >
+                            {saveMutation.isPending ? <span className="size-4 border-2 border-text-main/50 border-t-text-main rounded-full animate-spin"></span> : <MdSave className="text-[20px]" />}
+                            {t('common.save')}
+                        </button>
+                    </div>
                 </div>
-                <div className="flex gap-3">
-                    <button
-                        onClick={() => setIsEditing(false)}
-                        className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2 group"
-                    >
-                        <MdVisibility className="text-[20px] group-hover:text-primary transition-colors" />
-                        {t('cv.preview')}
-                    </button>
-                    <button
-                        onClick={handleSave}
-                        disabled={saveMutation.isPending}
-                        className="px-6 py-2.5 rounded-xl bg-surface-hover hover:bg-surface-card text-text-main font-bold border border-border-main transition-all flex items-center gap-2"
-                    >
-                        {saveMutation.isPending ? <span className="size-4 border-2 border-text-main/50 border-t-text-main rounded-full animate-spin"></span> : <MdSave className="text-[20px]" />}
-                        {t('common.save')}
-                    </button>
-                    <button
-                        onClick={handleDownload}
-                        disabled={downloadMutation.isPending}
-                        className="px-6 py-2.5 rounded-xl bg-primary text-black font-bold hover:opacity-90 hover:shadow-glow transition-all flex items-center gap-2 disabled:opacity-50"
-                    >
-                        {downloadMutation.isPending ? <span className="size-4 border-2 border-black/50 border-t-black rounded-full animate-spin"></span> : <MdDownload className="text-[20px]" />}
-                        {t('common.download')} .docx
-                    </button>
-                </div>
-            </div>
 
-            {/* 1. PERSONAL INFO & SUMMARY */}
-            <PersonalInfoForm data={data} updateField={updateField} />
+                {/* THEME CUSTOMIZATION (Collapsible) */}
+                <details className="bg-surface-card rounded-2xl border border-border-main group">
+                    <summary className="p-6 font-bold text-lg text-text-main flex items-center gap-2 cursor-pointer list-none select-none">
+                        <MdPalette className="text-primary text-[24px]" />
+                        Theme Settings
+                        <MdExpandMore className="ml-auto text-2xl text-text-muted transition-transform group-open:rotate-180" />
+                    </summary>
 
-            {/* 2. EXPERIENCE */}
-            <ExperienceForm
-                experiences={data.experiences}
-                addExperience={addExperience}
-                removeExperience={removeExperience}
-                updateExperience={updateExperience}
-            />
+                    <div className="px-6 pb-6 pt-0 flex flex-col gap-6">
+                        {/* Header Color */}
+                        <div>
+                            <label className="text-xs text-text-muted font-bold block mb-3 uppercase tracking-wider">Header Background</label>
+                            <div className="flex flex-wrap gap-3 items-center">
+                                {['#0f172a', '#1e40af', '#991b1b', '#065f46', '#5b21b6', '#ea580c', '#be185d'].map(color => (
+                                    <button
+                                        key={color}
+                                        onClick={() => updateField('themeColor', color)}
+                                        className={`size-8 rounded-full border-2 transition-all ${data.themeColor === color ? 'border-primary shadow-glow scale-110' : 'border-transparent hover:scale-105'}`}
+                                        style={{ backgroundColor: color }}
+                                        title={color}
+                                    />
+                                ))}
+                                <div className="h-6 w-px bg-border-main mx-2"></div>
+                                <div className="relative size-8 rounded-full overflow-hidden border-2 border-border-main cursor-pointer hover:border-text-muted transition-all bg-gradient-to-tr from-slate-200 to-slate-400">
+                                    <input
+                                        type="color"
+                                        value={data.themeColor || '#0f172a'}
+                                        onChange={(e) => updateField('themeColor', e.target.value)}
+                                        className="absolute inset-0 w-[150%] h-[150%] -top-1/4 -left-1/4 cursor-pointer p-0 border-0 opacity-0"
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-            {/* 3. EDUCATION */}
-            <EducationForm
-                educations={data.educations}
-                addEducation={addEducation}
-                removeEducation={removeEducation}
-                updateEducation={updateEducation}
-            />
+                        <div className="h-px bg-border-main"></div>
 
-            {/* 4. SKILLS & LANGUAGES (2 Columns) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Accent Color */}
+                        <div>
+                            <label className="text-xs text-text-muted font-bold block mb-3 uppercase tracking-wider">Accent Color (Titles & Icons)</label>
+                            <div className="flex flex-wrap gap-3 items-center">
+                                {['#0f172a', '#2563eb', '#dc2626', '#059669', '#7c3aed', '#f97316', '#db2777'].map(color => (
+                                    <button
+                                        key={color}
+                                        onClick={() => updateField('accentColor', color)}
+                                        className={`size-8 rounded-full border-2 transition-all ${data.accentColor === color ? 'border-primary shadow-glow scale-110' : 'border-transparent hover:scale-105'}`}
+                                        style={{ backgroundColor: color }}
+                                        title={color}
+                                    />
+                                ))}
+                                <div className="h-6 w-px bg-border-main mx-2"></div>
+                                <div className="relative size-8 rounded-full overflow-hidden border-2 border-border-main cursor-pointer hover:border-text-muted transition-all bg-gradient-to-tr from-slate-200 to-slate-400">
+                                    <input
+                                        type="color"
+                                        value={data.accentColor || '#0f172a'}
+                                        onChange={(e) => updateField('accentColor', e.target.value)}
+                                        className="absolute inset-0 w-[150%] h-[150%] -top-1/4 -left-1/4 cursor-pointer p-0 border-0 opacity-0"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                {/* 1. PERSONAL INFO & SUMMARY */}
+                <PersonalInfoForm data={data} updateField={updateField} />
+
+                {/* 2. EXPERIENCE */}
+                <ExperienceForm
+                    experiences={data.experiences}
+                    addExperience={addExperience}
+                    removeExperience={removeExperience}
+                    updateExperience={updateExperience}
+                />
+
+                {/* 3. EDUCATION */}
+                <EducationForm
+                    educations={data.educations}
+                    addEducation={addEducation}
+                    removeEducation={removeEducation}
+                    updateEducation={updateEducation}
+                />
+
+                {/* 4. SKILLS & LANGUAGES */}
                 <SkillsForm
                     skills={data.skills}
                     addSkill={addSkill}
@@ -248,16 +311,45 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
                     removeLanguage={removeLanguage}
                     updateLanguage={updateLanguage}
                 />
+
+                {/* 5. CERTIFICATES */}
+                <CertificatesForm
+                    certificates={data.certificates}
+                    addCertificate={addCertificate}
+                    removeCertificate={removeCertificate}
+                    updateCertificate={updateCertificate}
+                />
+
+                <div className="pb-20"></div>
             </div>
 
-            {/* 5. CERTIFICATES */}
-            <CertificatesForm
-                certificates={data.certificates}
-                addCertificate={addCertificate}
-                removeCertificate={removeCertificate}
-                updateCertificate={updateCertificate}
-            />
-
+            {/* RIGHT COLUMN: LIVE PREVIEW (Desktop Only) */}
+            <div className="hidden xl:block w-[210mm] shrink-0 h-full overflow-y-auto pr-4 pb-20 scrollbar-thin scrollbar-thumb-border-main scrollbar-track-transparent">
+                <div className="transform scale-100 origin-top-left">
+                    <div className="bg-surface-card rounded-2xl border border-border-main p-4 shadow-2xl relative">
+                        <div className="absolute top-4 right-4 z-10">
+                            <span className="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full animate-pulse border border-primary/50">
+                                LIVE PREVIEW
+                            </span>
+                        </div>
+                        {/* Reuse CvPreview Component with Live Data */}
+                        <CvPreview
+                            data={data}
+                            user={displayUser}
+                            showActions={false} // Hide header actions in live preview
+                        />
+                    </div>
+                    {/* Quick Download Button below preview */}
+                    <button
+                        onClick={handleDownload}
+                        disabled={downloadMutation.isPending}
+                        className="w-full mt-4 py-3 rounded-xl bg-primary text-black font-bold hover:shadow-glow transition-all flex items-center justify-center gap-2"
+                    >
+                        {downloadMutation.isPending ? <span className="size-4 border-2 border-black/50 border-t-black rounded-full animate-spin"></span> : <MdDownload className="text-[20px]" />}
+                        {t('common.download')} PDF / Word
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

@@ -21,7 +21,7 @@ export default function DashboardLayout({
                     <Header />
 
                     {/* Page Content */}
-                    <div className="flex-1 overflow-y-auto p-6 lg:p-10 relative z-0">
+                    <div className="flex-1 overflow-y-auto p-6 md:p-10 lg:p-12 relative z-0">
                         {children}
                     </div>
 

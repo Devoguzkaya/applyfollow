@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000") // CORS handled in SecurityConfig as well but explicit is fine
 public class UserController {
 
     private final UserService userService;

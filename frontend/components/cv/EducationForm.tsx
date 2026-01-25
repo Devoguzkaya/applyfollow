@@ -24,7 +24,7 @@ export default function EducationForm({ educations, addEducation, removeEducatio
             <div className="flex flex-col gap-6">
                 {educations.map((edu, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-surface-hover/50 border border-border-main relative group animate-fadeIn">
-                        <button onClick={() => removeEducation(idx)} className="absolute top-4 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
+                        <button onClick={() => removeEducation(idx)} className="absolute top-2 right-4 text-text-muted hover:text-red-400 z-10 p-1"><MdDelete className="text-[20px]" /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">{t('cv.sections.education.school')}</label><input value={edu.schoolName} onChange={e => updateEducation(idx, 'schoolName', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>
                             <div className="flex flex-col gap-1.5"><label className="text-xs text-text-muted font-bold">{t('cv.sections.education.field')}</label><input value={edu.fieldOfStudy} onChange={e => updateEducation(idx, 'fieldOfStudy', e.target.value)} className="bg-input-bg border border-border-main p-2.5 rounded-lg text-text-main text-sm focus:border-primary outline-none" /></div>

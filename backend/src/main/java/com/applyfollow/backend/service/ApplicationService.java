@@ -40,8 +40,9 @@ public class ApplicationService {
                 .collect(Collectors.toList());
     }
 
-    public ApplicationResponse getApplicationById(UUID id) {
+    public ApplicationResponse getApplicationById(UUID id, UUID userId) {
         return applicationRepository.findById(id)
+                .filter(app -> app.getUser().getId().equals(userId))
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                         "Application not found with id: " + id));

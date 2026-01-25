@@ -164,7 +164,7 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
     const activeStyle = statusStyles[application.status as string] || statusStyles['APPLIED'];
 
     return (
-        <main className="w-full max-w-[1400px] mx-auto flex flex-col gap-8 h-[calc(100vh-140px)]">
+        <main className="w-full flex flex-col gap-8 h-[calc(100vh-140px)]">
 
             {/* 1. Dynamic Pipeline */}
             <section aria-label="Application Progress" className="w-full shrink-0 py-4">

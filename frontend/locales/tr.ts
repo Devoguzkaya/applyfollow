@@ -230,11 +230,11 @@ export const tr = {
         },
 
         hero: {
-            badge: "",
+            badge: "Yeni Nesil Kariyer Yönetimi",
             title: "Hayalindeki İşe Karmaşa Olmadan Kavuş.",
             subtitle: "Excel tablolarını bırak. Profesyoneller için tasarlanmış güçlü bir çalışma alanında başvurularını takip et, mülakatlarını yönet ve ağını düzenle.",
             getStarted: "Hemen Başla",
-            starGithub: "",
+            starGithub: "GitHub'da İncele",
         },
         features: {
             title: "İhtiyacın Olan Her Şey",
@@ -242,16 +242,32 @@ export const tr = {
             cards: {
                 allInOne: {
                     title: "Hepsi Bir Arada",
-                    desc: "Dağınık notlardan kurtul. Tüm başvurularını, durumlarını ve notlarını tek bir panelde gör.",
+                    desc: "Dağınık notlardan kurtulun. Tüm başvurularını, durumlarını ve özel notlarınızı tek bir merkezden yönetin.",
                 },
                 reminders: {
-                    title: "Akıllı Hatırlatıcılar",
-                    desc: "Hiçbir mülakatı kaçırma. Yaklaşan görüşmeler ve takipler için otomatik bildirimler al.",
+                    title: "Mülakat Takibi",
+                    desc: "Hiçbir görüşmeyi kaçırmayın. Yaklaşan mülakatlarınızı takvim üzerinden takip edin ve programınızı düzenleyin.",
                 },
                 analytics: {
-                    title: "Süreç Analitiği",
-                    desc: "İlerlemeni görselleştir. Kaç başvuru gönderildiğini, kaç mülakat yapıldığını veya teklif alındığını takip et.",
+                    title: "Başarı Analizi",
+                    desc: "Sürecinizi verilerle izleyin. Gönderilen başvuruları ve başarı oranlarını grafiklerle analiz edin.",
+                },
+                cvBuilder: {
+                    title: "Hızlı CV Oluşturucu",
+                    desc: "Profil verilerini kullanarak saniyeler içinde profesyonel Word (docx) formatında CV'ler oluşturun.",
                 }
+            }
+        },
+        howItWorks: {
+            title: "Nasıl Çalışır?",
+            subtitle: "Kariyer yolculuğunuzu 6 basit adımda optimize edin.",
+            steps: {
+                step1: { title: "Kayıt Ol", desc: "Hızlıca hesabını oluştur veya Google/GitHub ile tek tıkla giriş yap." },
+                step2: { title: "Başvuru Ekle", desc: "Tüm ilanlarını saniyeler içinde kaydet, linkleri ve detayları düzenle." },
+                step3: { title: "CV Oluştur", desc: "Verilerini kullanarak tek tıkla profesyonel Word CV'ler çıkart." },
+                step4: { title: "Ağını Yönet", desc: "Her başvuru için görüşeceğin kişileri ve recruiter notlarını kaydet." },
+                step5: { title: "Takvim & Hatırlatıcı", desc: "Mülakatlarını kaçırma, özel alarmlar ve hatırlatıcılar kur." },
+                step6: { title: "Analiz Et", desc: "Başarı oranlarını ve süreçlerini grafiklerle izleyip optimize et." }
             }
         },
         about: {
@@ -259,6 +275,20 @@ export const tr = {
             title: "Profesyonelleri Geleceklerini İnşa Etmeleri İçin Güçlendiriyoruz.",
             desc1: "ApplyFollow bir ihtiyaçtan doğdu. Profesyoneller olarak işimize değer katmaya odaklanıyoruz ancak kendi kariyer süreçlerimizi yönetmek için doğru araçlardan yoksunuz.",
             desc2: "Misyonumuz, iş arama sürecindeki karmaşayı ortadan kaldırmak. Doğru veri ve organizasyonla, herkesin hayalindeki işe tükenmişlik yaşamadan ulaşabileceğine inanıyoruz."
+        },
+        testimonials: {
+            title: "Kullanıcı Deneyimleri",
+            quotes: [
+                { text: "ApplyFollow sayesinde aynı anda 20 başvuruyu yorulmadan yönetebildim. Gerçek bir hayat kurtarıcı.", author: "Ece Y., Senior Developer" },
+                { text: "Excel tablolarından kurtulmak verdiğim en iyi karardı. Görsel takip inanılmaz rahat.", author: "Can B., Product Manager" }
+            ]
+        },
+        faq: {
+            title: "Sıkça Sorulan Sosular",
+            items: [
+                { q: "Ücretli mi?", a: "Temel özelliklerimiz her zaman ücretsiz kalacak. Profesyonel araçlar yakında gelecek." },
+                { q: "Verilerim güvende mi?", a: "Güvenliğiniz bizim önceliğimiz. Verileriniz endüstri standardı şifreleme ile korunur." }
+            ]
         },
         contact: {
             title: "Bize Ulaşın.",

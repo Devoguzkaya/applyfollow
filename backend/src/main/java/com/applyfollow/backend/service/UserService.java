@@ -36,11 +36,7 @@ public class UserService {
             throw new BadRequestException("Email already in use");
         }
 
-        // Auto-assign ADMIN role for a specific email
         Role role = Role.USER;
-        if (request.email().equalsIgnoreCase("dev.oguzhankaya@gmail.com")) {
-            role = Role.ADMIN;
-        }
 
         var user = User.builder()
                 .fullName(request.fullName())

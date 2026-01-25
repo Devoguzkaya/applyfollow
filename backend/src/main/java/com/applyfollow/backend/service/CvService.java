@@ -42,6 +42,11 @@ public class CvService {
                 user.setGithubUrl(request.githubUrl());
                 user.setWebsiteUrl(request.websiteUrl());
                 user.setCvTitle(request.cvTitle());
+
+                // Tema Renkleri
+                user.setThemeColor(request.themeColor());
+                user.setAccentColor(request.accentColor());
+
                 userRepository.save(user);
 
                 // Eğitimleri Güncelle
@@ -185,6 +190,8 @@ public class CvService {
                                 user.getGithubUrl(),
                                 user.getWebsiteUrl(),
                                 user.getCvTitle(),
+                                user.getThemeColor(),
+                                user.getAccentColor(),
                                 educations,
                                 experiences,
                                 skills,
@@ -376,4 +383,3 @@ public class CvService {
                 return date.format(DateTimeFormatter.ofPattern("MMM yyyy"));
         }
 }
-

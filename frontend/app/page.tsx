@@ -12,7 +12,7 @@ import Navbar from "@/components/Navbar";
 
 function FeatureFragment({ icon, title, description, delay, align = 'left', theme }: { icon: string; title: string; description: string; delay: string; align?: 'left' | 'right'; theme: string }) {
   return (
-    <div className={`flex flex-col ${align === 'right' ? 'md:items-end md:text-right' : 'md:items-start md:text-left'} max-w-xl mb-24 relative animate-in fade-in slide-in-from-bottom-12 duration-1000 ${delay}`}>
+    <div className={`flex flex-col ${align === 'right' ? 'md:items-end md:text-right' : 'md:items-start md:text-left'} max-w-xl mb-16 relative animate-in fade-in slide-in-from-bottom-12 duration-1000 ${delay}`}>
       <div className={`absolute -z-10 text-[6rem] font-black ${theme === 'dark' ? 'text-white/[0.03]' : 'text-text-main/[0.05]'} select-none pointer-events-none -top-12 ${align === 'right' ? '-right-6' : '-left-6'}`}>
         {icon.toUpperCase().substring(0, 3)}
       </div>
@@ -96,7 +96,7 @@ export default function LandingPage() {
                 {t('landing.hero.getStarted')}
                 <span className="material-symbols-outlined text-xl">arrow_forward</span>
               </Link>
-              <a href="https://github.com/oguzkaya/applyfollow" target="_blank" className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-border-main bg-surface-card/10 text-text-main font-bold text-base hover:bg-surface-hover transition-all flex items-center justify-center gap-3">
+              <a href="https://github.com/Devoguzkaya/applyfollow" target="_blank" className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-border-main bg-surface-card/10 text-text-main font-bold text-base hover:bg-surface-hover transition-all flex items-center justify-center gap-3">
                 <Image src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" width={20} height={20} className={`${theme === 'dark' ? 'invert' : ''} opacity-70`} />
                 {t('landing.hero.starGithub')}
               </a>
@@ -122,7 +122,7 @@ export default function LandingPage() {
 
 
         {/* --- Features Section --- */}
-        <section id="features" className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-24 border-t border-border-main/10 relative">
+        <section id="features" className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 pt-24 pb-12 border-t border-border-main/10 relative">
           <div className="technical-grid opacity-40"></div>
           <DataFragment code={`[System]: Optimizing timeline...\nProcessing ID: 88219-X`} delay="delay-200" className="top-40 right-10" theme={theme} />
 
@@ -169,7 +169,7 @@ export default function LandingPage() {
         </section>
 
         {/* --- How It Works Section (Flow) --- */}
-        <section id="how-it-works" className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-24 relative border-t border-border-main/10 overflow-hidden">
+        <section id="how-it-works" className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 pt-12 pb-24 relative border-t border-border-main/10 overflow-hidden">
           <div className="technical-grid opacity-20"></div>
           <div className="flex flex-col lg:flex-row items-start gap-16 relative z-10">
             <div className="lg:sticky lg:top-40 lg:max-w-xs">
@@ -177,14 +177,28 @@ export default function LandingPage() {
               <p className="text-text-muted text-lg leading-relaxed border-l-2 border-primary pl-5">{t('landing.howItWorks.subtitle')}</p>
             </div>
 
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
-              {[1, 2, 3, 4, 5, 6].map((num) => (
-                <div key={num} className={`flex flex-col gap-4 animate-in fade-in slide-in-from-right-12 duration-1000 delay-${num}00`}>
-                  <div className="text-4xl font-display font-black text-primary/10 select-none">0{num}</div>
-                  <h4 className="text-xl font-display font-black text-text-main tracking-tight capitalize">{t(`landing.howItWorks.steps.step${num}.title`)}</h4>
-                  <p className="text-text-muted text-base max-w-xs leading-relaxed">{t(`landing.howItWorks.steps.step${num}.desc`)}</p>
-                </div>
-              ))}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-12 relative">
+              {/* Left Column (1, 3, 5) */}
+              <div className="flex flex-col gap-12">
+                {[1, 3, 5].map((num) => (
+                  <div key={num} className={`flex flex-col gap-4 animate-in fade-in slide-in-from-right-12 duration-1000 delay-${num}00`}>
+                    <div className="text-4xl font-display font-black text-primary/10 select-none">0{num}</div>
+                    <h4 className="text-xl font-display font-black text-text-main tracking-tight capitalize">{t(`landing.howItWorks.steps.step${num}.title`)}</h4>
+                    <p className="text-text-muted text-base leading-relaxed">{t(`landing.howItWorks.steps.step${num}.desc`)}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right Column (2, 4, 6) - with top margin */}
+              <div className="flex flex-col gap-12 md:mt-16">
+                {[2, 4, 6].map((num) => (
+                  <div key={num} className={`flex flex-col gap-4 animate-in fade-in slide-in-from-right-12 duration-1000 delay-${num}00`}>
+                    <div className="text-4xl font-display font-black text-primary/10 select-none">0{num}</div>
+                    <h4 className="text-xl font-display font-black text-text-main tracking-tight capitalize">{t(`landing.howItWorks.steps.step${num}.title`)}</h4>
+                    <p className="text-text-muted text-base leading-relaxed">{t(`landing.howItWorks.steps.step${num}.desc`)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -208,19 +222,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* --- Testimonials (Editorial Style) --- */}
-        <section className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-32 border-t border-border-main/10">
-          <div className="max-w-5xl mx-auto">
-            <QuoteFragment text={t('landing.testimonials.quotes.0.text')} author={t('landing.testimonials.quotes.0.author')} />
-            <div className="h-16 lg:h-32"></div>
-            <div className="md:pl-32">
-              <QuoteFragment text={t('landing.testimonials.quotes.1.text')} author={t('landing.testimonials.quotes.1.author')} />
-            </div>
-          </div>
-        </section>
 
         {/* --- FAQ Section (Modern Minimal) --- */}
-        <section className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-24 bg-surface-card/30 border-t border-border-main/10">
+        <section className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-24 border-t border-border-main/10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <div className="lg:col-span-1">
               <h2 className="text-4xl font-display font-black text-text-main leading-tight mb-8 italic">{t('landing.faq.title')}</h2>
@@ -228,10 +232,10 @@ export default function LandingPage() {
                 <span className="material-symbols-outlined text-primary text-3xl">help_outline</span>
               </div>
             </div>
-            <div className="lg:col-span-2 space-y-10">
-              {[0, 1].map((idx) => (
-                <div key={idx} className="group border-b border-border-main/20 pb-10">
-                  <h3 className="text-xl font-display font-bold text-text-main mb-4 group-hover:text-primary transition-colors flex items-center justify-between">
+            <div className="lg:col-span-2 space-y-6">
+              {[0, 1, 2, 3].map((idx) => (
+                <div key={idx} className="group border-b border-border-main/20 pb-6">
+                  <h3 className="text-xl font-display font-bold text-text-main mb-2 group-hover:text-primary transition-colors flex items-center justify-between">
                     {t(`landing.faq.items.${idx}.q`)}
                     <span className="material-symbols-outlined text-text-muted group-hover:rotate-45 transition-transform text-xl">add</span>
                   </h3>
@@ -243,60 +247,50 @@ export default function LandingPage() {
         </section>
 
         {/* --- Contact Section --- */}
-        <section id="contact" className="w-full px-8 md:px-16 lg:px-24 py-32 border-t border-border-main/10">
-          <div className={`bg-surface-card border border-border-main rounded-[48px] p-8 md:p-16 relative overflow-hidden transition-all ${theme === 'dark' ? 'shadow-glow-emerald/10' : 'shadow-card'}`}>
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10"></div>
+        <section id="contact" className="w-full max-w-screen-2xl mx-auto px-12 md:px-24 lg:px-32 py-24 border-t border-border-main/10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <div className="lg:col-span-1">
+              <h2 className="text-4xl font-display font-black text-text-main leading-tight mb-8 italic">{t('landing.contact.title')}</h2>
+              <p className="text-text-muted text-base leading-relaxed mb-8">
+                {t('landing.contact.subtitle')}
+              </p>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-              <div>
-                <h2 className="text-4xl md:text-6xl font-display font-black mb-8 text-text-main">{t('landing.contact.title')}</h2>
-                <p className="text-text-muted text-lg mb-12 max-w-md leading-relaxed">
-                  {t('landing.contact.subtitle')}
-                </p>
-                <div className="flex flex-col gap-8">
-                  <div className="flex items-center gap-6 group">
-                    <div className="size-14 rounded-2xl bg-surface-hover border border-border-main flex items-center justify-center group-hover:border-primary transition-all">
-                      <span className="material-symbols-outlined text-primary text-2xl">mail</span>
-                    </div>
-                    <div>
-                      <p className="text-xs text-text-muted uppercase font-bold tracking-widest mb-1">{t('landing.contact.info.email')}</p>
-                      <p className="text-text-main font-bold text-lg">hello@applyfollow.com</p>
-                    </div>
+              <div className="flex flex-col gap-6">
+                <div className="flex items-center gap-4 group">
+                  <div className="size-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-xl">mail</span>
                   </div>
-                  <div className="flex items-center gap-6 group">
-                    <div className="size-14 rounded-2xl bg-surface-hover border border-border-main flex items-center justify-center group-hover:border-primary transition-all">
-                      <span className="material-symbols-outlined text-primary text-2xl">location_on</span>
-                    </div>
-                    <div>
-                      <p className="text-xs text-text-muted uppercase font-bold tracking-widest mb-1">{t('landing.contact.info.location')}</p>
-                      <p className="text-text-main font-bold text-lg">Istanbul, Turkey</p>
-                    </div>
+                  <div>
+                    <p className="text-[10px] text-text-muted uppercase font-bold tracking-widest mb-0.5">{t('landing.contact.info.email')}</p>
+                    <a href="mailto:dev.oguzhankaya@gmail.com" className="text-text-main font-bold text-base hover:text-primary transition-colors">dev.oguzhankaya@gmail.com</a>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <form className={`bg-surface-card/20 p-12 rounded-[40px] border border-border-main/20 flex flex-col gap-8 backdrop-blur-sm ${theme === 'dark' ? 'shadow-2xl' : 'shadow-lg'} relative`}>
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  <div className="flex flex-col gap-3">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-50">{t('landing.contact.form.name')}</label>
-                    <input type="text" className="bg-transparent border-b border-border-main/20 px-0 py-3 text-text-main focus:border-primary outline-none transition-all placeholder:text-text-muted/30" placeholder="Oğuzhan Kaya" />
+            <div className="lg:col-span-2">
+              <form className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex flex-col gap-2 group">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-70 group-focus-within:text-primary transition-colors">{t('landing.contact.form.name')}</label>
+                    <input type="text" className="w-full bg-surface-card/50 border border-border-main rounded-xl px-4 py-3 text-text-main focus:border-primary focus:bg-surface-card focus:shadow-lg outline-none transition-all placeholder:text-text-muted/30 text-sm font-medium" placeholder="Oğuzhan Kaya" />
                   </div>
-                  <div className="flex flex-col gap-3">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-50">{t('landing.contact.form.email')}</label>
-                    <input type="email" className="bg-transparent border-b border-border-main/20 px-0 py-3 text-text-main focus:border-primary outline-none transition-all placeholder:text-text-muted/30" placeholder="oguz@applyfollow.com" />
+                  <div className="flex flex-col gap-2 group">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-70 group-focus-within:text-primary transition-colors">{t('landing.contact.form.email')}</label>
+                    <input type="email" className="w-full bg-surface-card/50 border border-border-main rounded-xl px-4 py-3 text-text-main focus:border-primary focus:bg-surface-card focus:shadow-lg outline-none transition-all placeholder:text-text-muted/30 text-sm font-medium" placeholder="oguz@applyfollow.com" />
                   </div>
                 </div>
-                <div className="flex flex-col gap-3">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-50">{t('landing.contact.form.subject')}</label>
-                  <input type="text" className="bg-transparent border-b border-border-main/20 px-0 py-3 text-text-main focus:border-primary outline-none transition-all placeholder:text-text-muted/30" placeholder="How can we help?" />
+                <div className="flex flex-col gap-2 group">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-70 group-focus-within:text-primary transition-colors">{t('landing.contact.form.subject')}</label>
+                  <input type="text" className="w-full bg-surface-card/50 border border-border-main rounded-xl px-4 py-3 text-text-main focus:border-primary focus:bg-surface-card focus:shadow-lg outline-none transition-all placeholder:text-text-muted/30 text-sm font-medium" placeholder="How can we help?" />
                 </div>
-                <div className="flex flex-col gap-3">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-50">{t('landing.contact.form.message')}</label>
-                  <textarea className="bg-transparent border-b border-border-main/20 px-0 py-4 text-text-main resize-none h-32 focus:border-primary outline-none transition-all placeholder:text-text-muted/30" placeholder="..." />
+                <div className="flex flex-col gap-2 group">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] ml-1 opacity-70 group-focus-within:text-primary transition-colors">{t('landing.contact.form.message')}</label>
+                  <textarea className="w-full bg-surface-card/50 border border-border-main rounded-xl px-4 py-3 text-text-main resize-none h-32 focus:border-primary focus:bg-surface-card focus:shadow-lg outline-none transition-all placeholder:text-text-muted/30 text-sm font-medium" placeholder="..." />
                 </div>
-                <button className="w-full py-5 rounded-full bg-primary text-slate-950 font-black text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow-emerald-20 mt-4 uppercase tracking-widest">
+                <button className="w-full sm:w-auto self-start px-10 py-4 rounded-full bg-primary text-slate-950 font-black text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow-emerald-20 mt-2 uppercase tracking-widest flex items-center justify-center gap-2">
                   {t('landing.contact.form.send')}
+                  <span className="material-symbols-outlined text-lg">send</span>
                 </button>
               </form>
             </div>

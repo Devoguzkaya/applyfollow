@@ -42,6 +42,7 @@ public class CvService {
                 user.setGithubUrl(request.githubUrl());
                 user.setWebsiteUrl(request.websiteUrl());
                 user.setCvTitle(request.cvTitle());
+                user.setProfileImage(request.profileImage());
 
                 // Tema Renkleri
                 user.setThemeColor(request.themeColor());
@@ -192,6 +193,7 @@ public class CvService {
                                 user.getCvTitle(),
                                 user.getThemeColor(),
                                 user.getAccentColor(),
+                                user.getProfileImage(),
                                 educations,
                                 experiences,
                                 skills,

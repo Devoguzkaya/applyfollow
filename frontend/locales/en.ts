@@ -313,7 +313,9 @@ export const en: Dictionary = {
             title: "Frequently Asked Questions",
             items: [
                 { q: "Is it free?", a: "Our basic features will always remain free. Professional tools are coming soon." },
-                { q: "Is my data safe?", a: "Your security is our priority. Your data is protected with industry-standard encryption." }
+                { q: "Is my data safe?", a: "Your security is our priority. Your data is protected with industry-standard encryption." },
+                { q: "Can I export my data?", a: "Absolutely. You can request a full export of your application history anytime." },
+                { q: "Do you offer mobile app?", a: "Currently we are web-first, but our interface is fully responsive on mobile devices." }
             ]
         },
         contact: {

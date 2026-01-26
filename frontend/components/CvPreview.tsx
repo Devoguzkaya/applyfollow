@@ -80,85 +80,110 @@ export default function CvPreview({ data, user, onEdit, onDownload, showActions 
             )}
 
             {/* A4 Document Preview (ATS Friendly Design) */}
-            <div className="mx-auto w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl overflow-hidden print:shadow-none print:w-full flex flex-col">
+            <div id="cv-preview-content" className="mx-auto w-full max-w-[210mm] min-h-[297mm] bg-white text-slate-900 shadow-2xl overflow-hidden print:shadow-none print:w-full flex flex-col">
 
-                {/* Header Section (Compact) */}
+                {/* Header Section (3-Column Layout: Photo - Name - Links) */}
                 <div
-                    className="text-white p-5 flex flex-row gap-5 items-center shrink-0 transition-colors duration-300"
-                    style={{ backgroundColor: data.themeColor || '#0f172a' }}
+                    className="p-8 pb-6 border-b border-slate-200 flex flex-row items-center gap-8 min-h-[160px] transition-colors duration-300"
+                    style={{ backgroundColor: data.themeColor || '#ffffff' }}
                 >
+                    {/* LEFT: Photo */}
                     {data.profileImage && (
-                        <div className="size-20 rounded-full border-2 border-white/20 shrink-0 overflow-hidden bg-white/10">
-                            <img src={data.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                        <div className="shrink-0">
+                            <div className="size-28 rounded-xl border-2 border-white/50 overflow-hidden bg-slate-50 shadow-sm">
+                                <img src={data.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            </div>
                         </div>
                     )}
-                    <div className="flex-1 min-w-0">
-                        <h1 className="text-2xl font-bold uppercase tracking-wide leading-tight">{user.fullName || "Your Name"}</h1>
+
+                    {/* CENTER: Name & Title */}
+                    <div className="flex flex-col items-center text-center flex-1 min-w-0">
+                        <h1
+                            className={`text-3xl font-bold uppercase tracking-tight leading-none break-words w-full ${data.themeColor ? 'text-white' : 'text-slate-900'}`}
+                        >
+                            {user.fullName || "Your Name"}
+                        </h1>
                         {data.cvTitle && (
-                            <h2 className="text-sm font-medium tracking-wider uppercase mt-0.5 opacity-90 truncate" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                            <h2
+                                className="text-base font-bold tracking-wide uppercase mt-2"
+                                style={{ color: data.themeColor ? 'rgba(255,255,255,0.9)' : (data.accentColor || '#0f172a') }}
+                            >
                                 {data.cvTitle}
                             </h2>
+                        )}
+                    </div>
+
+                    {/* RIGHT: Contact Info Stack (Links Only) */}
+                    <div className={`flex flex-col items-end gap-2 text-xs font-medium shrink-0 ${data.themeColor ? 'text-white/90' : 'text-slate-600'}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-sm font-semibold ${data.themeColor ? 'text-white' : 'text-slate-900'}`}>{user.email}</span>
+                            <MdEmail className="text-base shrink-0" style={{ color: data.themeColor ? 'white' : (data.accentColor || '#0f172a') }} />
+                        </div>
+
+                        {/* Links */}
+                        {data.linkedinUrl && (
+                            <div className="flex items-center gap-2 group">
+                                <a href={data.linkedinUrl} target="_blank" rel="noreferrer" className="group-hover:underline transition-colors">
+                                    {data.linkedinUrl.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '').replace(/\/$/, '') || 'LinkedIn'}
+                                </a>
+                                <FaLinkedin className="text-sm shrink-0 group-hover:scale-110 transition-transform" style={{ color: data.themeColor ? 'white' : (data.accentColor || '#0f172a') }} />
+                            </div>
+                        )}
+                        {data.githubUrl && (
+                            <div className="flex items-center gap-2 group">
+                                <a href={data.githubUrl} target="_blank" rel="noreferrer" className="group-hover:underline transition-colors">
+                                    {data.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, '').replace(/\/$/, '') || 'GitHub'}
+                                </a>
+                                <FaGithub className="text-sm shrink-0 group-hover:scale-110 transition-transform" style={{ color: data.themeColor ? 'white' : (data.accentColor || '#0f172a') }} />
+                            </div>
+                        )}
+                        {data.websiteUrl && (
+                            <div className="flex items-center gap-2 group">
+                                <a href={data.websiteUrl} target="_blank" rel="noreferrer" className="group-hover:underline transition-colors">
+                                    {data.websiteUrl.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') || 'Website'}
+                                </a>
+                                <FaGlobe className="text-sm shrink-0 border rounded-full p-px group-hover:scale-110 transition-transform" style={{ borderColor: data.themeColor ? 'white' : (data.accentColor || '#0f172a'), color: data.themeColor ? 'white' : (data.accentColor || '#0f172a') }} />
+                            </div>
                         )}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 min-h-[200mm] flex-1">
 
-                    {/* LEFT SIDEBAR (Contact, Skills, Languages) */}
-                    <div className="md:col-span-3 bg-slate-50 p-6 border-r border-slate-200 flex flex-col gap-8">
-                        {/* Contact Info */}
-                        <section>
-                            <h3
-                                className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3 transition-colors duration-300"
-                                style={{ borderColor: data.accentColor || data.themeColor || '#cbd5e1', color: data.accentColor || data.themeColor || '#0f172a' }}
-                            >
-                                Contact
-                            </h3>
-                            <div className="flex flex-col gap-2 text-xs text-slate-600">
-                                <div className="flex items-center gap-2 break-all">
-                                    <MdEmail className="shrink-0 transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                    <span>{user.email}</span>
-                                </div>
-                                {data.phoneNumber && (
-                                    <div className="flex items-center gap-2">
-                                        <MdCall className="shrink-0 transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                        <span>{data.phoneNumber}</span>
-                                    </div>
-                                )}
-                                {data.address && (
-                                    <div className="flex items-start gap-2">
-                                        <MdLocationOn className="shrink-0 mt-0.5 transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                        <span>{data.address}</span>
-                                    </div>
-                                )}
-                                <div className="mt-3 flex flex-col gap-2">
-                                    {data.linkedinUrl && (
-                                        <div className="flex items-center gap-2">
-                                            <FaLinkedin className="shrink-0 text-lg transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                            <a href={data.linkedinUrl} target="_blank" rel="noreferrer" className="truncate hover:underline text-slate-600 hover:text-slate-900 transition-colors text-[10px]">
-                                                {data.linkedinUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                                            </a>
+                    {/* LEFT SIDEBAR (Contact Info, Skills, Languages) */}
+                    <div className="md:col-span-3 bg-slate-50/50 p-6 border-r border-slate-100 flex flex-col gap-8 text-sm">
+
+                        {/* Contact Info (Moved here) */}
+                        {(data.phoneNumber || data.address) && (
+                            <section>
+                                <h3
+                                    className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3 transition-colors duration-300"
+                                    style={{ borderColor: data.accentColor || data.themeColor || '#cbd5e1', color: data.accentColor || data.themeColor || '#0f172a' }}
+                                >
+                                    Info
+                                </h3>
+                                <div className="flex flex-col gap-3 text-xs text-slate-600">
+                                    {data.phoneNumber && (
+                                        <div className="flex flex-col gap-0.5">
+                                            <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                                                <MdCall className="text-sm" />
+                                                Phone
+                                            </div>
+                                            <span className="pl-5 font-medium">{data.phoneNumber}</span>
                                         </div>
                                     )}
-                                    {data.githubUrl && (
-                                        <div className="flex items-center gap-2">
-                                            <FaGithub className="shrink-0 text-lg transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                            <a href={data.githubUrl} target="_blank" rel="noreferrer" className="truncate hover:underline text-slate-600 hover:text-slate-900 transition-colors text-[10px]">
-                                                {data.githubUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                                            </a>
-                                        </div>
-                                    )}
-                                    {data.websiteUrl && (
-                                        <div className="flex items-center gap-2">
-                                            <FaGlobe className="shrink-0 text-lg transition-colors duration-300" style={{ color: data.accentColor || data.themeColor || '#0f172a' }} />
-                                            <a href={data.websiteUrl} target="_blank" rel="noreferrer" className="truncate hover:underline text-slate-600 hover:text-slate-900 transition-colors text-[10px]">
-                                                {data.websiteUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                                            </a>
+                                    {data.address && (
+                                        <div className="flex flex-col gap-0.5">
+                                            <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                                                <MdLocationOn className="text-sm" />
+                                                Location
+                                            </div>
+                                            <span className="pl-5 font-medium">{data.address}</span>
                                         </div>
                                     )}
                                 </div>
-                            </div>
-                        </section>
+                            </section>
+                        )}
 
                         {/* Skills */}
                         {data.skills && data.skills.length > 0 && (

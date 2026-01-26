@@ -37,8 +37,36 @@ export default function PersonalInfoForm({ data, updateField }: PersonalInfoForm
                                     const file = e.target.files?.[0];
                                     if (file) {
                                         const reader = new FileReader();
-                                        reader.onloadend = () => {
-                                            updateField('profileImage', reader.result);
+                                        reader.onload = (event) => {
+                                            const img = new Image();
+                                            img.onload = () => {
+                                                const canvas = document.createElement('canvas');
+                                                let width = img.width;
+                                                let height = img.height;
+                                                const maxDim = 500;
+
+                                                if (width > height) {
+                                                    if (width > maxDim) {
+                                                        height *= maxDim / width;
+                                                        width = maxDim;
+                                                    }
+                                                } else {
+                                                    if (height > maxDim) {
+                                                        width *= maxDim / height;
+                                                        height = maxDim;
+                                                    }
+                                                }
+
+                                                canvas.width = width;
+                                                canvas.height = height;
+                                                const ctx = canvas.getContext('2d');
+                                                ctx?.drawImage(img, 0, 0, width, height);
+
+                                                // Convert to WebP
+                                                const webpData = canvas.toDataURL('image/webp', 0.8);
+                                                updateField('profileImage', webpData);
+                                            };
+                                            img.src = event.target?.result as string;
                                         };
                                         reader.readAsDataURL(file);
                                     }

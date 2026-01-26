@@ -103,7 +103,7 @@ export default function Sidebar() {
                 <div className={`h-20 flex items-center ${collapsed ? 'justify-center px-2' : 'px-6'} border-b border-border-main relative transition-all`}>
                     <NextLink href="/" className="flex items-center gap-3 group/logo w-full justify-center lg:justify-start">
                         <div className="relative size-10 shrink-0 bg-slate-900 rounded-lg p-1 border border-white/5 transition-transform group-hover/logo:scale-105">
-                            <Image src="/ApplyFollowLogo.png" alt="ApplyFollow" fill className="object-contain" priority />
+                            <Image src="/ApplyFollowLogo.png" alt="ApplyFollow" fill sizes="40px" className="object-contain" priority />
                         </div>
                         {(!collapsed || isMobile) && (
                             <h1 className="text-xl font-black text-text-main tracking-tighter animate-in fade-in slide-in-from-left-2 transition-all group-hover/logo:text-primary whitespace-nowrap">

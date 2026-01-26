@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { CvData, EducationDto, ExperienceDto, SkillDto, LanguageDto, CertificateDto, cvService } from '@/services/cvService';
 import toast from 'react-hot-toast';
 import { useLanguage } from '@/context/LanguageContext';
@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MdSave, MdDownload, MdVisibility, MdPalette, MdExpandMore } from "react-icons/md";
 import { useAppSelector } from '@/store/hooks';
 import CvPreview from './CvPreview';
+import { useReactToPrint } from 'react-to-print';
 
 // Sub-components
 import PersonalInfoForm from './cv/PersonalInfoForm';
@@ -42,7 +43,8 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
         skills: [],
         languages: [],
         certificates: [],
-        cvTitle: ''
+        cvTitle: '',
+        profileImage: ''
     });
 
     // 1. Fetch CV Data (TanStack Query)
@@ -66,7 +68,8 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
                 skills: serverData.skills || [],
                 languages: serverData.languages || [],
                 certificates: serverData.certificates || [],
-                cvTitle: serverData.cvTitle || ''
+                cvTitle: serverData.cvTitle || '',
+                profileImage: serverData.profileImage || ''
             });
         }
     }, [serverData]);
@@ -83,24 +86,66 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
         }
     });
 
-    // 4. Download Mutation
-    const downloadMutation = useMutation({
-        mutationFn: cvService.downloadCv,
-        onError: () => {
-            toast.error("Failed to download CV");
-        }
-    });
-
     const handleSave = async () => {
         saveMutation.mutate(data);
     };
 
+    // 4. PDF Download (Server-Side with Puppeteer)
+    const componentRef = useRef<HTMLDivElement>(null);
+
     const handleDownload = async () => {
-        // Save first then download
+        if (!componentRef.current) {
+            toast.error("Preview not ready");
+            return;
+        }
+
+        // Save first
         saveMutation.mutate(data, {
-            onSuccess: () => {
-                downloadMutation.mutate();
-                toast.success(t('cv.preview') + " " + t('common.download') + "!");
+            onSuccess: async () => {
+                const toastId = toast.loading('Generating High-Quality PDF...');
+
+                try {
+                    // Extract HTML
+                    const htmlContent = componentRef.current?.innerHTML || '';
+
+                    // Call backend API
+                    const response = await fetch('/api/generate-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            html: htmlContent,
+                            themeConfig: {
+                                primary: data.themeColor || '#17cf63',
+                                primaryDark: data.themeColor || '#14b556', // Simple fallback
+                                accent: data.accentColor || data.themeColor || '#0f172a'
+                            }
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Server failed to generate PDF');
+                    }
+
+                    // Handle Blob
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    // Filename logic
+                    const filename = `CV_${user?.fullName?.replace(/\s+/g, '_') || 'My_CV'}.pdf`;
+                    link.setAttribute('download', filename);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+
+                    toast.success('PDF Downloaded!', { id: toastId });
+
+                } catch (error) {
+                    console.error("PDF Error:", error);
+                    toast.error('Failed to generate PDF. Please try again.', { id: toastId });
+                }
             }
         });
     };
@@ -333,23 +378,25 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
                             </span>
                         </div>
                         {/* Reuse CvPreview Component with Live Data */}
-                        <CvPreview
-                            data={data}
-                            user={displayUser}
-                            showActions={false} // Hide header actions in live preview
-                        />
+                        <div ref={componentRef} className="print:m-0 print:p-0 print:w-[210mm] print:h-[297mm]">
+                            <CvPreview
+                                data={data}
+                                user={displayUser}
+                                showActions={false} // Hide header actions in live preview
+                            />
+                        </div>
                     </div>
-                    {/* Quick Download Button below preview */}
-                    <button
-                        onClick={handleDownload}
-                        disabled={downloadMutation.isPending}
-                        className="w-full mt-4 py-3 rounded-xl bg-primary text-black font-bold hover:shadow-glow transition-all flex items-center justify-center gap-2"
-                    >
-                        {downloadMutation.isPending ? <span className="size-4 border-2 border-black/50 border-t-black rounded-full animate-spin"></span> : <MdDownload className="text-[20px]" />}
-                        {t('common.download')} PDF / Word
-                    </button>
                 </div>
             </div>
+
+            {/* Floating Download Button (FAB) */}
+            <button
+                onClick={handleDownload}
+                title={t('common.download')}
+                className="fixed bottom-28 right-8 z-40 size-14 bg-surface-card text-text-main border border-border-main rounded-full shadow-lg hover:shadow-primary/30 hover:border-primary hover:text-primary hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group"
+            >
+                <MdDownload className="text-3xl" />
+            </button>
         </div>
     );
 }

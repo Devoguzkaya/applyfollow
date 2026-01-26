@@ -1,5 +1,7 @@
 package com.applyfollow.backend.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity // Method-level security (@PreAuthorize) desteği
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfiguration {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
@@ -72,9 +75,8 @@ public class SecurityConfiguration {
                                                                 .userService(customOAuth2UserService))
                                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                                 .failureHandler((request, response, exception) -> {
-                                                        System.out.println("OAuth2 Login Failed: "
-                                                                        + exception.getMessage());
-                                                        exception.printStackTrace();
+                                                        log.error("OAuth2 Login Failed: {}", exception.getMessage(),
+                                                                        exception);
                                                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                                                         "OAuth2 Login Failed: "
                                                                                         + exception.getMessage());

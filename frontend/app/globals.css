@@ -234,3 +234,25 @@ body::before {
 .delay-1000 {
   animation-delay: 1000ms;
 }
+
+@media print {
+  @page {
+    size: 210mm 297mm;
+    margin: 0;
+  }
+
+  body {
+    print-color-adjust: exact;
+    background-color: white !important;
+  }
+
+  /* Hide everything by default regarding navigation etc if needed, 
+     but react-to-print handles most isolation. 
+     We ensure our CV container fits perfectly. */
+
+  /* Ensure backgrounds are printed */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

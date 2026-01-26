@@ -16,6 +16,7 @@ public record CvUpdateRequest(
                 String cvTitle,
                 String themeColor,
                 String accentColor,
+                String profileImage,
                 List<EducationDto> educations,
                 List<ExperienceDto> experiences,
                 List<SkillDto> skills,

@@ -308,10 +308,12 @@ export const tr = {
             ]
         },
         faq: {
-            title: "Sıkça Sorulan Sosular",
+            title: "Sıkça Sorulan Sorular",
             items: [
                 { q: "Ücretli mi?", a: "Temel özelliklerimiz her zaman ücretsiz kalacak. Profesyonel araçlar yakında gelecek." },
-                { q: "Verilerim güvende mi?", a: "Güvenliğiniz bizim önceliğimiz. Verileriniz endüstri standardı şifreleme ile korunur." }
+                { q: "Verilerim güvende mi?", a: "Güvenliğiniz bizim önceliğimiz. Verileriniz endüstri standardı şifreleme ile korunur." },
+                { q: "Verilerimi dışa aktarabilir miyim?", a: "Kesinlikle. İstediğiniz zaman tüm başvuru geçmişinizin dökümünü alabilirsiniz." },
+                { q: "Mobil uygulamanız var mı?", a: "Şu an web öncelikli ilerliyoruz ancak sitemiz mobil cihazlarla tam uyumludur." }
             ]
         },
         contact: {

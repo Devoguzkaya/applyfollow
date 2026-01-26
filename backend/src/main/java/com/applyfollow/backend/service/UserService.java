@@ -43,7 +43,6 @@ public class UserService {
                 .email(request.email())
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(role)
-                .role(role)
                 .active(true)
                 .marketDataConsent(request.marketDataConsent())
                 .build();
@@ -61,7 +60,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (!user.isActive()) {
-            throw new BadRequestException("Hesabınız askıya alınmıştır aktifleştirmek için iletişime geçin");
+            throw new BadRequestException("Your account is suspended. Please contact support to activate it.");
         }
 
         authenticationManager.authenticate(

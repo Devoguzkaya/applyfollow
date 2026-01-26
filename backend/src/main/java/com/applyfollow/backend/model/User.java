@@ -27,7 +27,7 @@ public class User extends BaseEntity implements UserDetails {
             String providerId, boolean active,
             boolean marketDataConsent,
             String summary, String phoneNumber, String address, String linkedinUrl, String githubUrl, String websiteUrl,
-            String cvTitle,
+            String cvTitle, String profileImage,
             List<Application> applications, Set<Education> educations,
             Set<Experience> experiences, Set<Skill> skills, Set<Language> languages, Set<Certificate> certificates) {
         this.setId(id);
@@ -46,6 +46,7 @@ public class User extends BaseEntity implements UserDetails {
         this.githubUrl = githubUrl;
         this.websiteUrl = websiteUrl;
         this.cvTitle = cvTitle;
+        this.profileImage = profileImage;
         this.applications = applications;
         this.educations = educations;
         this.experiences = experiences;
@@ -71,6 +72,9 @@ public class User extends BaseEntity implements UserDetails {
     private String cvTitle;
     private String themeColor;
     private String accentColor;
+
+    @Column(columnDefinition = "TEXT")
+    private String profileImage;
 
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -76,29 +76,4 @@ export const cvService = {
         await api.post('/cv', data);
     },
 
-    downloadCv: async (): Promise<void> => {
-        const response = await api.get('/cv/download', {
-            responseType: 'blob', // Dosya indireceğimiz için blob önemli
-        });
-
-        // Tarayıcıda indirme işlemini tetikle
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-
-        // Backend header'dan dosya adını çekmeye çalış, yoksa default ver
-        const contentDisposition = response.headers['content-disposition'];
-        let fileName = 'My_CV.docx';
-        if (contentDisposition) {
-            const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-            if (fileNameMatch && fileNameMatch.length === 2)
-                fileName = fileNameMatch[1].replace(/"/g, ''); // Tırnakları temizle
-        }
-
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-    }
 };

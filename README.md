@@ -9,6 +9,15 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 
 ---
 
+## 🌟 Latest Updates (January 2026)
+
+- **Standardized Logging**: Migrated all backend logs to **SLF4J + Logback**. No more `System.out.println` or manual stack traces.
+- **Robust OAuth2 Flow**: Implemented an **In-Memory State Repository** for Google Login to bypass cross-site cookie restrictions on local development.
+- **Docker Optimization**: Faster builds with Maven dependency caching in the Docker image.
+- **Improved Security**: Enhanced `CookieUtils` with manual `Set-Cookie` header injection and `SameSite=Lax` policy compatibility.
+
+---
+
 ## Core Features
 
 - **Intelligent Analytics**: Monitor your success rate with real-time status tracking and visual KPIs.
@@ -24,8 +33,9 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 | **Frontend** | Next.js 15+, React 19, Tailwind CSS v4, TanStack Query v5, Redux Toolkit |
 | **Backend** | Spring Boot 3.2, Spring Security, Spring Data JPA, Hibernate |
 | **Database** | PostgreSQL, HikariCP Connection Pooling |
-| **Security** | JWT (JSON Web Token), Google OAuth2 (In-Memory State Management) |
-| **DevOps** | GitHub Actions (CI/CD), Docker, Docker Compose |
+| **Security** | JWT (JSON Web Token), Google OAuth2 (Stateless In-Memory Storage) |
+| **Logging** | SLF4J with Lombok `@Slf4j` |
+| **DevOps** | GitHub Actions (CI/CD), Docker BuildKit Caching |
 
 ---
 

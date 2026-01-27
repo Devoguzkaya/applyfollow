@@ -35,7 +35,7 @@ export default function QuickAddModal({ isOpen, onClose }: { isOpen: boolean; on
             });
 
             // Invalidate cache to refresh lists
-            queryClient.invalidateQueries({ queryKey: ['applications'] }); // Fix: pass object
+            queryClient.invalidateQueries({ queryKey: ['applications'] });
 
             toast.success(t('applications.new.success'));
 

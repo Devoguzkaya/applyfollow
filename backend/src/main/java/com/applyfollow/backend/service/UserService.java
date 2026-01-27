@@ -13,14 +13,14 @@ import com.applyfollow.backend.model.Role;
 import com.applyfollow.backend.model.User;
 import com.applyfollow.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +36,11 @@ public class UserService {
             throw new BadRequestException("Email already in use");
         }
 
-        Role role = Role.USER;
-
         var user = User.builder()
                 .fullName(request.fullName())
                 .email(request.email())
                 .passwordHash(passwordEncoder.encode(request.password()))
-                .role(role)
+                .role(Role.USER)
                 .active(true)
                 .marketDataConsent(request.marketDataConsent())
                 .build();
@@ -73,11 +71,10 @@ public class UserService {
                 user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
     }
 
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream()
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
                 .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
-                        user.isActive()))
-                .collect(Collectors.toList());
+                        user.isActive()));
     }
 
     public AuthResponse updateProfile(UUID userId, UpdateProfileRequest request) {

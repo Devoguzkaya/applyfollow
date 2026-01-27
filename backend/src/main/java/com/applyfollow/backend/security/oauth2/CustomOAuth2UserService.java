@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -28,9 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             return processOAuth2User(userRequest, oAuth2User);
         } catch (Exception ex) {
-            // Hatanın detayını konsola basalım
-            System.err.println("OAuth2 User Processing Error: " + ex.getMessage());
-            ex.printStackTrace();
+            log.error("OAuth2 User Processing Error: ", ex);
             throw new OAuth2AuthenticationException(ex.getMessage() != null ? ex.getMessage() : "Unknown Error");
         }
     }

@@ -55,7 +55,6 @@ export default function UserDetailPage() {
             // Fetch CV separately
             try {
                 const cvDataRes = await adminService.getUserCv(realId);
-                console.log("CV Data Loaded:", cvDataRes);
                 setCvData(cvDataRes);
             } catch (cvError) {
                 console.warn("Could not load CV data:", cvError);

@@ -3,7 +3,6 @@ package com.applyfollow.backend.security.oauth2;
 import com.applyfollow.backend.model.User;
 import com.applyfollow.backend.repository.UserRepository;
 import com.applyfollow.backend.config.JwtService;
-import com.applyfollow.backend.util.CookieUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,9 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import static com.applyfollow.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Component
 @RequiredArgsConstructor
@@ -56,6 +52,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
+
+        if (email == null) {
+            throw new RuntimeException("Email not found from OAuth2 provider");
+        }
 
         log.info("Extracting attributes for user: {}", email);
 

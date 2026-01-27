@@ -2,6 +2,9 @@ package com.applyfollow.backend.service;
 
 import com.applyfollow.backend.model.Company;
 import com.applyfollow.backend.repository.CompanyRepository;
+import com.applyfollow.backend.dto.CompanyResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +27,13 @@ public class CompanyService {
                 });
     }
 
-    public java.util.List<com.applyfollow.backend.dto.CompanyResponse> getAllCompanies() {
-        return companyRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(java.util.stream.Collectors.toList());
+    public Page<CompanyResponse> getAllCompanies(Pageable pageable) {
+        return companyRepository.findAll(pageable)
+                .map(this::mapToResponse);
     }
 
-    private com.applyfollow.backend.dto.CompanyResponse mapToResponse(Company company) {
-        return new com.applyfollow.backend.dto.CompanyResponse(
+    private CompanyResponse mapToResponse(Company company) {
+        return new CompanyResponse(
                 company.getId(),
                 company.getName(),
                 company.getWebsite(),
@@ -40,4 +42,3 @@ public class CompanyService {
                 company.getCreatedAt());
     }
 }
-

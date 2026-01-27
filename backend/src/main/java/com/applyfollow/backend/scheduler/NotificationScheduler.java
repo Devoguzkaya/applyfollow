@@ -26,9 +26,7 @@ public class NotificationScheduler {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
-        List<CalendarEvent> eventsToNotify = eventRepository
-                .findAllByHasAlarmTrueAndNotifiedFalseAndDateBeforeOrDateEqualsAndAlarmTimeBeforeOrAlarmTimeEquals(
-                        today, today, now, now);
+        List<CalendarEvent> eventsToNotify = eventRepository.findEventsToNotify(today, today, now);
 
         if (eventsToNotify.isEmpty()) {
             return;
@@ -48,10 +46,10 @@ public class NotificationScheduler {
                     event.getNotes() != null ? event.getNotes() : "No notes");
 
             mailService.sendEmail(userEmail, subject, body);
-
             event.setNotified(true);
-            eventRepository.save(event);
         }
+
+        // Batch save all notified events
+        eventRepository.saveAll(eventsToNotify);
     }
 }
-

@@ -29,7 +29,24 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
     // Redirect URI'leri için ayrı bir map (opsiyonel ama sağlıklı)
     private final Map<String, String> redirectUris = new ConcurrentHashMap<>();
 
+    // İsteklerin oluşturulma zamanı: state -> timestamp
+    private final Map<String, Long> creationTimes = new ConcurrentHashMap<>();
+
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
+
+    // Her 5 dakikada bir bayat istekleri temizle
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 300000)
+    public void cleanupStaleRequests() {
+        long now = System.currentTimeMillis();
+        creationTimes.forEach((state, time) -> {
+            if (now - time > 300000) { // 5 dakika
+                log.info("Cleanup: Removing stale OAuth2 request for state: {}", state);
+                authorizationRequests.remove(state);
+                redirectUris.remove(state);
+                creationTimes.remove(state);
+            }
+        });
+    }
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
@@ -72,14 +89,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         String state = authorizationRequest.getState();
         log.info("Step: Save - Storing request in memory with state: {}", state);
         authorizationRequests.put(state, authorizationRequest);
+        creationTimes.put(state, System.currentTimeMillis());
 
         String redirectUri = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
         if (redirectUri != null && !redirectUri.isBlank()) {
             redirectUris.put(state, redirectUri);
         }
-
-        // Temizlik: 5 dakikadan eski istekleri temizleyen bir mekanizma eklenebilir.
-        // Ama şimdilik akışın çalışması önceliğimiz.
     }
 
     @Override
@@ -90,6 +105,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         if (state != null) {
             log.info("Step: Remove - Cleaning up memory for state: {}", state);
             redirectUris.remove(state);
+            creationTimes.remove(state);
             return authorizationRequests.remove(state);
         }
         return null;
@@ -101,6 +117,13 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         if (state != null) {
             authorizationRequests.remove(state);
             redirectUris.remove(state);
+            creationTimes.remove(state);
         }
+    }
+
+    public String getRedirectUri(String state) {
+        if (state == null)
+            return null;
+        return redirectUris.get(state);
     }
 }

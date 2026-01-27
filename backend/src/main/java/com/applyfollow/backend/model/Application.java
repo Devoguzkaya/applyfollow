@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Application extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // Şimdilik nullable olabilir test için, auth gelince false yaparız
+    @JoinColumn(name = "user_id", nullable = false)
     @lombok.ToString.Exclude
     @lombok.EqualsAndHashCode.Exclude
     private User user;

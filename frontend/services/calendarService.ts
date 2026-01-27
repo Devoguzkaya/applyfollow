@@ -26,5 +26,10 @@ export const calendarService = {
 
     deleteEvent: async (id: string): Promise<void> => {
         await api.delete(`/calendar/${id}`);
+    },
+
+    getTodayCount: async (): Promise<number> => {
+        const response = await api.get<number>('/calendar/today/count');
+        return response.data;
     }
 };

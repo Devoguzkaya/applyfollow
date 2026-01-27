@@ -28,6 +28,12 @@ public class CalendarEventController {
         return service.getAllEvents(user.getId());
     }
 
+    @GetMapping("/today/count")
+    public long getTodayEventCount(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = (User) userDetails;
+        return service.getTodayEventCount(user.getId());
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CalendarEventResponse createEvent(

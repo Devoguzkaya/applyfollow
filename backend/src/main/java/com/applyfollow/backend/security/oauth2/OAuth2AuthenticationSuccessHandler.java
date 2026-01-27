@@ -48,7 +48,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             Authentication authentication) {
         // State-Map (Hafıza) üzerinden redirect URI'yi almaya çalış, yoksa default'a
         // dön
-        String targetUrl = defaultTargetUrl; // Şimdilik basit tutalım, ileride Map'ten çekilir
+        String state = request.getParameter("state");
+        String targetUrl = httpCookieOAuth2AuthorizationRequestRepository.getRedirectUri(state);
+
+        if (targetUrl == null) {
+            targetUrl = defaultTargetUrl;
+        }
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");

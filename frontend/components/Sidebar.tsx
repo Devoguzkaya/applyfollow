@@ -33,21 +33,14 @@ export default function Sidebar() {
         localStorage.setItem('sidebar-collapsed', String(newState));
     };
 
-    // Fetch alerts for badge using TanStack Query
-    // It's much cleaner than useEffect + setInterval
-    const { data: events } = useQuery({
-        queryKey: ['calendar-events-count'],
-        queryFn: () => calendarService.getAllEvents(),
-        enabled: mounted && !!user, // Only fetch if user is logged in
-        refetchInterval: 60000, // Refresh every minute
+    // Fetch count for badge using TanStack Query - much more efficient
+    const { data: todayCount = 0 } = useQuery({
+        queryKey: ['calendar-today-count'],
+        queryFn: () => calendarService.getTodayCount(),
+        enabled: mounted && !!user,
+        refetchInterval: 60000,
         staleTime: 30000,
     });
-
-    const todayCount = events ? (() => {
-        const today = new Date();
-        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        return events.filter(e => e.date === todayStr).length;
-    })() : 0;
 
     // Initial check for mobile
     useEffect(() => {

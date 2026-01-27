@@ -29,6 +29,10 @@ public class CalendarEventService {
                 .collect(Collectors.toList());
     }
 
+    public long getTodayEventCount(UUID userId) {
+        return repository.countByUserIdAndDate(userId, java.time.LocalDate.now());
+    }
+
     @Transactional
     public CalendarEventResponse createEvent(CalendarEventRequest request, UUID userId) {
         User user = userRepository.findById(userId)

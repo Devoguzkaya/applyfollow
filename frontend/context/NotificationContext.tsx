@@ -59,7 +59,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             read: false,
             type
         };
-        setNotifications(prev => [newNotif, ...prev]);
+        setNotifications(prev => [newNotif, ...prev].slice(0, 50));
     };
 
     const markAsRead = (id: string) => {

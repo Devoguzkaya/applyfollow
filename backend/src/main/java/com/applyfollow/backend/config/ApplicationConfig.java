@@ -18,15 +18,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository repository;
+    private final java.util.Map<String, org.springframework.security.core.userdetails.UserDetails> userDetailsCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     /**
      * Kullanıcı detaylarını veritabanından çeken servis.
-     * Spring Security bu servisi kullanarak authentication yapar.
+     * Performans için basit bir cache mekanizması eklenmiştir.
      */
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        return username -> userDetailsCache.computeIfAbsent(username, email -> repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email)));
     }
 
     /**
@@ -57,4 +58,3 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

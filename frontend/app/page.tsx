@@ -106,7 +106,7 @@ export default function LandingPage() {
           <div className="flex-1 relative w-full aspect-square lg:aspect-auto lg:h-[500px] animate-in fade-in slide-in-from-right-12 duration-1000 delay-500">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-primary/5 blur-[120px] rounded-full"></div>
             <div className={`relative w-full h-full rounded-2xl bg-surface-card border border-border-main ${theme === 'dark' ? 'shadow-[0_0_80px_rgba(0,0,0,0.5)]' : 'shadow-card'} overflow-hidden group rotate-1 hover:rotate-0 transition-transform duration-700`}>
-              <Image src="/landing/hero.png" alt="Dashboard Preview" fill className="object-cover group-hover:scale-[1.05] transition-transform duration-1000" />
+              <Image src="/landing/hero.png" alt="Dashboard Preview" fill className="object-cover group-hover:scale-[1.05] transition-transform duration-1000" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
               <div className={`absolute inset-0 bg-gradient-to-tr ${theme === 'dark' ? 'from-background/80' : 'from-background/20'} via-transparent to-transparent pointer-events-none`}></div>
             </div>
 

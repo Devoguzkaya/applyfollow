@@ -16,4 +16,6 @@ public interface CalendarEventRepository extends JpaRepository<CalendarEvent, UU
     List<CalendarEvent> findEventsToNotify(LocalDate d1, LocalDate d2, LocalTime t2);
 
     boolean existsByHasAlarmTrueAndNotifiedFalse();
+
+    long countByUserIdAndDate(UUID userId, LocalDate date);
 }

@@ -21,6 +21,7 @@ public class CalendarEventService {
 
     private final CalendarEventRepository repository;
     private final UserRepository userRepository;
+    private final com.applyfollow.backend.scheduler.NotificationScheduler notificationScheduler;
 
     public List<CalendarEventResponse> getAllEvents(UUID userId) {
         return repository.findAllByUserId(userId).stream()
@@ -44,6 +45,11 @@ public class CalendarEventService {
         event.setUser(user);
 
         CalendarEvent savedEvent = repository.save(event);
+
+        if (event.isHasAlarm()) {
+            notificationScheduler.triggerCheck();
+        }
+
         return mapToResponse(savedEvent);
     }
 
@@ -72,4 +78,3 @@ public class CalendarEventService {
                 event.getAlarmTime());
     }
 }
-

@@ -5,16 +5,18 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 [![Build Status](https://github.com/Devoguzkaya/applyfollow/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Devoguzkaya/applyfollow/actions)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2015-black?logo=next.js)](https://nextjs.org/)
 [![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot%203.2-green?logo=springboot)](https://spring.io/projects/spring-boot)
-[![Tailwind CSS v4](https://img.shields.io/badge/Design-Tailwind%20CSS%20v4-38B2AC?logo=tailwindcss)](https://tailwindcss.com/)
 
 ---
 
-## 🌟 Latest Updates (January 2026)
+## 🌟 Latest Updates (January 27, 2026)
 
-- **Standardized Logging**: Migrated all backend logs to **SLF4J + Logback**. No more `System.out.println` or manual stack traces.
-- **Robust OAuth2 Flow**: Implemented an **In-Memory State Repository** for Google Login to bypass cross-site cookie restrictions on local development.
-- **Docker Optimization**: Faster builds with Maven dependency caching in the Docker image.
-- **Improved Security**: Enhanced `CookieUtils` with manual `Set-Cookie` header injection and `SameSite=Lax` policy compatibility.
+- **Performance & Scalability Engine**:
+  - Implemented **Pagination** for all major entities (Users, Companies).
+  - Fixed **N+1 Query issues** in scheduler using specialized `JOIN FETCH` queries.
+  - Implemented **Batch Writes** (`saveAll`) and **Bulk Deletes** (`@Modifying`) for maximum DB efficiency.
+- **Modern Logging**: Full migration to **SLF4J** with clean error handling.
+- **Rock-solid OAuth2**: Custom in-memory state repository solves all redirect & cookie issues.
+- **Optimized DevOps**: Docker builds are now significantly faster thanks to dependency caching.
 
 ---
 
@@ -24,7 +26,6 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 - **Interview Scheduler**: Integrated calendar to keep track of interviews and technical tests.
 - **Pro CV Builder**: Generate PDF resumes automatically based on your application history and profile.
 - **Secure & Stateless**: Robust security architecture leveraging OAuth2 and JWT.
-- **Internationalized**: Seamlessly switch between English and Turkish.
 
 ## The Tech Stack
 
@@ -33,9 +34,8 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 | **Frontend** | Next.js 15+, React 19, Tailwind CSS v4, TanStack Query v5, Redux Toolkit |
 | **Backend** | Spring Boot 3.2, Spring Security, Spring Data JPA, Hibernate |
 | **Database** | PostgreSQL, HikariCP Connection Pooling |
-| **Security** | JWT (JSON Web Token), Google OAuth2 (Stateless In-Memory Storage) |
+| **Scalability** | Spring Data Pagination, Batch Processing |
 | **Logging** | SLF4J with Lombok `@Slf4j` |
-| **DevOps** | GitHub Actions (CI/CD), Docker BuildKit Caching |
 
 ---
 
@@ -43,27 +43,16 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 
 ### 1. Prerequisites
 
-- **JDK 17+**
-- **Node.js 20+**
-- **PostgreSQL** instance
+- **JDK 17+**, **Node.js 20+**, **PostgreSQL**
 
-### 2. Environment Setup
-
-Rename `.env.example` to `.env` in the root and frontend directories, then fill in your credentials.
-
-### 3. Backend Execution
+### 2. Quick Run
 
 ```bash
-cd backend
-mvn spring-boot:run
-```
+# Backend
+cd backend && mvn spring-boot:run
 
-### 4. Frontend Execution
-
-```bash
-cd frontend
-npm install
-npm run dev
+# Frontend
+cd frontend && npm run dev
 ```
 
 Visit `http://localhost:3000` to start tracking!
@@ -72,7 +61,7 @@ Visit `http://localhost:3000` to start tracking!
 
 ## Detailed Documentation
 
-For deep technical insights, architectural decisions, and API methodology, please refer to the [TECHNICAL_SPECS.md](./TECHNICAL_SPECS.md) file.
+For deep technical insights, refer to the [TECHNICAL_SPECS.md](./TECHNICAL_SPECS.md) file.
 
 ---
-© 2026 ApplyFollow. Crafted with precision for the developer community.
+© 2026 ApplyFollow. Optimized for scale.

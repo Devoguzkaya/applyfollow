@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @RequiredArgsConstructor
@@ -20,15 +21,40 @@ public class NotificationScheduler {
     private final CalendarEventRepository eventRepository;
     private final MailService mailService;
 
+    // "Akıllı State": Veritabanına gitmeden önce bellekte bekleyen alarm var mı
+    // kontrol eder
+    private final AtomicBoolean hasPendingAlarms = new AtomicBoolean(false);
+
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        // Uygulama başlarken veritabanında bekleyen alarm (notified=false) var mı bak
+        boolean exists = eventRepository.existsByHasAlarmTrueAndNotifiedFalse();
+        hasPendingAlarms.set(exists);
+        log.info("Notification system initialized. Pending alarms exists: {}", exists);
+    }
+
+    public void triggerCheck() {
+        hasPendingAlarms.set(true);
+    }
+
     // Runs every minute
     @Scheduled(fixedRate = 60000)
     public void sendEventReminders() {
+        if (!hasPendingAlarms.get()) {
+            return; // Hiç alarm yoksa veritabanına sorgu atma
+        }
+
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
         List<CalendarEvent> eventsToNotify = eventRepository.findEventsToNotify(today, today, now);
 
         if (eventsToNotify.isEmpty()) {
+            // Hiç bildirim saati gelmiş etkinlik yoksa, genel olarak bekleyen alarm kalmış
+            // mı kontrol et
+            if (!eventRepository.existsByHasAlarmTrueAndNotifiedFalse()) {
+                hasPendingAlarms.set(false);
+            }
             return;
         }
 
@@ -51,5 +77,11 @@ public class NotificationScheduler {
 
         // Batch save all notified events
         eventRepository.saveAll(eventsToNotify);
+
+        // İşlem sonrası bekleyen alarm kalmadıysa flag'i indir
+        if (!eventRepository.existsByHasAlarmTrueAndNotifiedFalse()) {
+            hasPendingAlarms.set(false);
+            log.info("All pending alarms processed. Cooling down scheduler.");
+        }
     }
 }

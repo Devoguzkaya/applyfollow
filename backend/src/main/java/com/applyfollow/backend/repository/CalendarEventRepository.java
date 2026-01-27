@@ -14,4 +14,6 @@ public interface CalendarEventRepository extends JpaRepository<CalendarEvent, UU
             "WHERE e.hasAlarm = true AND e.notified = false AND " +
             "(e.date < :d1 OR (e.date = :d2 AND e.alarmTime <= :t2))")
     List<CalendarEvent> findEventsToNotify(LocalDate d1, LocalDate d2, LocalTime t2);
+
+    boolean existsByHasAlarmTrueAndNotifiedFalse();
 }

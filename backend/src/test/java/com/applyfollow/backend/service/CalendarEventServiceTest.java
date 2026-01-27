@@ -31,6 +31,8 @@ class CalendarEventServiceTest {
     private CalendarEventRepository repository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private com.applyfollow.backend.scheduler.NotificationScheduler notificationScheduler;
 
     @InjectMocks
     private CalendarEventService service;
@@ -94,4 +96,3 @@ class CalendarEventServiceTest {
         verify(repository, never()).delete(any());
     }
 }
-

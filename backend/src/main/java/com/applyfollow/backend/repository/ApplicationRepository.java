@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, UUID> {
-    @org.springframework.data.jpa.repository.Query("SELECT a FROM Application a JOIN FETCH a.company WHERE a.user.id = :userId")
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM Application a JOIN FETCH a.company WHERE a.user.id = :userId ORDER BY a.appliedAt DESC")
     List<Application> findAllByUserId(UUID userId);
 
     // Duplicate kontrolü için

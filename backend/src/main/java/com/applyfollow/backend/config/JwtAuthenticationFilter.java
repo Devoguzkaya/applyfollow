@@ -58,12 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Token geçersizse veya bir hata oluşursa sessizce devam et.
-            // Bu sayede permitAll() endpointleri (register vb.) 401 almaz.
+            // Token is present but invalid/expired -> Return 401 immediately
+            // This prevents silent failures where client thinks it's authenticated
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or Expired JWT Token");
+            return;
         }
 
         // 4. Zincirdeki bir sonraki filtreye geçiş
         filterChain.doFilter(request, response);
     }
 }
-

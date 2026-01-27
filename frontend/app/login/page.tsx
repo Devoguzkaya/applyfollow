@@ -116,28 +116,17 @@ export default function LoginPage() {
                     <div className="h-px bg-border-main flex-1 opacity-50"></div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 h-11 mb-6">
+                <div className="flex flex-col gap-4 mb-6">
                     <button
                         type="button"
                         onClick={() => {
                             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
                             window.location.href = `${apiUrl}/oauth2/authorization/google`;
                         }}
-                        className="flex items-center justify-center gap-2 bg-surface-card border border-border-main text-text-main font-bold text-xs rounded-xl hover:border-primary transition-all active:scale-[0.98] shadow-sm"
+                        className="flex items-center justify-center gap-3 h-11 bg-surface-card border border-border-main text-text-main font-bold text-xs rounded-xl hover:border-primary transition-all active:scale-[0.98] shadow-sm w-full"
                     >
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="size-4" />
-                        Google
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-                            window.location.href = `${apiUrl}/oauth2/authorization/github`;
-                        }}
-                        className="flex items-center justify-center gap-2 bg-surface-card border border-border-main text-text-main font-bold text-xs rounded-xl hover:border-primary transition-all active:scale-[0.98] shadow-sm"
-                    >
-                        <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className={`size-4 ${theme === 'dark' ? 'invert' : ''} opacity-70`} />
-                        GitHub
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="size-5" />
+                        <span>Google</span>
                     </button>
                 </div>
 

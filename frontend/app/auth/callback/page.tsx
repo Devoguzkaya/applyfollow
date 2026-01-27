@@ -16,21 +16,24 @@ function CallbackContent() {
         const token = searchParams.get('token');
 
         if (token) {
-            // 2. Persist token immediately
+            // 1. Clean URL immediately to prevent token leakage
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            // 2. Persist token to allow API requests (Interceptor reads from localStorage)
             authService.setToken(token);
 
-            // 3. Fetch real user profile
+            // 3. Try to fetch real user profile
             authService.fetchUserProfile()
                 .then(user => {
-                    // 4. Update Redux with real user data
-                    dispatch(setCredentials({ user, token }));
+                    // Success: Update Redux with real user data (Token is already in localStorage via setToken)
+                    dispatch(setCredentials({ user }));
                     toast.success("Successfully logged in via OAuth!");
                     router.push('/dashboard');
                 })
                 .catch(err => {
-                    console.error("OAuth profile fetch failed", err);
-                    toast.error("Failed to fetch user profile.");
-                    authService.logout();
+                    console.error("Critical: Failed to fetch real user profile after OAuth success", err);
+                    toast.error("Profil bilgileriniz alınamadı. Lütfen tekrar deneyin.");
+                    authService.logout(); // Clears storage and redirects to /login
                 });
         } else {
             toast.error("Login failed. No token received.");

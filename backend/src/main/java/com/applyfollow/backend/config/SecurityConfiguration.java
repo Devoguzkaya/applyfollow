@@ -21,6 +21,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.applyfollow.backend.security.oauth2.CustomOAuth2UserService;
 import com.applyfollow.backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.applyfollow.backend.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.applyfollow.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 
 import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
@@ -36,6 +38,8 @@ public class SecurityConfiguration {
         private final AuthenticationProvider authenticationProvider;
         private final CustomOAuth2UserService customOAuth2UserService;
         private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+        private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+        private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
         @Value("#{'${cors.allowed.origins}'.split(',')}")
         private List<String> allowedOrigins;
@@ -46,7 +50,8 @@ public class SecurityConfiguration {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/api/contact/**",
-                        "/login/oauth2/code/**" // Allow OAuth2 callback endpoints
+                        "/api/login/oauth2/code/google",
+                        "/error" // Claude'un önerisi: Hata durumunda yönlendirme izni
         };
 
         @Bean
@@ -62,25 +67,27 @@ public class SecurityConfiguration {
                                                 .anyRequest().authenticated() // Diğer her şey için authentication şart
                                 )
                                 .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // REST API
-                                                                                                        // stateless
-                                                                                                        // olmalı
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Artık cookie
+                                                                                                        // üzerinden
+                                                                                                        // ilerlediğimiz
+                                                                                                        // için
+                                                                                                        // stateless'a
+                                                                                                        // geri
+                                                                                                        // dönebiliriz
                                 )
                                 .oauth2Login(oauth2 -> oauth2
                                                 .authorizationEndpoint(authorization -> authorization
-                                                                .baseUri("/api/oauth2/authorization"))
+                                                                .baseUri("/api/oauth2/authorization")
+                                                                .authorizationRequestRepository(
+                                                                                httpCookieOAuth2AuthorizationRequestRepository))
                                                 .redirectionEndpoint(redirection -> redirection
-                                                                .baseUri("/api/login/oauth2/code/*"))
+                                                                .baseUri("/api/login/oauth2/code/google")) // Dokümandaki
+                                                                                                           // net
+                                                                                                           // eşleşme
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService))
                                                 .successHandler(oAuth2AuthenticationSuccessHandler)
-                                                .failureHandler((request, response, exception) -> {
-                                                        log.error("OAuth2 Login Failed: {}", exception.getMessage(),
-                                                                        exception);
-                                                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                                                        "OAuth2 Login Failed: "
-                                                                                        + exception.getMessage());
-                                                }))
+                                                .failureHandler(oAuth2AuthenticationFailureHandler))
                                 .authenticationProvider(authenticationProvider)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 // Yetkisiz erişimlerde 403 yerine 401 dönmesi için (Frontend redirect için

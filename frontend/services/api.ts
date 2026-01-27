@@ -16,20 +16,13 @@ const api = axios.create({
     timeout: 30000,
 });
 
-// Request interceptor for future Auth token (JWT)
+// Request interceptor for Auth token (JWT)
 api.interceptors.request.use(
     (config) => {
         if (typeof window !== 'undefined') {
-            const userStr = localStorage.getItem('user');
-            if (userStr) {
-                try {
-                    const user = JSON.parse(userStr);
-                    if (user && user.token) {
-                        config.headers['Authorization'] = `Bearer ${user.token}`;
-                    }
-                } catch (e) {
-                    console.error("Failed to parse user from local storage", e);
-                }
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
             }
         }
         return config;
@@ -48,6 +41,7 @@ api.interceptors.response.use(
             if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
                 // Clear all auth data
                 localStorage.removeItem('user');
+                localStorage.removeItem('token');
 
                 // Trigger a custom event for UI components to handle the redirect cleanly (SPA friendly)
                 window.dispatchEvent(new Event('auth:unauthorized'));

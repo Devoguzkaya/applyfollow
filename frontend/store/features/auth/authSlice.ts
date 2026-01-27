@@ -61,7 +61,7 @@ export const authSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
-        setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
+        setCredentials: (state, action: PayloadAction<{ user: User }>) => {
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isLoading = false;

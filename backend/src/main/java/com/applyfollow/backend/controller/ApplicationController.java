@@ -32,6 +32,7 @@ public class ApplicationController {
 
     // Admin endpoint to view other users' applications
     @GetMapping("/user/{userId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public List<ApplicationResponse> findAllByUserId(@PathVariable UUID userId) {
         return service.getAllApplications(userId);
     }

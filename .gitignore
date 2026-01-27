@@ -35,6 +35,7 @@ backend/bin/
 backend/.idea/
 backend/*.iml
 backend/logs/
+backend/src/main/resources/application-dev.properties
 
 # --- IDE & OS ---
 .vscode/

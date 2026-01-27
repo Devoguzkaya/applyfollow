@@ -13,7 +13,6 @@ export interface User {
     githubUrl?: string;
     websiteUrl?: string;
     summary?: string;
-    token?: string; // Add token to User interface
 }
 
 export interface LoginRequest {
@@ -59,7 +58,9 @@ export const authService = {
     login: async (credentials: LoginRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>(`${API_URL}/login`, credentials);
         if (response.data.id && response.data.token) {
-            localStorage.setItem('user', JSON.stringify(response.data));
+            localStorage.setItem('token', response.data.token);
+            const { token, ...userData } = response.data;
+            localStorage.setItem('user', JSON.stringify(userData));
         }
         return response.data;
     },
@@ -67,13 +68,16 @@ export const authService = {
     register: async (data: RegisterRequest): Promise<AuthResponse> => {
         const response = await api.post<AuthResponse>(`${API_URL}/register`, data);
         if (response.data.id && response.data.token) {
-            localStorage.setItem('user', JSON.stringify(response.data));
+            localStorage.setItem('token', response.data.token);
+            const { token, ...userData } = response.data;
+            localStorage.setItem('user', JSON.stringify(userData));
         }
         return response.data;
     },
 
     logout: () => {
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
         window.location.href = '/login';
     },
 
@@ -92,16 +96,7 @@ export const authService = {
         const response = await api.put<AuthResponse>('/users/profile', data);
 
         if (response.data) {
-            const currentUserStr = localStorage.getItem('user');
-            if (currentUserStr) {
-                const currentUser = JSON.parse(currentUserStr);
-                // Preserve the token while updating user info
-                const updatedUser = {
-                    ...response.data,
-                    token: currentUser.token
-                };
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-            }
+            localStorage.setItem('user', JSON.stringify(response.data));
         }
         return response.data;
     },
@@ -114,18 +109,13 @@ export const authService = {
     fetchUserProfile: async (): Promise<User> => {
         const response = await api.get<AuthResponse>('/users/me');
         if (response.data) {
-            const token = localStorage.getItem('token') || authService.getCurrentUser()?.token;
-            const userWithToken = { ...response.data, token };
-            localStorage.setItem('user', JSON.stringify(userWithToken));
-            return userWithToken;
+            localStorage.setItem('user', JSON.stringify(response.data));
+            return response.data;
         }
         throw new Error('User profile could not be fetched');
     },
 
     setToken: (token: string) => {
-        // Create a temporary user object with token to satisfy auth checks until full profile is fetched
-        const tempUser = { token };
-        // We can also store token in a separate key if api interceptor uses it
-        localStorage.setItem('user', JSON.stringify(tempUser));
+        localStorage.setItem('token', token);
     }
 };

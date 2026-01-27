@@ -60,7 +60,7 @@ public class CvControllerTest {
         public void getCv_ShouldReturnCvData() throws Exception {
                 CvUpdateRequest cvData = new CvUpdateRequest(
                                 null, null, null, null, null, null, null, // summary to title
-                                null, null, // colors
+                                null, null, null, // colors and profileImage
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());
@@ -75,7 +75,7 @@ public class CvControllerTest {
         public void updateCv_ShouldReturnOk() throws Exception {
                 CvUpdateRequest request = new CvUpdateRequest(
                                 null, null, null, null, null, null, null, // summary to title
-                                null, null, // colors
+                                null, null, null, // colors and profileImage
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList(), Collections.emptyList(),
                                 Collections.emptyList());

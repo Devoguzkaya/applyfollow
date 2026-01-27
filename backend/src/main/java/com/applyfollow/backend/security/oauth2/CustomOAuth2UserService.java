@@ -13,16 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 import java.util.Optional;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +54,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        // Fallback for GitHub if email is hidden
-        if (email == null && "github".equalsIgnoreCase(registrationId)) {
-            email = fetchGitHubEmail(userRequest);
-        }
-
         if (email == null) {
             throw new InternalAuthenticationServiceException("Email not found from OAuth2 provider");
         }
@@ -92,39 +78,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         return UserPrincipal.create(user, oAuth2User.getAttributes());
-    }
-
-    private String fetchGitHubEmail(OAuth2UserRequest userRequest) {
-        String token = userRequest.getAccessToken().getTokenValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        try {
-            ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
-                    "https://api.github.com/user/emails",
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
-                    });
-
-            List<Map<String, Object>> emails = response.getBody();
-            if (emails != null) {
-                for (Map<String, Object> emailObj : emails) {
-                    Boolean primary = (Boolean) emailObj.get("primary");
-                    Boolean verified = (Boolean) emailObj.get("verified");
-                    String email = (String) emailObj.get("email");
-
-                    if (Boolean.TRUE.equals(primary) && Boolean.TRUE.equals(verified)) {
-                        return email;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to fetch GitHub emails: " + e.getMessage());
-        }
-        return null; // Hala bulamazsa null dönsün
     }
 
     private User registerNewUser(OAuth2UserRequest userRequest, String name, String email, String socialId) {

@@ -81,12 +81,19 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
-            # VPS Dizinine Git
-            cd ~/applyfollow || cd /root/Repositories/ApplyFollow
+            TARGET_DIR="/root/Repositories/ApplyFollow"
+            mkdir -p $TARGET_DIR
+            cd $TARGET_DIR
             
             # Sadece kodları güncelle (docker-compose.yml vb.)
-            git fetch origin master
-            git reset --hard origin/master
+            if [ ! -d ".git" ]; then
+              echo "Cloning repository for the first time..."
+              git clone https://github.com/${{ github.repository }}.git .
+            else
+              echo "Updating existing repository..."
+              git fetch origin master
+              git reset --hard origin/master
+            fi
             
             # GitHub Login
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

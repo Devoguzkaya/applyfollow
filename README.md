@@ -38,3 +38,5 @@ ApplyFollow is a high-performance Job Application CRM tailored for modern develo
 
 ---
 © 2026 ApplyFollow. Engineered for speed.
+
+

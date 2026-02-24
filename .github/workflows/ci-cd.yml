@@ -87,8 +87,11 @@ jobs:
             
             # Sadece kodları güncelle (docker-compose.yml vb.)
             if [ ! -d ".git" ]; then
-              echo "Cloning repository for the first time..."
-              git clone https://github.com/${{ github.repository }}.git .
+              echo "Initializing repository for the first time..."
+              git init
+              git remote add origin https://github.com/${{ github.repository }}.git
+              git fetch origin master
+              git reset --hard origin/master
             else
               echo "Updating existing repository..."
               git fetch origin master

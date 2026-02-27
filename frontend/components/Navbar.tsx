@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from '@/context/ThemeContext';
 import { MdWbSunny, MdDarkMode } from 'react-icons/md';
+import { useAppSelector } from '@/store/hooks';
 
 interface NavbarProps {
     isAuthPage?: boolean;
@@ -16,6 +17,7 @@ export default function Navbar({ isAuthPage = false }: NavbarProps) {
     const { theme, toggleTheme } = useTheme();
     const [scrolled, setScrolled] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const { isAuthenticated } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
         setMounted(true);
@@ -83,14 +85,20 @@ export default function Navbar({ isAuthPage = false }: NavbarProps) {
                     </button>
 
                     {!isAuthPage ? (
-                        <>
-                            <Link href="/login" className="hidden sm:block text-sm font-black text-text-muted hover:text-primary transition-colors uppercase tracking-widest">
-                                {t('landing.nav.login')}
+                        mounted && isAuthenticated ? (
+                            <Link href="/dashboard" className="px-6 py-2.5 rounded-xl bg-primary text-slate-950 text-sm font-black hover:bg-emerald-400 transition-all shadow-glow hover:-translate-y-0.5 active:translate-y-0 text-center uppercase tracking-widest">
+                                {t('landing.nav.dashboard') || 'Dashboard'}
                             </Link>
-                            <Link href="/register" className="px-6 py-2.5 rounded-xl bg-primary text-slate-950 text-sm font-black hover:bg-emerald-400 transition-all shadow-glow hover:-translate-y-0.5 active:translate-y-0 text-center uppercase tracking-widest">
-                                {t('landing.nav.signup')}
-                            </Link>
-                        </>
+                        ) : (
+                            <>
+                                <Link href="/login" className="hidden sm:block text-sm font-black text-text-muted hover:text-primary transition-colors uppercase tracking-widest">
+                                    {t('landing.nav.login')}
+                                </Link>
+                                <Link href="/register" className="px-6 py-2.5 rounded-xl bg-primary text-slate-950 text-sm font-black hover:bg-emerald-400 transition-all shadow-glow hover:-translate-y-0.5 active:translate-y-0 text-center uppercase tracking-widest">
+                                    {t('landing.nav.signup')}
+                                </Link>
+                            </>
+                        )
                     ) : (
                         <Link href="/" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-darker border border-border-main text-xs font-black text-text-muted hover:text-primary hover:border-primary transition-all uppercase tracking-widest group">
                             <span className="text-lg group-hover:-translate-x-1 transition-transform">←</span>

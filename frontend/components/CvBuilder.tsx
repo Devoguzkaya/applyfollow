@@ -86,8 +86,75 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
         }
     });
 
+    const validateCvData = (cvData: CvData): boolean => {
+        // Education Validation
+        for (const edu of cvData.educations) {
+            if (!edu.schoolName.trim() || !edu.fieldOfStudy.trim()) {
+                toast.error(t('cv.sections.education.empty') || 'Please fill in School Name and Field of Study in all Education entries.');
+                return false;
+            }
+        }
+
+        // Experience Validation
+        for (const exp of cvData.experiences) {
+            if (!exp.companyName.trim() || !exp.position.trim()) {
+                toast.error(t('cv.sections.experience.empty') || 'Please fill in Company Name and Position in all Experience entries.');
+                return false;
+            }
+        }
+
+        // Skill Validation
+        for (const skill of cvData.skills) {
+            if (!skill.name.trim()) {
+                toast.error(t('cv.sections.skills.empty') || 'Please fill in the Skill Name for all skill entries.');
+                return false;
+            }
+        }
+
+        // Language Validation
+        for (const lang of cvData.languages) {
+            if (!lang.name.trim()) {
+                toast.error(t('cv.sections.languages.empty') || 'Please fill in the Language Name for all language entries.');
+                return false;
+            }
+        }
+
+        // Certificate Validation
+        for (const cert of cvData.certificates) {
+            if (!cert.name.trim()) {
+                toast.error(t('cv.sections.certificates.empty') || 'Please fill in the Certificate Name for all certificate entries.');
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     const handleSave = async () => {
-        saveMutation.mutate(data);
+        if (!validateCvData(data)) {
+            return;
+        }
+
+        // Scrub empty strings from dates to prevent backend Jackson 400 Bad Request
+        const cleanData: CvData = {
+            ...data,
+            educations: data.educations.map(e => ({
+                ...e,
+                startDate: e.startDate === '' ? undefined : e.startDate,
+                endDate: e.endDate === '' ? undefined : e.endDate
+            })),
+            experiences: data.experiences.map(e => ({
+                ...e,
+                startDate: e.startDate === '' ? undefined : e.startDate,
+                endDate: e.endDate === '' ? undefined : e.endDate
+            })),
+            certificates: data.certificates.map(c => ({
+                ...c,
+                date: c.date === '' ? undefined : c.date
+            }))
+        };
+
+        saveMutation.mutate(cleanData);
     };
 
     // 4. PDF Download (Server-Side with Puppeteer)
@@ -99,8 +166,31 @@ export default function CvBuilder({ setIsEditing }: CvBuilderProps) {
             return;
         }
 
+        if (!validateCvData(data)) {
+            return;
+        }
+
+        // Scrub empty strings from dates to prevent backend Jackson 400 Bad Request
+        const cleanData: CvData = {
+            ...data,
+            educations: data.educations.map(e => ({
+                ...e,
+                startDate: e.startDate === '' ? undefined : e.startDate,
+                endDate: e.endDate === '' ? undefined : e.endDate
+            })),
+            experiences: data.experiences.map(e => ({
+                ...e,
+                startDate: e.startDate === '' ? undefined : e.startDate,
+                endDate: e.endDate === '' ? undefined : e.endDate
+            })),
+            certificates: data.certificates.map(c => ({
+                ...c,
+                date: c.date === '' ? undefined : c.date
+            }))
+        };
+
         // Save first
-        saveMutation.mutate(data, {
+        saveMutation.mutate(cleanData, {
             onSuccess: async () => {
                 const toastId = toast.loading('Generating High-Quality PDF...');
 

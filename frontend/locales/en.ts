@@ -253,6 +253,7 @@ export const en: Dictionary = {
             contact: "Contact",
             login: "Login",
             signup: "Sign Up",
+            dashboard: "Dashboard",
         },
 
         hero: {

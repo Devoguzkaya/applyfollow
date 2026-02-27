@@ -251,6 +251,7 @@ export const tr = {
             contact: "İletişim",
             login: "Giriş Yap",
             signup: "Kayıt Ol",
+            dashboard: "Panel",
         },
 
         hero: {

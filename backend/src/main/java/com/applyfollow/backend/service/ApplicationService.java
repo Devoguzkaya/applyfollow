@@ -41,8 +41,7 @@ public class ApplicationService {
     }
 
     public ApplicationResponse getApplicationById(UUID id, UUID userId) {
-        return applicationRepository.findById(id)
-                .filter(app -> app.getUser().getId().equals(userId))
+        return applicationRepository.findByIdAndUserId(id, userId)
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                         "Application not found with id: " + id));
@@ -59,8 +58,7 @@ public class ApplicationService {
         }
 
         Company company = companyService.findOrCreateCompany(request.companyName());
-        com.applyfollow.backend.model.User user = userRepository.findById(userId)
-                .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException("User not found"));
+        com.applyfollow.backend.model.User user = userRepository.getReferenceById(userId);
 
         Application application = new Application();
         application.setUser(user);
@@ -79,8 +77,7 @@ public class ApplicationService {
 
     @Transactional
     public void deleteApplication(UUID id, UUID userId) {
-        Application application = applicationRepository.findById(id)
-                .filter(app -> app.getUser().getId().equals(userId))
+        Application application = applicationRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                         "Application not found or unauthorized"));
         applicationRepository.delete(application);
@@ -90,8 +87,7 @@ public class ApplicationService {
 
     @Transactional
     public ContactDto addContact(UUID applicationId, ContactDto contactDto, UUID userId) {
-        Application application = applicationRepository.findById(applicationId)
-                .filter(app -> app.getUser().getId().equals(userId))
+        Application application = applicationRepository.findByIdAndUserId(applicationId, userId)
                 .orElseThrow(
                         () -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                                 "Application not found or unauthorized"));
@@ -122,8 +118,7 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse updateNotes(UUID id, String notes, UUID userId) {
-        Application application = applicationRepository.findById(id)
-                .filter(app -> app.getUser().getId().equals(userId))
+        Application application = applicationRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                         "Application not found or unauthorized"));
 
@@ -134,8 +129,7 @@ public class ApplicationService {
 
     @Transactional
     public ApplicationResponse updateStatus(UUID id, String status, UUID userId) {
-        Application application = applicationRepository.findById(id)
-                .filter(app -> app.getUser().getId().equals(userId))
+        Application application = applicationRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new com.applyfollow.backend.exception.ResourceNotFoundException(
                         "Application not found or unauthorized"));
 

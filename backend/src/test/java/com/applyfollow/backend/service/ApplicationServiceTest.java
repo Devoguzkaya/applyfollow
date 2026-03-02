@@ -74,7 +74,7 @@ class ApplicationServiceTest {
 
     @Test
     void getApplicationById_WhenExists_ShouldReturnApplication() {
-        when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
+        when(applicationRepository.findByIdAndUserId(application.getId(), user.getId())).thenReturn(Optional.of(application));
 
         ApplicationResponse result = applicationService.getApplicationById(application.getId(), user.getId());
 
@@ -85,7 +85,7 @@ class ApplicationServiceTest {
     @Test
     void getApplicationById_WhenNotExists_ShouldThrowException() {
         UUID randomId = UUID.randomUUID();
-        when(applicationRepository.findById(randomId)).thenReturn(Optional.empty());
+        when(applicationRepository.findByIdAndUserId(randomId, user.getId())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
                 () -> applicationService.getApplicationById(randomId, user.getId()));
@@ -101,7 +101,7 @@ class ApplicationServiceTest {
                 .thenReturn(Optional.empty());
 
         when(companyService.findOrCreateCompany(anyString())).thenReturn(company);
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.getReferenceById(user.getId())).thenReturn(user);
         when(applicationRepository.save(any(Application.class))).thenReturn(application);
 
         ApplicationResponse result = applicationService.createApplication(request, user.getId());
@@ -131,7 +131,7 @@ class ApplicationServiceTest {
     @Test
     void deleteApplication_ShouldDelete() {
         UUID appId = application.getId();
-        when(applicationRepository.findById(appId)).thenReturn(Optional.of(application));
+        when(applicationRepository.findByIdAndUserId(appId, user.getId())).thenReturn(Optional.of(application));
 
         applicationService.deleteApplication(appId, user.getId());
 
@@ -141,7 +141,7 @@ class ApplicationServiceTest {
     @Test
     void deleteApplication_WhenNotExists_ShouldThrowException() {
         UUID appId = UUID.randomUUID();
-        when(applicationRepository.findById(appId)).thenReturn(Optional.empty());
+        when(applicationRepository.findByIdAndUserId(appId, user.getId())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> applicationService.deleteApplication(appId, user.getId()));
     }
@@ -153,7 +153,7 @@ class ApplicationServiceTest {
         contact.setId(UUID.randomUUID());
         contact.setName("John Doe");
 
-        when(applicationRepository.findById(application.getId())).thenReturn(Optional.of(application));
+        when(applicationRepository.findByIdAndUserId(application.getId(), user.getId())).thenReturn(Optional.of(application));
         when(contactRepository.save(any(Contact.class))).thenReturn(contact);
 
         ContactDto result = applicationService.addContact(application.getId(), contactDto, user.getId());

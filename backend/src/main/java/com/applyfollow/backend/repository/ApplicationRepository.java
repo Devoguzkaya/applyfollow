@@ -15,4 +15,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Optional<Application> findByUserIdAndCompany_NameAndPosition(UUID userId, String companyName, String position);
 
     boolean existsByIdAndUser_Id(UUID id, UUID userId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM Application a JOIN FETCH a.company JOIN FETCH a.user WHERE a.id = :id AND a.user.id = :userId")
+    Optional<Application> findByIdAndUserId(@org.springframework.data.repository.query.Param("id") UUID id, @org.springframework.data.repository.query.Param("userId") UUID userId);
 }

@@ -28,4 +28,16 @@ public class AuthController {
     public AuthResponse login(@RequestBody @Valid LoginRequest request) {
         return userService.login(request);
     }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void forgotPassword(@RequestBody @Valid com.applyfollow.backend.dto.ForgotPasswordRequest request) {
+        userService.forgotPassword(request);
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void resetPassword(@RequestBody @Valid com.applyfollow.backend.dto.ResetPasswordRequest request) {
+        userService.resetPassword(request);
+    }
 }

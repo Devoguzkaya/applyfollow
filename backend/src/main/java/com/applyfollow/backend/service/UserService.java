@@ -20,6 +20,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.applyfollow.backend.dto.ForgotPasswordRequest;
+import com.applyfollow.backend.dto.ResetPasswordRequest;
+import com.applyfollow.backend.model.PasswordResetToken;
+import com.applyfollow.backend.repository.PasswordResetTokenRepository;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -30,6 +36,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final EmailService emailService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
@@ -122,5 +130,34 @@ public class UserService {
         return new AuthResponse(null, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(),
                 "Profile fetched", user.getPhoneNumber(), user.getAddress(), user.getLinkedinUrl(),
                 user.getGithubUrl(), user.getWebsiteUrl(), user.getSummary());
+    }
+
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+            String token = UUID.randomUUID().toString();
+            PasswordResetToken resetToken = new PasswordResetToken(token, user, LocalDateTime.now().plusHours(1));
+            // Clear previous tokens for this user
+            tokenRepository.deleteByUser(user);
+            tokenRepository.save(resetToken);
+            emailService.sendPasswordResetEmail(user.getEmail(), token);
+        });
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(request.getToken())
+                .orElseThrow(() -> new BadRequestException("Invalid or expired password reset token"));
+
+        if (resetToken.isExpired()) {
+            tokenRepository.delete(resetToken);
+            throw new BadRequestException("Invalid or expired password reset token");
+        }
+
+        User user = resetToken.getUser();
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        tokenRepository.delete(resetToken);
     }
 }

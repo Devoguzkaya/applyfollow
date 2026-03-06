@@ -105,6 +105,14 @@ export const authService = {
         await api.post('/users/change-password', { currentPassword, newPassword });
     },
 
+    forgotPassword: async (email: string): Promise<void> => {
+        await api.post(`${API_URL}/forgot-password`, { email });
+    },
+
+    resetPassword: async (token: string, newPassword: string): Promise<void> => {
+        await api.post(`${API_URL}/reset-password`, { token, newPassword });
+    },
+
     // OAuth2 Helpers
     fetchUserProfile: async (): Promise<User> => {
         const response = await api.get<AuthResponse>('/users/me');

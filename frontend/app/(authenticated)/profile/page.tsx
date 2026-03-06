@@ -3,8 +3,10 @@
 import { useLanguage } from '@/context/LanguageContext';
 import { useState, useEffect } from 'react';
 import { userService, UpdateProfileRequest, ChangePasswordRequest } from '@/services/userService';
+import { authService } from '@/services/authService';
 import toast from 'react-hot-toast';
 import { FaUser, FaLock, FaSave, FaLinkedin, FaGithub, FaGlobe } from 'react-icons/fa';
+import { MdLockOutline } from 'react-icons/md';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ProfilePage() {
@@ -12,6 +14,7 @@ export default function ProfilePage() {
     const t = dict;
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<'personal' | 'security'>('personal');
+    const [isResetLinkSending, setIsResetLinkSending] = useState(false);
 
     // Profile State (Local Form State)
     const [profile, setProfile] = useState<UpdateProfileRequest>({
@@ -112,6 +115,19 @@ export default function ProfilePage() {
             currentPassword: passwords.currentPassword,
             newPassword: passwords.newPassword,
         });
+    };
+
+    const handleSendResetLink = async () => {
+        if (!user?.email) return;
+        setIsResetLinkSending(true);
+        try {
+            await authService.forgotPassword(user.email);
+            toast.success("Password reset link sent to your email.");
+        } catch (error) {
+            toast.error("Failed to send reset link.");
+        } finally {
+            setIsResetLinkSending(false);
+        }
     };
 
     if (!t.profilePage) return null;
@@ -301,66 +317,84 @@ export default function ProfilePage() {
                         </div>
                     </form>
                 ) : (
-                    <form onSubmit={onChangePassword} className="space-y-6 max-w-2xl mx-auto">
-                        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
-                            <p className="text-yellow-200 text-sm">
-                                {t.profilePage.security.requirements}
-                            </p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-300">{t.profilePage.security.currentPassword}</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                value={passwords.currentPassword}
-                                onChange={handlePasswordChange}
-                                className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-300">{t.profilePage.security.newPassword}</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={passwords.newPassword}
-                                onChange={handlePasswordChange}
-                                className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
-                                required
-                                minLength={6}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-300">{t.profilePage.security.confirmPassword}</label>
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                value={passwords.confirmPassword}
-                                onChange={handlePasswordChange}
-                                className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
-                                required
-                                minLength={6}
-                            />
-                        </div>
-
-                        <div className="flex justify-end pt-4">
+                    <div className="space-y-6 max-w-2xl mx-auto">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-white/5 border border-white/10 rounded-xl p-5 gap-4">
+                            <div>
+                                <h4 className="text-white font-medium mb-1 flex items-center gap-2"><MdLockOutline className="text-emerald-400 text-lg" /> Set or Reset Password</h4>
+                                <p className="text-gray-400 text-sm">If you registered via Google or forgot your password, you can request a secure reset link.</p>
+                            </div>
                             <button
-                                type="submit"
-                                disabled={changePasswordMutation.isPending}
-                                className="flex items-center gap-2 bg-[#00D632] hover:bg-[#00D632]/90 text-black font-semibold px-6 py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,214,50,0.3)] hover:shadow-[0_0_30px_rgba(0,214,50,0.4)]"
+                                type="button"
+                                onClick={handleSendResetLink}
+                                disabled={isResetLinkSending}
+                                className="whitespace-nowrap px-4 py-2 bg-[#0F1416]/50 border border-white/10 rounded-lg text-sm text-white hover:bg-white/10 transition-colors disabled:opacity-50"
                             >
-                                {changePasswordMutation.isPending ? (
-                                    <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                ) : (
-                                    <FaLock />
-                                )}
-                                {changePasswordMutation.isPending ? t.profilePage.security.changing : t.profilePage.security.changePassword}
+                                {isResetLinkSending ? "Sending..." : "Send Reset Link"}
                             </button>
                         </div>
-                    </form>
+
+                        <form onSubmit={onChangePassword} className="space-y-6">
+
+                            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
+                                <p className="text-yellow-200 text-sm">
+                                    {t.profilePage.security.requirements}
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-300">{t.profilePage.security.currentPassword}</label>
+                                <input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={passwords.currentPassword}
+                                    onChange={handlePasswordChange}
+                                    className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-300">{t.profilePage.security.newPassword}</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwords.newPassword}
+                                    onChange={handlePasswordChange}
+                                    className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-300">{t.profilePage.security.confirmPassword}</label>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={passwords.confirmPassword}
+                                    onChange={handlePasswordChange}
+                                    className="w-full bg-[#0F1416]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00D632] focus:ring-1 focus:ring-[#00D632]/50 transition-all placeholder-gray-600"
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+
+                            <div className="flex justify-end pt-4">
+                                <button
+                                    type="submit"
+                                    disabled={changePasswordMutation.isPending}
+                                    className="flex items-center gap-2 bg-[#00D632] hover:bg-[#00D632]/90 text-black font-semibold px-6 py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,214,50,0.3)] hover:shadow-[0_0_30px_rgba(0,214,50,0.4)]"
+                                >
+                                    {changePasswordMutation.isPending ? (
+                                        <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                    ) : (
+                                        <FaLock />
+                                    )}
+                                    {changePasswordMutation.isPending ? t.profilePage.security.changing : t.profilePage.security.changePassword}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 )}
             </div>
         </div>

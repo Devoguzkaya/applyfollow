@@ -70,6 +70,7 @@ services:
       # Mail Config
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
+      RESEND_API_KEY: ${RESEND_API_KEY}
 
       # OAuth2 Config
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}

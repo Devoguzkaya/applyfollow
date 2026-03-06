@@ -85,7 +85,7 @@ export default function LoginPage() {
                     <div className="relative group">
                         <div className="flex justify-between items-center mb-1.5 px-1">
                             <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] opacity-50">{t('auth.register.password')}</label>
-                            <Link href="#" className="text-[10px] font-black text-primary hover:text-primary-dark transition-colors uppercase tracking-[0.1em]">{t('auth.login.forgotPassword')}</Link>
+                            <Link href="/forgot-password" className="text-[10px] font-black text-primary hover:text-primary-dark transition-colors uppercase tracking-[0.1em]">{t('auth.login.forgotPassword')}</Link>
                         </div>
                         <div className="relative">
                             <MdLockOutline className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-text-muted group-focus-within:text-primary transition-colors" />

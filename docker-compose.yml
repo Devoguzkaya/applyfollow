@@ -81,6 +81,7 @@ services:
 
       # CORS
       CORS_ALLOWED_ORIGINS: "http://localhost:3000,https://${DOMAIN_NAME},https://www.${DOMAIN_NAME}"
+      APP_FRONTEND_URL: "https://${DOMAIN_NAME}"
 
       # NGINX CONFIG
       VIRTUAL_HOST: ${DOMAIN_NAME},www.${DOMAIN_NAME}

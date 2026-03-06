@@ -7,6 +7,7 @@ import { applicationService, ContactDto } from "@/services/applicationService";
 import { useLanguage } from "@/context/LanguageContext";
 import toast from 'react-hot-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import StatusSelect from '@/components/applications/StatusSelect';
 
 export default function ApplicationDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { t } = useLanguage();
@@ -212,20 +213,11 @@ export default function ApplicationDetailsPage({ params }: { params: Promise<{ i
                                     <span className="text-black font-bold text-2xl">{application.company.name.charAt(0)}</span>
                                 )}
                             </div>
-                            <div className="relative group/status w-fit">
-                                <select
-                                    value={application.status}
-                                    onChange={(e) => updateStatusMutation.mutate(e.target.value)}
-                                    className={`appearance-none bg-transparent border rounded-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider cursor-pointer outline-none focus:ring-1 focus:ring-primary transition-all pr-7 ${activeStyle}`}
-                                >
-                                    <option value="APPLIED" className="bg-[#0A0C10]">{t('applications.status.APPLIED')}</option>
-                                    <option value="INTERVIEW" className="bg-[#0A0C10]">{t('applications.status.INTERVIEW')}</option>
-                                    <option value="OFFER" className="bg-[#0A0C10]">{t('applications.status.OFFER')}</option>
-                                    <option value="REJECTED" className="bg-[#0A0C10]">{t('applications.status.REJECTED')}</option>
-                                    <option value="GHOSTED" className="bg-[#0A0C10]">{t('applications.status.GHOSTED')}</option>
-                                </select>
-                                <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-[14px] pointer-events-none opacity-50">expand_more</span>
-                            </div>
+                            <StatusSelect
+                                value={application.status as string}
+                                onChange={(newStatus: string) => updateStatusMutation.mutate(newStatus)}
+                                disabled={updateStatusMutation.isPending}
+                            />
                         </header>
                         <div>
                             <h1 className="text-2xl font-bold font-display text-white leading-tight mb-1">{application.position}</h1>
